@@ -1,0 +1,19 @@
+:root {
+  --commonBackground: #EBCEC5; 
+}
+
+:global(*) {
+  -webkit-touch-callout: none;  /* iOS 드래그 방지 */
+  -webkit-user-select: none;    /* 텍스트 선택 방지 */
+  -moz-user-select: none;       /* Firefox 드래그 방지 */
+  -ms-user-select: none;        /* Internet Explorer 드래그 방지 */
+  user-select: none;            /* 일반 드래그 방지 */
+  touch-action: none;           /* 터치스크린에서 드래그 방지 */
+  -webkit-user-drag: none;      /* 웹킷에서 드래그 방지 */
+}
+
+/* 링크와 버튼에서 텍스트 선택 방지 */
+:global(a), :global(button) {
+  -webkit-user-select: none;
+  user-select: none;
+}

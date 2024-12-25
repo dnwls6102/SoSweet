@@ -1,29 +1,32 @@
+'use client';
+
 import React from 'react';
-import './App.css';
+import Header from '../../components/header';
+import styles from './mainpage.module.css';
+import { useRouter } from 'next/navigation';
 
-function App() {
+const MainPage = () => {
+  const router = useRouter(); // useRouter 훅을 사용하여 router 객체를 가져옵니다.
+
+  const handleAiClick = () => {
+    router.push('/MatchingAI'); // /MatchingAI로 이동 (app/MatchingAI/page.tsx와 연결)
+  };
+
   return (
-    <div className="app">
-      {/* Header Section */}
-      <header className="header">
-        <span className="logo">💖 소스윗</span>
-        <button className="logout">로그아웃</button>
-      </header>
-
-      {/* Main Content Section */}
-      <main className="main-content">
-        <div className="option ai">
-          <div className="icon">🤖</div>
-          <span className="label">AI</span>
+    <div className={styles.container}>
+      <Header />
+      <div className={styles.mainContent}>
+        <div className={`${styles.option} ${styles.ai}`} onClick={handleAiClick}>
+          <div className={styles.icon}>🤖</div>
+          <span className={styles.label}>AI</span>
         </div>
-
-        <div className="option human">
-          <div className="icon">🧑</div>
-          <span className="label">사람</span>
+        <div className={`${styles.option} ${styles.human}`}>
+          <div className={styles.icon}>🧑</div>
+          <span className={styles.label}>사람</span>
         </div>
-      </main>
+      </div>
     </div>
   );
-}
+};
 
-export default App;
+export default MainPage;

@@ -1,0 +1,15 @@
+.container {
+  background-color: var(--commonBackground);
+  min-height: 100vh;
+  
+}
+
+.cardsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; 
+  align-items: center; 
+  gap: 30px;
+  min-height: 70vh;
+  overflow: hidden;
+}
