@@ -60,6 +60,9 @@ export default function Signin() {
       gender,
     };
 
+    //로컬 환경이면 : http://localhost:백엔드 서버의 포트번호/api/register
+    //서버 테스트 환경이면 : AWS 서버 주소/api/register
+    //실제 서비스 환경이면 : 실제 사이트 주소/api/register
     try {
       const response = await fetch('/api/register', {
         method: 'POST',
