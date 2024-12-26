@@ -3,7 +3,6 @@
   min-height: 100vh;
 }
 
-/* 콘텐츠 스타일 */
 .content {
   display: flex;
   flex-direction: column;
@@ -11,7 +10,6 @@
   margin-top: 130px;
 }
 
-/* 등급 텍스트 */
 .rank {
   font-size: 30px;
   font-weight: bold;
@@ -19,15 +17,13 @@
   margin-bottom: 40px;
   display: flex;
   align-items: center;
-  gap: 8px; /* 텍스트와 아이콘 간격 */
+  gap: 8px;
 }
 
-/* 등급 아이콘 */
 .rankIcon {
   display: inline-block;
 }
 
-/* Unknown Person 영역 */
 .unknownPerson {
   width: 150px;
   height: 150px;
@@ -37,15 +33,13 @@
   justify-content: center;
   align-items: center;
   margin-bottom: 30px;
-  overflow: hidden; /* 이미지를 둥글게 자르기 */
+  overflow: hidden;
 }
 
-/* Unknown Person 이미지 */
 .unknownPersonImage {
   border-radius: 50%;
 }
 
-/* 매칭 버튼 */
 .matchButton {
   background-color: #fef6e4;
   border: none;

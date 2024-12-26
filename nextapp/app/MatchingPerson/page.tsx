@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import Header from '../../components/header'; // Header 경로 수정!
+import Header from '../../components/header';
 import styles from './page.module.css';
 
 const MatchingPerson = () => {
@@ -14,7 +14,7 @@ const MatchingPerson = () => {
           나의 등급:
           <Image
             className={styles.rankIcon}
-            src="/rankBronze.png" /* 등급 아이콘 경로 */
+            src="/rankBronze.png"
             alt="Rank Icon"
             width={48}
             height={48}
@@ -24,7 +24,7 @@ const MatchingPerson = () => {
         <div className={styles.unknownPerson}>
           <Image
             className={styles.unknownPersonImage}
-            src="/unknownPerson.png" /* Unknown Person 이미지 경로 */
+            src="/unknownPerson.png"
             alt="Unknown Person"
             width={150}
             height={150}
