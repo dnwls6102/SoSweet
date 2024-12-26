@@ -13,11 +13,11 @@ export default function Main() {
           <Input placeholder="비밀번호"></Input>
         </div>
         <div className={styles.inlinewrapper}>
-          <Link href="/MainPage">
-            <button className={styles.button}>로그인</button>
-          </Link>
           <Link href="/Signin">
             <button className={styles.button}>회원가입</button>
+          </Link>
+          <Link href="/MainPage">
+            <button className={styles.button}>로그인</button>
           </Link>
         </div>
       </SmallForm>

@@ -1,0 +1,43 @@
+.input {
+  display: flex;
+  flex-direction: column;
+  width: 650px;
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+  margin-top : 5px;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.select {
+  margin-left: auto;
+  margin-right: auto;
+  width: 500px;
+  height: 30px;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.button {
+  width: 48%;
+  height: 40px;
+  font-size: 16px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background-color: white;
+}
+
+.button.selected {
+  background-color: #0070f3;
+  color: white;
+  border-color: #0070f3;
+}
