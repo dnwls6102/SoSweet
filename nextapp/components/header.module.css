@@ -1,0 +1,61 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: white;
+  border-bottom: 1px solid #ccc;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15); /* 섀도우 주기 - position, z-index도 줘야 함! */
+  position: relative;
+  z-index: 1;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* 💖 */
+.heart {
+  font-size: 1.8rem; 
+  gap: 10px;
+}
+
+/* 소스윗 */
+.title {
+  font-size: 1.5rem; 
+}
+
+.logoutContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.logout {
+  font-size: 1rem;
+  padding: 10px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  outline: none;
+}
+
+/* /* 호버 시 약간 투명해지는 효과 */
+
+.mypage {
+  cursor: pointer;
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none; /* 기본 링크 스타일 제거 */
+  color: inherit; /* 텍스트 색상 유지 */
+  cursor: pointer;
+}
+
