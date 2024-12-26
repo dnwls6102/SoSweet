@@ -3,7 +3,7 @@
 import React from 'react';
 import Header from '../../components/header';
 import Card from '../../components/card';
-import styles from './matchingAI.module.css';
+import styles from './page.module.css';
 
 const MatchingAI = () => {
   const cardData = [

@@ -12,8 +12,11 @@
   -webkit-user-drag: none;      /* 웹킷에서 드래그 방지 */
 }
 
-/* 링크와 버튼에서 텍스트 선택 방지 */
 :global(a), :global(button) {
   -webkit-user-select: none;
   user-select: none;
+}
+
+:global(body) {
+  background-color: #f4dcd5; /* 원하는 배경색 */
 }

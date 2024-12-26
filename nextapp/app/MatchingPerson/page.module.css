@@ -1,0 +1,65 @@
+.container {
+  background-color: #f4dcd5;
+  min-height: 100vh;
+}
+
+/* 콘텐츠 스타일 */
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 130px;
+}
+
+/* 등급 텍스트 */
+.rank {
+  font-size: 30px;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* 텍스트와 아이콘 간격 */
+}
+
+/* 등급 아이콘 */
+.rankIcon {
+  display: inline-block;
+}
+
+/* Unknown Person 영역 */
+.unknownPerson {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f8d6f0, #f49fc6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+  overflow: hidden; /* 이미지를 둥글게 자르기 */
+}
+
+/* Unknown Person 이미지 */
+.unknownPersonImage {
+  border-radius: 50%;
+}
+
+/* 매칭 버튼 */
+.matchButton {
+  background-color: #fef6e4;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333333;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.matchButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Header from '../../components/header';
-import styles from './mainpage.module.css';
+import styles from './page.module.css';
 import { useRouter } from 'next/navigation';
 
 const MainPage = () => {
@@ -10,6 +10,10 @@ const MainPage = () => {
 
   const handleAiClick = () => {
     router.push('/MatchingAI'); // /MatchingAI로 이동 (app/MatchingAI/page.tsx와 연결)
+  };
+
+  const handlePersonClick = () => {
+    router.push('/MatchingPerson');
   };
 
   return (
@@ -20,7 +24,7 @@ const MainPage = () => {
           <div className={styles.icon}>🤖</div>
           <span className={styles.label}>AI</span>
         </div>
-        <div className={`${styles.option} ${styles.human}`}>
+        <div className={`${styles.option} ${styles.human}`} onClick={handlePersonClick}>
           <div className={styles.icon}>🧑</div>
           <span className={styles.label}>사람</span>
         </div>
