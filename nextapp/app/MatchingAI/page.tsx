@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Header from '../../components/header';
 import Card from '../../components/card';
 import styles from './page.module.css';
 
@@ -14,7 +13,6 @@ const MatchingAI = () => {
 
   return (
     <div className={styles.container}>
-      <Header />
       <div className={styles.cardsContainer}>
         {cardData.map((card, index) => (
           <Card key={index} name={card.name} age={card.age} job={card.job} />

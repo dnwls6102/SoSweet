@@ -1,4 +1,8 @@
-@import '../../components/background.module.css';
+@font-face {
+  font-family: 'logoFont';
+  src: url("@/fonts/Cafe24Ssurround-v2.0.ttf") format('truetype');
+  font-weight: bold;
+}
 
 .container {
   text-align: center;

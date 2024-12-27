@@ -2,13 +2,11 @@
 
 import React from 'react';
 import Image from 'next/image';
-import Header from '../../components/header';
 import styles from './page.module.css';
 
 const MatchingPerson = () => {
   return (
     <div className={styles.container}>
-      <Header />
       <div className={styles.content}>
         <h2 className={styles.rank}>
           나의 등급:
