@@ -8,11 +8,11 @@ import Videobox from '@/components/videobox';
 export default function Chat() {
   const videoref = useRef<HTMLVideoElement>(null);
   const router = useRouter();
-  const keys = '호감도';
-  const value = 10;
+  const keys = '행복';
+  const value = 30;
 
   const handleNavigation = () => {
-    router.push('/Feedback');
+    router.push('/Comment');
   };
   return (
     <div className={styles.wrapper}>
@@ -20,11 +20,7 @@ export default function Chat() {
         <Videobox videoref={videoref} keys={keys} value={value} />
       </div>
       <div className={styles.right}>
-        <textarea
-          className={styles.textarea}
-          readOnly
-          defaultValue={`침울한 표정 1분 지속 : 호감도 - 10%\n주제 파악을 못함 : 호감도 - 10%`}
-        ></textarea>
+        <Videobox videoref={videoref} keys={keys} value={value} />
         <button className={styles.endButton} onClick={handleNavigation}>
           대화 종료
         </button>

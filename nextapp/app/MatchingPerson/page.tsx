@@ -2,9 +2,16 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 
 const MatchingPerson = () => {
+  const router = useRouter();
+
+  const handleMatching = () => {
+    router.push('/MatchingPerson/ChatHuman');
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.content}>
@@ -28,7 +35,9 @@ const MatchingPerson = () => {
             height={150}
           />
         </div>
-        <button className={styles.matchButton}>매칭 시작</button>
+        <button className={styles.matchButton} onClick={handleMatching}>
+          매칭 시작
+        </button>
       </div>
     </div>
   );

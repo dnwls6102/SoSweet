@@ -1,6 +1,6 @@
 .videobox {
   width: 500px;
-  height: 600px;
+  height: 500px;
   background-color: gray;
   position: relative; /* 부모 요소에 상대 위치 설정 */
 }
