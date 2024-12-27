@@ -18,11 +18,17 @@ const MainPage = () => {
   return (
     <div className={styles.container}>
       <div className={styles.mainContent}>
-        <div className={`${styles.option} ${styles.ai}`} onClick={handleAiClick}>
+        <div
+          className={`${styles.option} ${styles.ai}`}
+          onClick={handleAiClick}
+        >
           <div className={styles.icon}>🤖</div>
           <span className={styles.label}>AI</span>
         </div>
-        <div className={`${styles.option} ${styles.human}`} onClick={handlePersonClick}>
+        <div
+          className={`${styles.option} ${styles.human}`}
+          onClick={handlePersonClick}
+        >
           <div className={styles.icon}>🧑</div>
           <span className={styles.label}>사람</span>
         </div>

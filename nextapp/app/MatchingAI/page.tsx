@@ -3,6 +3,7 @@
 import React from 'react';
 import Card from '../../components/card';
 import styles from './page.module.css';
+import Link from 'next/link';
 
 const MatchingAI = () => {
   const cardData = [
@@ -13,11 +14,14 @@ const MatchingAI = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.cardsContainer}>
-        {cardData.map((card, index) => (
-          <Card key={index} name={card.name} age={card.age} job={card.job} />
-        ))}
-      </div>
+      {/* <Header /> */}
+      <Link href="/MatchingAI/ChatAI" className={styles.link}>
+        <div className={styles.cardsContainer}>
+          {cardData.map((card, index) => (
+            <Card key={index} name={card.name} age={card.age} job={card.job} />
+          ))}
+        </div>
+      </Link>
     </div>
   );
 };
