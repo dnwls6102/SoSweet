@@ -1,4 +1,5 @@
 import NavbarIcon from '@/components/navbarIcon';
+// import styles from './layout.module.css';
 
 export default function RootLayout({
   children,
@@ -6,7 +7,7 @@ export default function RootLayout({
   return (
     <>
       <NavbarIcon />
-      {children}
+      <div>{children}</div>
     </>
   );
 }
