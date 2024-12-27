@@ -1,3 +1,15 @@
+@font-face {
+  font-family: 'logoFont';
+  src: url("@/fonts/Cafe24Ssurround-v2.0.ttf") format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'NotoSansKR';
+  src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
+  font-weight: normal;
+}
+
 .container {
   background-color: var(--commonBackground);
   min-height: 100vh;
@@ -10,8 +22,9 @@
   justify-content: center; 
   align-items: center; 
   gap: 30px;
-  min-height: 70vh;
+  min-height: 100vh;
   overflow: hidden;
+  font-family: 'NotoSansKR', sans-serif;
 }
 
 .link {
