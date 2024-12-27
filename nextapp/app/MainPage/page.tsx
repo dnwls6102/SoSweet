@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Header from '../../components/header';
+// import Header from '../../components/header';
 import styles from './page.module.css';
 import { useRouter } from 'next/navigation';
 
@@ -18,13 +18,19 @@ const MainPage = () => {
 
   return (
     <div className={styles.container}>
-      <Header />
+      {/* <Header /> */}
       <div className={styles.mainContent}>
-        <div className={`${styles.option} ${styles.ai}`} onClick={handleAiClick}>
+        <div
+          className={`${styles.option} ${styles.ai}`}
+          onClick={handleAiClick}
+        >
           <div className={styles.icon}>🤖</div>
           <span className={styles.label}>AI</span>
         </div>
-        <div className={`${styles.option} ${styles.human}`} onClick={handlePersonClick}>
+        <div
+          className={`${styles.option} ${styles.human}`}
+          onClick={handlePersonClick}
+        >
           <div className={styles.icon}>🧑</div>
           <span className={styles.label}>사람</span>
         </div>

@@ -1,11 +1,11 @@
-// import NavbarIcon from '@/components/navbarIcon';
+import NavbarIcon from '@/components/navbarIcon';
 
 export default function MainPageLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <>
-      {/* <NavbarIcon /> */}
+      <NavbarIcon />
       {children}
     </>
   );
