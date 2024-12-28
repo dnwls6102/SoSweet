@@ -3,7 +3,7 @@
 import React, { useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
-import Videobox from '@/components/videobox';
+import Videobox from '../../../components/videobox'; // 상대 경로로 수정
 
 export default function Chat() {
   const videoref = useRef<HTMLVideoElement>(null);
@@ -14,6 +14,7 @@ export default function Chat() {
   const handleNavigation = () => {
     router.push('/Feedback');
   };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.left}>
