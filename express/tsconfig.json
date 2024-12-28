@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+      "rootDir": "./src", // 소스 파일 위치
+      "outDir": "./dist", // 컴파일된 파일 저장 위치
+      "target": "ES2017", // 프론트와 동일하게 설정
+      "lib": ["esnext"], // 백엔드에서는 DOM 관련 설정 필요 없음
+      "allowJs": true, // JS 파일 허용
+      "skipLibCheck": true, // 라이브러리 타입 검사 건너뜀
+      "strict": true, // 엄격한 타입 검사
+      "noEmit": false, // 컴파일 결과물 생성함
+      "esModuleInterop": true, // ES6 모듈 간 상호 운용성 지원
+      "module": "commonjs", // Node.js 환경에 맞게 CommonJS 모듈 사용
+      "moduleResolution": "node", // Node.js의 모듈 해석 방식 사용
+      "resolveJsonModule": true, // JSON 모듈 import 가능
+      "isolatedModules": true, // 각 파일을 독립적으로 처리
+      "incremental": true, // 증분 컴파일 활성화
+      "paths": {
+        "@/*": ["./src/*"] // Alias를 프론트와 맞춤
+      }
+    },
+    "include": ["src/**/*.ts"], // 소스 파일 경로 포함
+    "exclude": ["node_modules", "dist"] // 제외할 디렉토리
+  }
+  
