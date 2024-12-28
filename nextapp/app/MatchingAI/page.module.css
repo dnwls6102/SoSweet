@@ -12,7 +12,7 @@
 
 .container {
   background-color: var(--commonBackground);
-  min-height: 100vh;
+  min-height: 80vh;
   
 }
 
@@ -22,7 +22,7 @@
   justify-content: center; 
   align-items: center; 
   gap: 30px;
-  min-height: 100vh;
+  min-height: 80vh;
   overflow: hidden;
   font-family: 'NotoSansKR', sans-serif;
 }
