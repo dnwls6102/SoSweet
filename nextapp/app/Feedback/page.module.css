@@ -1,110 +1,179 @@
+@font-face {
+  font-family: 'logoFont';
+  src: url("@/fonts/Cafe24Ssurround-v2.0.ttf") format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'NotoSansKR';
+  src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
+  font-weight: normal;
+}
+
+body {
+  overflow-x: hidden;
+}
+
 .container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    font-family: 'NotoSans', Arial, sans-serif;
-    color: #333;
-  }
-  
-  .logo {
-    font-size: 1.8em;
-    font-weight: bold;
-    color: #ff7f50;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .title {
-    font-size: 1.8em;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .chartContainer {
-    width: 50%;
-    max-width: 350px;
-    margin: 0 auto 20px auto;
-  }
-  
-  .chartDetails {
-    text-align: center;
-    margin-top: 20px;
-  }
-  
-  .chartDetails ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .chartDetails li {
-    margin-bottom: 10px;
-    font-size: 1.2em;
-  }
-  
-  .section {
-    margin-top: 30px;
-  }
-  
-  .sectionTitle {
-    font-size: 1.4em;
-    font-weight: bold;
-    margin-bottom: 15px;
-    border-left: 5px solid #ff7f50;
-    padding-left: 10px;
-  }
-  
-  .overallSection {
-    margin-top: 20px;
-    text-align: center;
-    background-color: #ffe4e1;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .overallTitle {
-    font-size: 1.6em;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #ff7f50;
-  }
-  
-  .overallText {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .highlight {
-    color: #007bff;
-  }
-  
-  .tipsSection {
-    margin-top: 40px;
-  }
-  
-  .tipsTitle {
-    font-size: 1.4em;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .tipsContent {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 5px;
-    font-size: 1em;
-  }
-  
-  .footer {
-    text-align: center;
-    font-size: 0.9em;
-    color: #777;
-    margin-top: 30px;
-  }
-  
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  font-family: 'NotoSans', Arial, sans-serif;
+  color: #333;
+}
+
+.logo {
+  font-size: 1.8em;
+  font-weight: bold;
+  font-family: 'logoFont', sans-serif;
+  color: #ff7f50;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.title {
+  font-size: 1.8em;
+  font-weight: bold;
+  font-family: 'NotoSansKR', sans-serif;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.chartContainer {
+  width: 50%;
+  max-width: 350px;
+  margin: 0 auto 20px auto;
+  font-family: 'NotoSansKR', sans-serif;
+}
+
+.rankContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.rankIcon {
+  margin-right: 10px;
+}
+
+.rankText {
+  font-size: 1.4em;
+  font-weight: bold;
+  font-family: 'NotoSansKR', sans-serif;
+  color: #331a02;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 1px;
+}
+
+.chartDetails {
+  text-align: center;
+  margin-top: 20px;
+  font-family: 'NotoSansKR', sans-serif;
+}
+
+.chartDetails ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.chartDetails li {
+  margin-bottom: 10px;
+  font-size: 1.2em;
+}
+
+.section {
+  margin-top: 30px;
+  font-family: 'NotoSansKR', sans-serif;
+}
+
+.sectionTitle {
+  font-size: 1.4em;
+  font-weight: bold;
+  margin-bottom: 15px;
+  border-left: 5px solid #ff7f50;
+  padding-left: 10px;
+}
+
+.overallSection {
+  margin-top: 20px;
+  text-align: center;
+  font-family: 'NotoSansKR', sans-serif;
+  background-color: #ffe4e1;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.overallTitle {
+  font-size: 1.6em;
+  font-weight: bold;
+  font-family: 'NotoSansKR', sans-serif;
+  margin-bottom: 10px;
+  color: #ff7f50;
+}
+
+.overallText {
+  font-size: 1.2em;
+  font-weight: bold;
+  font-family: 'NotoSansKR', sans-serif;
+  color: #333;
+}
+
+.highlight {
+  color: #007bff;
+}
+
+.tipsSection {
+  margin-top: 40px;
+  font-family: 'NotoSansKR', sans-serif;
+}
+
+.tipsTitle {
+  font-size: 1.4em;
+  font-weight: bold;
+  font-family: 'NotoSansKR', sans-serif;
+  margin-bottom: 10px;
+}
+
+.tipsContent {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 5px;
+  font-size: 1em;
+
+}
+
+.footer {
+  text-align: center;
+  font-size: 0.9em;
+  color: #777;
+  margin-top: 30px;
+}
+
+/* Button Styles */
+.buttonContainer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.mainPageButton {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  font-size: 1.2em;
+  font-weight: bold;
+  font-family: 'NotoSansKR', sans-serif;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.mainPageButton:hover {
+  background-color: #0056b3;
+}
