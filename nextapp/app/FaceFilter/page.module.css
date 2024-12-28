@@ -1,12 +1,24 @@
+@font-face {
+  font-family: 'logoFont';
+  src: url("@/fonts/Cafe24Ssurround-v2.0.ttf") format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'NotoSansKR';
+  src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
+  font-weight: normal;
+}
+
 .app {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  min-height: 100vh;
+  min-height: 80vh;
   background-color: #EBCEC5;
   font-family: Arial, sans-serif;
-  padding-top: 70px;
+  padding-top: 140px;
 }
 
 .heading {
