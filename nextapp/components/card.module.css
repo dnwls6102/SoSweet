@@ -1,0 +1,42 @@
+.card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  width: 280px;
+  height: 300px; 
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  margin: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  text-align: left;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.textContent {
+  position: relative;
+  width: 100%;
+}
+
+.textContent > * {
+  position: relative;
+  z-index: 1;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333333;
+}
+
+.job {
+  font-size: 16px;
+  color: #777777;
+}

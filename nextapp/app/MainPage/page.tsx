@@ -1,29 +1,29 @@
+'use client';
+
 import React from 'react';
-import './App.css';
+import styles from './page.module.css';
+import Link from 'next/link';
 
-function App() {
+const MainPage = () => {
+
   return (
-    <div className="app">
-      {/* Header Section */}
-      <header className="header">
-        <span className="logo">💖 소스윗</span>
-        <button className="logout">로그아웃</button>
-      </header>
-
-      {/* Main Content Section */}
-      <main className="main-content">
-        <div className="option ai">
-          <div className="icon">🤖</div>
-          <span className="label">AI</span>
+    <div className={styles.container}>
+      <div className={styles.mainContent}>
+        <Link href="/MatchingAI" className={styles.link}>
+          <div className={`${styles.option} ${styles.ai}`}>
+          <div className={styles.icon}>🤖</div>
+          <span className={styles.label}>AI</span>
         </div>
-
-        <div className="option human">
-          <div className="icon">🧑</div>
-          <span className="label">사람</span>
-        </div>
-      </main>
+        </Link>
+        <Link href="/MatchingPerson" className={styles.link}>
+          <div className={`${styles.option} ${styles.human}`}>
+            <div className={styles.icon}>🧑</div>
+            <span className={styles.label}>사람</span>
+          </div>
+        </Link>
+      </div>
     </div>
   );
-}
+};
 
-export default App;
+export default MainPage;

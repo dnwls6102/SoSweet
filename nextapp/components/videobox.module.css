@@ -1,0 +1,16 @@
+.videobox {
+  width: 500px;
+  height: 500px;
+  background-color: gray;
+  position: relative; /* 부모 요소에 상대 위치 설정 */
+}
+
+.label {
+  position: absolute;
+  top: 10px; /* 상단 여백 */
+  right: 10px; /* 우측 여백 */
+  background-color: rgba(0, 0, 0, 0.5); /* 배경색 (선택 사항) */
+  color: white; /* 글자색 */
+  padding: 5px; /* 패딩 (선택 사항) */
+  border-radius: 5px; /* 모서리 둥글게 (선택 사항) */
+}

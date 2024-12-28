@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Emotion Analysis Report</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            body {
+                font-family: 'NotoSans', Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #ffe4e1;
+                color: #333;
+                overflow-y: auto;
+            }
+
+            .container {
+                max-width: 800px;
+                margin: 20px auto;
+                padding: 20px;
+                background-color: #fff;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+            }
+
+            .logo {
+                font-size: 1.8em;
+                font-weight: bold;
+                color: #ff7f50;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+
+            .title {
+                font-size: 1.8em;
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .section {
+                margin-top: 30px;
+            }
+
+            .section-title {
+                font-size: 1.4em;
+                font-weight: bold;
+                margin-bottom: 15px;
+                border-left: 5px solid #ff7f50;
+                padding-left: 10px;
+            }
+
+            .chart-container {
+                width: 50%;
+                max-width: 350px;
+                margin: 0 auto 20px auto;
+            }
+
+            .chart-details {
+                text-align: center;
+                margin-top: 20px;
+            }
+
+            .chart-details ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .chart-details li {
+                margin-bottom: 10px;
+                font-size: 1.2em;
+            }
+
+            .recommendations {
+                list-style-type: none;
+                padding: 0;
+            }
+
+            .recommendations li {
+                background-color: #f2f2f2;
+                margin: 10px 0;
+                padding: 10px;
+                border-radius: 5px;
+            }
+
+            .tips-section {
+                margin-top: 40px;
+            }
+
+            .tips-title {
+                font-size: 1.4em;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+
+            .tips-content {
+                background-color: #f9f9f9;
+                padding: 15px;
+                border-radius: 5px;
+                font-size: 1em;
+            }
+
+            .overall-section {
+                margin-top: 20px;
+                text-align: center;
+                background-color: #ffe4e1;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .overall-title {
+                font-size: 1.6em;
+                font-weight: bold;
+                margin-bottom: 10px;
+                color: #ff7f50;
+            }
+
+            .overall-text {
+                font-size: 1.2em;
+                font-weight: bold;
+                color: #333;
+            }
+
+            .overall-text .highlight {
+                color: #007bff;
+            }
+
+            .footer {
+                text-align: center;
+                font-size: 0.9em;
+                color: #777;
+                margin-top: 30px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="logo">💖 소스윗</div>
+            <h1 class="title">당신의 소개팅력은?</h1>
+
+            <div class="chart-container">
+                <canvas id="emotionChart"></canvas>
+            </div>
+
+            <div class="chart-details">
+                <h3>Top 3 Emotions</h3>
+                <ul>
+                    <li>1st: Sad (29.29%)</li>
+                    <li>2nd: Happy (24.01%)</li>
+                    <li>3rd: Neutral (23.75%)</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">언어적 분석</h2>
+                <p>
+                    대화 중 사용자가 말한 비율이 70% 이상입니다. 조금 더 경청해
+                    주세요~
+                </p>
+                <p>
+                    '음', '아니', '어..' 같은 표현이 10회 이상입니다. 이러한
+                    표현은 자신감 없는 인상을 주기에 줄이는 연습을 해보세요~
+                </p>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">비언어적 분석</h2>
+                <p>
+                    전반적으로 슬픈 표정이 많습니다. 편안하게 긴장을 풀고,
+                    자연스러운 표정을 지어볼까요?
+                </p>
+                <p>눈 맞춤 빈도는 80%입니다. 아주 잘하고 계시네요!</p>
+                <p>
+                    대화 중 귀를 만지는 횟수가 5회 이상이었습니다. 긴장하실 때
+                    귀를 만지는 습관이 있으신 것 같아요!
+                </p>
+            </div>
+
+            <div class="overall-section">
+                <div class="overall-title">종합 평가</div>
+                <div class="overall-text">
+                    당신은 <span class="highlight">연애고자</span> 입니다.<br />
+                    등급: 🦅 브론즈
+                </div>
+            </div>
+
+            <div class="tips-section">
+                <h2 class="tips-title">실전 대비 개선 Tips</h2>
+                <div class="tips-content">
+                    <p>실전 소개팅에서는 다음 팁을 시도해 보세요:</p>
+                    <ul>
+                        <li>자연스러운 대화 흐름 유지하기</li>
+                        <li>적절한 눈맞춤과 미소로 긍정적인 인상을 주기</li>
+                        <li>감정을 너무 숨기지 말고 적절히 표현하기</li>
+                        <li>상대방의 반응에 귀 기울이며 대화 이어나가기</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer">&copy; 2024 SoSweet Analysis Report</div>
+        </div>
+
+        <script>
+            const ctx = document.getElementById('emotionChart').getContext('2d')
+            const data = {
+                labels: [
+                    'Neutral',
+                    'Happy',
+                    'Sad',
+                    'Fear',
+                    'Angry',
+                    'Surprise',
+                ],
+                datasets: [
+                    {
+                        label: 'Emotion Distribution',
+                        data: [23.75, 24.01, 29.29, 17.94, 3.17, 1.85],
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF',
+                            '#FF9F40',
+                        ],
+                    },
+                ],
+            }
+            const config = {
+                type: 'pie',
+                data: data,
+            }
+            new Chart(ctx, config)
+        </script>
+    </body>
+</html>

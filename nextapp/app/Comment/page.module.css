@@ -1,0 +1,80 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .stars {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    font-size: 32px;
+    cursor: pointer;
+  }
+  
+  .filledStar {
+    color: gold;
+    margin: 0 5px;
+  }
+  
+  .emptyStar {
+    color: #cccccc;
+    margin: 0 5px;
+  }
+  
+  .textarea {
+    width: 80%;
+    max-width: 600px;
+    height: 100px;
+    margin: 20px 0;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    resize: none;
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 600px;
+    margin: 20px 0;
+  }
+  
+  .likeButton {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .dislikeButton {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .submitButton {
+    background-color: #ffd700;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    max-width : 100px;
+    justify-self: center;;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
