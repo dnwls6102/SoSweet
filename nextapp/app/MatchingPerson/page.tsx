@@ -15,24 +15,26 @@ const MatchingPerson = () => {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        <h2 className={styles.rank}>
-          나의 등급:
-          <Image
-            className={styles.rankIcon}
-            src="/rankBronze.png"
-            alt="Rank Icon"
-            width={48}
-            height={48}
-          />
-          브론즈
-        </h2>
+        <div className={styles.rank}>
+          <span className={styles.rankText}>나의 등급:</span>
+          <div className={styles.rankIcon}>
+            <Image
+              src="/bronze-icon.svg"
+              alt="Rank Icon"
+              width={80}
+              height={80}
+            />
+          </div>
+          <span className={styles.rankLevel}>브론즈</span>
+        </div>
+
         <div className={styles.unknownPerson}>
           <Image
             className={styles.unknownPersonImage}
-            src="/unknownPerson.png"
+            src="/anonymous.png"
             alt="Unknown Person"
-            width={150}
-            height={150}
+            width={225}
+            height={225}
           />
         </div>
         <button className={styles.matchButton} onClick={handleMatching}>

@@ -1,34 +1,66 @@
+@font-face {
+  font-family: 'logoFont';
+  src: url("@/fonts/Cafe24Ssurround-v2.0.ttf") format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'NotoSansKR';
+  src: url("@/fonts/NotoSansKR-Black.ttf") format('truetype');
+  font-weight: normal;
+}
+
 .container {
-  background-color: #f4dcd5;
-  min-height: 100vh;
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  padding-top: 10px;
+  height: 100vh;
 }
 
 .content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 130px;
+  justify-content: center;
 }
 
 .rank {
-  font-size: 30px;
-  font-weight: bold;
-  color: #333333;
-  margin-bottom: 40px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0px;
+  margin-bottom: 40px;
+}
+
+.rankText {
+  font-size: 25px;
+  font-weight: bold;
+  font-family: 'NotoSansKR', sans-serif;
+  color: #555555;
+  margin-right: 10px;
 }
 
 .rankIcon {
-  display: inline-block;
+  width: 90px;
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.2));
+}
+
+.rankLevel {
+  font-size: 32px;
+  font-weight: bold;
+  font-family: 'NotoSansKR', sans-serif;
+  color: rgb(51, 26, 2);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 1px;
 }
 
 .unknownPerson {
-  width: 150px;
-  height: 150px;
+  width: 225px;
+  height: 225px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #f8d6f0, #f49fc6);
+  background: linear-gradient(135deg, #ffebdc, #ffc23e);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -38,19 +70,22 @@
 
 .unknownPersonImage {
   border-radius: 50%;
+  opacity: 0.9;
 }
 
 .matchButton {
   background-color: #fef6e4;
   border: none;
-  border-radius: 12px;
-  padding: 12px 24px;
-  font-size: 20px;
+  border-radius: 24px;
+  padding: 18px 36px;
+  font-size: 30px;
   font-weight: bold;
+  font-family: 'NotoSansKR', sans-serif;
   color: #333333;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 10px;
 }
 
 .matchButton:hover {
