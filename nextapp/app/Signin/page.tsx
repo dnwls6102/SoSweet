@@ -79,7 +79,7 @@ export default function Signin() {
 
       if (response.ok) {
         const result = await response.json();
-        if (result.exists) {
+        if (result.isExists) {
           console.log('이미 사용 중인 아이디입니다.');
         } else {
           console.log('사용 가능한 아이디입니다.');

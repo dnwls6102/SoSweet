@@ -32,6 +32,7 @@ export default function WebSpeechSTT() {
         }
       }
       console.log('Interim transcript:', interimTranscript);
+      console.log('Final transcript:', transcript);
     };
 
     recognition.onerror = (event) => {
