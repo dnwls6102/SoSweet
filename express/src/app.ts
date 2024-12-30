@@ -1,6 +1,9 @@
 import express, { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import User from './models/User';
+import userRoutes from './routes/userRoutes';
 
 dotenv.config(); // .env 파일 로드
 
@@ -16,9 +19,23 @@ app.use(cors({
 // JSON 파싱 미들웨어
 app.use(express.json());
 
-// 간단한 라우터 추가
+// MongoDB 연결
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/sosweet', {
+})
+  .then(() => console.log('MongoDB 연결 성공!'))
+  .catch((error: unknown) => console.error('MongoDB 연결 실패: ', error))
+
+
+// REST API 라우트 등록
+app.use('/users', userRoutes);
+
+
+// 기본 경로
 app.get('/', (req: Request, res: Response) => {
-  res.send('소스윗 백엔드 서버 실행 중입니당');
+  res.send('SoSweet 서버가 실행 중입니다');
 });
 
 export default app;
+
+
+

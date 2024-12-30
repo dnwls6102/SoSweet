@@ -1,0 +1,28 @@
+import mongoose, { Schema, Document } from 'mongoose';
+
+// User 인터페이스 (TS 타입 정의)
+export interface IUser extends Document {
+    user_id: string;
+    user_password: string;
+    user_nickname: string;
+    user_birth: Date;
+    user_job: string;
+    user_photo: string;
+    user_gender: 'male' | 'female';
+    user_level: 'Bronze' | 'Silver';
+    user_state: 0 | 1 | 2;
+}
+
+const UserSchema: Schema = new Schema({
+    user_id: { type: String, required: true, unique: true },
+    user_password: { type: String, required: true },
+    user_nickname: { type: String, required: true },
+    user_birth: { type: Date, required: true },
+    user_job: { type: String, required: true },
+    user_photo: { type: String }, // 선택 필드
+    user_gender: { type: String, enum: ['male', 'female'], required: true },
+    user_level: { type: String, enum: ['Bronze', 'Silver'], required: true },
+    user_state: { type: Number, enum: [0, 1, 2], required: true }, 
+});
+
+export default mongoose.model<IUser>('User', UserSchema);
