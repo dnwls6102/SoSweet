@@ -12,6 +12,26 @@ export default function Chat() {
   const router = useRouter();
   const recognition = useRef<SpeechRecognition | null>(null);
 
+  const trySendScript = async (script: string) => {
+    try {
+      const response = await fetch('/api/ai/dialog', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ script }),
+      });
+
+      if (response.ok) {
+        console.log('전송 성공');
+      } else {
+        console.log('오류 발생');
+      }
+    } catch (error) {
+      console.log('서버 오류 발생');
+    }
+  };
+
   const handleStartRecording = () => {
     if (!recognition.current) return;
 
@@ -24,6 +44,7 @@ export default function Chat() {
       console.log('사용자가 말을 시작함');
     };
 
+    //onresult : 음성 인식 결과가 발생할때마다 호출됨
     recognition.current.onresult = (event: SpeechRecognitionEvent) => {
       for (let i = event.resultIndex; i < event.results.length; i++) {
         if (event.results[i].isFinal) {
@@ -31,12 +52,24 @@ export default function Chat() {
           scriptRef.current += event.results[i][0].transcript;
         }
       }
+      console.log('Transcription result: ', scriptRef.current);
+      //trySendScript(scriptRef.current)
+      //여기에다가 음성 인식 결과를 보낼 경우 : 변환 결과를 바로바로 보내주기 때문에
+      //말을 끊었는지 여부도 조금 더 명확하게 판단 가능할수도 있다
+      //이렇게 되면 남,녀 구분은 어떻게 해야할지?
+      //서버에서 문자열을 받을 때마다 (남)표시를 하면 script가 정상적으로 생성될련지
+      //부하가 많이 걸리는지? 실제로 만족스러울 정도로 통신이 될련지는 생각해봐야 함
+      scriptRef.current = '';
     };
 
     recognition.current.onspeechend = () => {
       console.log('onspeechend called');
       console.log('Final transcript:', scriptRef.current);
-      scriptRef.current = '';
+      /* 이곳에 trySendScript로 발화 내용을 전송하면
+         문제점 : 사용자가 발화하지 않는다고 판단하는 시간을 너무 보수적으로 잡음
+         --> chunk 내용이 엄청 길어지게 됨
+      */
+      // scriptRef.current = '';
     };
 
     recognition.current.onend = () => {
