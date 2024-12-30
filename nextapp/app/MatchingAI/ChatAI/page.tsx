@@ -8,6 +8,7 @@ import Videobox from '../../../components/videobox';
 export default function Chat() {
   const isRecording = useRef(false);
   const [transcript, setTranscript] = useState('');
+  const scriptRef = useRef('');
   const router = useRouter();
   const recognition = useRef<SpeechRecognition | null>(null);
 
@@ -27,13 +28,15 @@ export default function Chat() {
       for (let i = event.resultIndex; i < event.results.length; i++) {
         if (event.results[i].isFinal) {
           setTranscript((prev) => prev + event.results[i][0].transcript);
+          scriptRef.current += event.results[i][0].transcript;
         }
       }
     };
 
     recognition.current.onspeechend = () => {
       console.log('onspeechend called');
-      console.log('Final transcript:', transcript);
+      console.log('Final transcript:', scriptRef.current);
+      scriptRef.current = '';
     };
 
     recognition.current.onend = () => {
@@ -46,7 +49,8 @@ export default function Chat() {
     };
 
     recognition.current.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
+      if (event.error !== 'no-speech')
+        console.error('Speech recognition error:', event.error);
     };
 
     recognition.current.start();
