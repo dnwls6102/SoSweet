@@ -8,15 +8,23 @@ const app = express();
 const server = http.createServer(app);
 const cors = require("cors");
 
+const dbConnect = require("./config/dbConnect");
+dbConnect(); // DB 접속
+
+const User = require("./models/userModel");
+
 // TS 타입 임포트
 import { Request, Response } from "express";
 
 dotenv.config(); // .env 파일 로드
 
+const PORT: number = Number(process.env.PORT) || 3000; // .env 에서 PORT 가져오기, 기본값 3000
+
 // CORS 설정
 app.use(
   cors({
-    origin: process.env.CLIENT_URL, // 허용할 클라이언트 도메인
+    // origin: process.env.CLIENT_URL, // 허용할 클라이언트 도메인
+    origin: [`https://localhost:${PORT}`, "https://localhost"], // 허용할 클라이언트 도메인
     methods: ["GET", "POST", "PUT", "DELETE"], // 허용할 HTTP 메서드
     credentials: true, // 쿠키 허용
   })
@@ -35,83 +43,119 @@ app.use(
   express.static(path.join(__dirname, "..", "node_modules"))
 );
 
-const PORT: number = Number(process.env.PORT) || 3000; // .env 에서 PORT 가져오기, 기본값 3000
-
-// // 간단한 라우터 추가
-// app.get("/", (req: Request, res: Response) => {
-//   res.send("소스윗 백엔드 서버 실행 중입니당");
-// });
-
 // Socket 서버 생성
-const io = new Server(server);
+// '/api/match' 경로일 때만 요청 가능
+const io = new Server(server
+  , {
+  path: "/api/match",
+  cors: {
+    origin: [`https://localhost:${PORT}`, "https://localhost"],
+    credentials: true,
+    methods: ["GET", "POST", "OPTIONS"],
+  },
+}
+);
+// // DB Connection test
+// (async()=> {
+//   for (let i = 0; i < 10; i++) {
+//     await User.create({id: `dummy${i+1}`, gender: 1, state: 0})
+//   }
+// })();
+let id: any;
+let gender: any;
+enum Gender {
+  male = 1,
+  female,
+}
+enum State {
+  normal,
+  matching,
+  dating,
+}
+app.get("/chat", async (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, 'public', 'chat.html'))
+});
+app.get('/api/match', (req: Request, res: Response)=>{
+  id = req.query.id;
+  gender = Number(req.query.gender);
+  res.json({message:'매칭을 시작합니다.'});
+});
+io.on("connection", async (socket: typeof Socket) => {
+  // 유저의 반대 성별이면서 매칭 상태인 상대 리스트 출력
+  const user_id = id;
+  const user_gender = gender;
+  const matchedGender: Gender =
+  Number(user_gender) == Gender.male ? Gender.female : Gender.male;
+  let waitingList: any = await User.find({
+    id: { $ne: user_id },
+    gender: matchedGender,
+    state: State.matching,
+  });
+  let randomIdx: number = waitingList.length !== 0 ? Math.floor((Math.random() * waitingList.length)) : -1;
+  let isInitiator: boolean = randomIdx === -1 ? true : false;
 
-// client와 socket 연결 시 동작
-io.on("connection", (socket: typeof Socket) => {
-  // 접속한 Client 식별
-  console.log(`Client ID : ${socket.id} connected.`);
-  let randomRoomName = "foo";
-  // console.log('!============================================');
-  // console.log(socket.rooms);
-  // console.log(io.sockets.adapter.rooms);
-  // console.log(io.sockets.adapter.rooms.get(randomRoomName));
-  // console.log('!============================================');
-  socket.on("message", (message: string) => {
-    // message가 bye면 채팅방(foo)을 비우는(leave) 코드
-    let elements = io.sockets.adapter.rooms.get(randomRoomName);
-    if (message === "bye" && elements) {
-      elements.forEach((socketId: string) => {
-        let clientSocket = io.sockets.sockets.get(socketId);
-        if (clientSocket) {
-          clientSocket.leave(randomRoomName);
-        }
-      });
+  // 매칭이 잡혔을 때
+  let matchedId: string = '';
+  if (randomIdx > -1) {
+    matchedId = waitingList[randomIdx].id;
+    
+    // 해당 방에 참여하고 기본 방 제거
+    socket.join(matchedId);
+    socket.leave(socket.id);
+    
+    // 유저를 소개팅 상태로 변경
+    let user = await User.findOne({ id: user_id });
+    user.state = State.dating;
+    user.save();
+    
+    // 방 참가 메세지 전송
+    socket.broadcast.emit("joined");
+  } else {
+    // 유저 id 이름의 소켓 방 생성 및 기본 방 제거
+    socket.join(user_id);
+    socket.leave(socket.id);
+    
+    // 유저를 매칭 상태로 변경
+    let user = await User.findOne({ id: user_id });
+    user.state = State.matching;
+    user.save();
+    
+    // 방 생성 메세지 전송
+    socket.emit("created");
+  }
+  
+  // console.log('isInitiator in server', isInitiator);
+
+  // 메세지 받으면, 해당 방의 다른 클라이언트에게 메세지 전송
+  socket.on("message", async (message: any) => {
+    // socket.to(matchedId).emit("message", message);
+    if (message === "bye") {
+      if (isInitiator) {
+        socket.leave(user_id);
+        let user = await User.findOne({ id: user_id });
+        user.state = State.normal;
+        user.save();
+      } else {
+        socket.leave(matchedId);
+        let user = await User.findOne({ id: user_id });
+        user.state = State.normal;
+        user.save();
+      }
     }
 
-    // 수신한 메세지를 현재 소켓을 제외한 모든 클라이언트에 전송
-    socket.broadcast.emit("message", message);
-  });
+    if (isInitiator && message === 'change state') {
+      let user = await User.findOne({ id: user_id });
+      user.state = State.dating;
+      user.save();
+    }
 
-  // foo라는 방에 들어가고 기존 기본 방 떠나기
-  // console.log('==========================');
-  // socket.join('foo');
-  // socket.leave(socket.id);
-  // io.sockets.adapter.rooms.forEach(console.log);
-  // console.log('==========================');
-
-  socket.on("create or join", () => {
-    // let randomRoomName = 'foo';
-    console.log(`Received request to create or join room : ${randomRoomName}`);
-
-    // Map으로 된 방 중에서 랜덤 방 이름 키의 요소 가져오기
-    let clientsInRoom = io.sockets.adapter.rooms.get(randomRoomName);
-    // Set으로 된 클라이언트 목록의 크기 가져오기
-    let numClients = clientsInRoom ? clientsInRoom.size : 0;
-
-    console.log(`Room ${randomRoomName} now has ${numClients} client(s)`);
-
-    // 방의 인원이 없다면
-    if (numClients === 0) {
-      socket.join(randomRoomName);
-      // log('Client ID ' + socket.id + ' created room ' + room);
-      socket.emit("created", randomRoomName, socket.id);
-    } else if (numClients === 1) {
-      // 방에 인원이 있다면
-      // 현재 소켓을 포함한 해당 방 안의 모든 소켓에 메세지 전송
-      // 그러나 입장하는 클라이언트는 아직 방에 들어가지 않았으므로,
-      // 생성 클라이언트에게만 메세지가 전송된다
-      io.sockets.in(randomRoomName).emit("join", randomRoomName);
-      socket.join(randomRoomName);
-      // socket.emit('joined', randomRoomName, socket.id);
-      socket.emit("joined", randomRoomName);
-      io.sockets.in(randomRoomName).emit("ready");
+    if (isInitiator) {
+      console.log('Host Message : ', message);
+      socket.to(user_id).emit('message', message);
     } else {
-      // 인원이 2명으로 가득 찼다면
-      socket.emit("full", randomRoomName);
+      console.log('Guest Message : ', message);
+      socket.to(matchedId).emit("message", message);
     }
-  });
-
-  socket.on("bye", () => {
-    console.log("received bye");
   });
 });
 
