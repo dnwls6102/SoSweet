@@ -34,7 +34,7 @@ export default function RatingPage() {
         alert('평가가 성공적으로 전송되었습니다.');
       } else {
         alert('평가 전송에 실패했습니다.');
-        router.push('/test.html');
+        router.push('/Feedback');
       }
     } catch (error) {
       alert('오류가 발생했습니다.');
