@@ -20,9 +20,9 @@ const UserSchema: Schema = new Schema({
     user_birth: { type: Date, required: true },
     user_job: { type: String, required: true },
     user_photo: { type: String }, // 선택 필드
-    user_gender: { type: String, enum: ['male', 'female'], required: true },
-    user_level: { type: String, enum: ['Bronze', 'Silver'], required: true },
-    user_state: { type: Number, enum: [0, 1, 2], required: true }, 
+    user_gender: { type: String, enum: ['남성', '여성'], required: true },
+    user_level: { type: String, enum: ['Bronze', 'Silver'], required: true, default: 'Bronze' },
+    user_state: { type: Number, enum: [0, 1, 2], required: true, default: 0 }, 
 });
 
 export default mongoose.model<IUser>('User', UserSchema);
