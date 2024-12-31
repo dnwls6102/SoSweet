@@ -1,7 +1,8 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Types } from 'mongoose';
 
 // User 인터페이스 (TS 타입 정의)
 export interface IUser extends Document {
+    _id: Types.ObjectId;
     user_id: string;
     user_password: string;
     user_nickname: string;
