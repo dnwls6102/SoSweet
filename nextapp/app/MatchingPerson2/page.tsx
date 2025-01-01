@@ -1,57 +1,60 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 
-const MatchingPerson = () => {
+export default function MatchingPerson2() {
   const router = useRouter();
+  const [isMatching, setIsMatching] = useState(false);
+  const [socket, setSocket] = useState<any>(null);
 
-  const man = { id: 'dnwls6102', name: '한량', job: '한량', gender: '남성' };
+  const man = { id: 'rgb10', name: '여자', job: '여자', gender: '여성' };
 
-  //   useEffect(() => {
-  //     const socket = io('http://localhost:4000', {
-  //       path: '/api/match',
-  //       withCredentials: true,
-  //     });
+  useEffect(() => {
+    // 소켓 연결 초기화
+    const newSocket = io('http://localhost:4000', {
+      path: '/api/match',
+      transports: ['websocket'],
+    });
 
-  //     socket.on('connect', () => {
-  //       console.log(`Socket connected in MP: ${socket.id}`);
-  //     });
+    setSocket(newSocket);
 
-  //     socket.on('disconnect', () => {
-  //       console.log('Socket disconnected');
-  //     });
+    newSocket.on('connect', () => {
+      console.log('Socket connected:', newSocket.id);
+    });
 
-  //     socket.on('connect_error', (err) => {
-  //       console.error('Connection error:', err);
-  //     });
+    newSocket.on('matchSuccess', (data: { room: string }) => {
+      console.log('Match success:', data);
+      router.push(`/MatchingPerson2/ChatHuman?room=${data.room}`);
+    });
 
-  //     return () => {
-  //       socket.disconnect();
-  //     };
-  //   }, []);
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [router]);
 
-  const handleMatching = async () => {
-    try {
-      const response = await fetch('http://localhost:4000/api/match', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(man),
+  const handleMatching = () => {
+    setIsMatching(true);
+    if (socket) {
+      socket.emit('startMatching', {
+        id: man.id,
+        gender: man.gender,
       });
-
-      if (response.ok) {
-        console.log('매칭 성공');
-        router.push('/MatchingPerson2/ChatHuman');
-      }
-    } catch {
-      console.log('매칭 실패');
     }
   };
+
+  if (isMatching) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.content}>
+          <div className={styles.loadingText}>매칭 중...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -84,6 +87,4 @@ const MatchingPerson = () => {
       </div>
     </div>
   );
-};
-
-export default MatchingPerson;
+}

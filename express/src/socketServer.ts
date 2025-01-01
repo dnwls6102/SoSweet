@@ -4,6 +4,18 @@ import UserSchema, { State } from "./models/User";
 import dotenv from "dotenv";
 import { global_id, global_gender } from "./app";
 
+// WebRTC 관련 타입 정의
+interface RTCSessionDescription {
+  type: 'offer' | 'answer';
+  sdp: string;
+}
+
+interface RTCIceCandidate {
+  candidate: string;
+  sdpMLineIndex: number | null;
+  sdpMid: string | null;
+}
+
 dotenv.config();
 
 const PORT = process.env.PORT ?? 3000;
@@ -81,17 +93,29 @@ export const initializeSocketServer = (server: http.Server) => {
     }
 
     // WebRTC 시그널링 이벤트 처리
-    socket.on("offer", (data: { offer: RTCSessionDescriptionInit; room: string }) => {
+    socket.on("join", async (data: { room: string }) => {
+      console.log("User joined room:", data.room);
+      socket.join(data.room);
+      
+      // 방에 있는 다른 사용자 수 확인
+      const clients = await io.in(data.room).allSockets();
+      if (clients.size === 2) {
+        // 두 번째 사용자가 들어왔을 때 시그널링 시작
+        socket.emit("ready");
+      }
+    });
+
+    socket.on("offer", (data: { offer: RTCSessionDescription; room: string }) => {
       console.log("Offer received:", data.room);
       socket.to(data.room).emit("offer", data.offer);
     });
 
-    socket.on("answer", (data: { answer: RTCSessionDescriptionInit; room: string }) => {
+    socket.on("answer", (data: { answer: RTCSessionDescription; room: string }) => {
       console.log("Answer received:", data.room);
       socket.to(data.room).emit("answer", data.answer);
     });
 
-    socket.on("candidate", (data: { candidate: RTCIceCandidateInit; room: string }) => {
+    socket.on("candidate", (data: { candidate: RTCIceCandidate; room: string }) => {
       console.log("ICE candidate received:", data.room);
       socket.to(data.room).emit("candidate", data.candidate);
     });

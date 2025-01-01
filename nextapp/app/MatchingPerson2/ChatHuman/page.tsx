@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import io, { Socket } from 'socket.io-client';
 import 'webrtc-adapter';
 import styles from './page.module.css';
@@ -14,6 +14,8 @@ export default function Chat() {
     useState<RTCPeerConnection | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const room = searchParams.get('room');
   const keys = '행복';
   const value = 30;
 
@@ -26,13 +28,15 @@ export default function Chat() {
   };
 
   useEffect(() => {
+    if (!room) {
+      console.error('No room provided');
+      return;
+    }
+
     // 소켓 연결 초기화
     const newSocket = io('http://localhost:4000', {
       path: '/api/match',
       transports: ['websocket'],
-      query: {
-        userId: 'rgb10', // 두 번째 사용자 ID
-      },
     });
     setSocket(newSocket);
 
@@ -56,8 +60,8 @@ export default function Chat() {
           newPeerConnection.addTrack(track, stream);
         });
 
-        // 연결이 성공하면 시그널링 시작
-        newSocket.emit('startMatching', { id: 'rgb10', gender: '여성' });
+        // 연결되면 시그널링 시작
+        newSocket.emit('join', { room });
       } catch (err) {
         console.error('Error accessing media devices:', err);
       }
@@ -68,8 +72,11 @@ export default function Chat() {
     // PeerConnection 이벤트 핸들러 설정
     newPeerConnection.onicecandidate = (event) => {
       if (event.candidate) {
-        console.log('Sending ICE candidate:', event.candidate);
-        newSocket.emit('candidate', event.candidate);
+        console.log('Sending ICE candidate');
+        newSocket.emit('candidate', {
+          candidate: event.candidate,
+          room: room,
+        });
       }
     };
 
@@ -85,7 +92,18 @@ export default function Chat() {
       console.log('Socket connected:', newSocket.id);
     });
 
-    newSocket.on('offer', async (offer: RTCSessionDescriptionInit) => {
+    // 방에 참가한 후 offer 생성
+    newSocket.on('ready', async () => {
+      try {
+        const offer = await newPeerConnection.createOffer();
+        await newPeerConnection.setLocalDescription(offer);
+        newSocket.emit('offer', { offer, room });
+      } catch (error) {
+        console.error('Error creating offer:', error);
+      }
+    });
+
+    newSocket.on('offer', async (offer: RTCSessionDescription) => {
       console.log('Received offer');
       try {
         await newPeerConnection.setRemoteDescription(
@@ -93,13 +111,13 @@ export default function Chat() {
         );
         const answer = await newPeerConnection.createAnswer();
         await newPeerConnection.setLocalDescription(answer);
-        newSocket.emit('answer', answer);
+        newSocket.emit('answer', { answer, room });
       } catch (error) {
         console.error('Error handling offer:', error);
       }
     });
 
-    newSocket.on('answer', async (answer: RTCSessionDescriptionInit) => {
+    newSocket.on('answer', async (answer: RTCSessionDescription) => {
       console.log('Received answer');
       try {
         await newPeerConnection.setRemoteDescription(
@@ -110,12 +128,20 @@ export default function Chat() {
       }
     });
 
-    newSocket.on('candidate', async (candidate: RTCIceCandidateInit) => {
+    newSocket.on('candidate', async (candidate: RTCIceCandidate) => {
       console.log('Received ICE candidate');
       try {
         await newPeerConnection.addIceCandidate(new RTCIceCandidate(candidate));
       } catch (error) {
         console.error('Error handling ICE candidate:', error);
+      }
+    });
+
+    // 상대방 연결 종료 처리
+    newSocket.on('peerDisconnected', () => {
+      console.log('Peer disconnected');
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = null;
       }
     });
 
@@ -128,7 +154,7 @@ export default function Chat() {
         newSocket.disconnect();
       }
     };
-  }, []);
+  }, [room]);
 
   const handleNavigation = () => {
     router.push('/Comment');
