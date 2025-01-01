@@ -23,7 +23,8 @@ export default function Feedback() {
   const [emotionData, setEmotionData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
 
-  const handleEmotionData = async () => {
+  // API에서 감정 데이터 가져오기
+  const fetchEmotionData = async () => {
     try {
       const response = await fetch('/api/feedback/faceinfo/{userID}', {
         method: 'GET',
@@ -33,10 +34,27 @@ export default function Feedback() {
       });
 
       if(response.ok) {
-        const data
+        const data = await response.json();
+        setEmotionData(data);
+      } else {
+        console.error('데이터 가져오기 실패:', response.status);
       }
+    } catch (error) {
+      console.error('서버 오류:', error);
     }
-  }
+  };
+
+  // 감정 데이터 순위 매기기
+  useEffect(() => {
+    if (emotionData.length > 0) {
+      const rankedData = [...emotionData].sort((a, b => b.y - a.y);
+      setSortedData(rankedData);
+    }
+  }, [emotionData]);
+
+  useEffect(() => {
+    fetchEmotionData();
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -63,9 +81,11 @@ export default function Feedback() {
       <div className={styles.chartDetails}>
         <h3>Top 3 감정 순위</h3>
         <ul>
-          <li>1위: 슬픔 (30.0%)</li>
-          <li>2위: 놀람 (25.0%)</li>
-          <li>3위: 무난 (20.0%)</li>
+          {sortedData.slice(0, 3).map((item, index) => (
+            <li key={index}>
+              {index + 1}위: {item.x} ({item.y}%)
+            </li>
+          ))}
         </ul>
       </div>
 
