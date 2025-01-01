@@ -90,7 +90,7 @@ export default function Chat() {
         }
       }
       console.log('Transcription result: ', scriptRef.current);
-      tryNlp(scriptRef.current);
+      // tryNlp(scriptRef.current);
       trySendScript(scriptRef.current);
       //여기에다가 음성 인식 결과를 보낼 경우 : 변환 결과를 바로바로 보내주기 때문에
       //말을 끊었는지 여부도 조금 더 명확하게 판단 가능할수도 있다
@@ -195,12 +195,12 @@ export default function Chat() {
 
   const handleNavigation = async () => {
     try {
-      const response = await fetch('/api/ai/dialog/end', {
+      const response = await fetch('http://localhost:4000/api/ai/dialog/end', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ flag: 'end' }),
+        body: JSON.stringify({ script: 'end' }),
       });
       if (response.ok) {
         console.log('대화 종료 요청 성공');
