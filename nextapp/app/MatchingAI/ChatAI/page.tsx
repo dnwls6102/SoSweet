@@ -4,6 +4,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import Videobox from '../../../components/videobox';
+import { useDispatch } from 'react-redux';
+import { setSummary } from '../../../store/summarySlice';
 
 export default function Chat() {
   const ID = 'userID12';
@@ -17,6 +19,8 @@ export default function Chat() {
 
   const videoStreamRef = useRef<MediaStream | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+
+  const dispatch = useDispatch();
 
   //대화 영상 전체 / n분 간격으로 서버로 보내는 함수
 
@@ -195,23 +199,26 @@ export default function Chat() {
 
   const handleNavigation = async () => {
     try {
-      const response = await fetch('/api/ai/dialog/end', {
+      const response = await fetch('http://localhost:4000/api/ai/dialog/end', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ flag: 'end' }),
       });
+
       if (response.ok) {
+        const data = await response.json();
         console.log('대화 종료 요청 성공');
+        // AI 응답을 Redux store에 저장
+        dispatch(setSummary(data.summary));
+        router.push('/Feedback');
       } else {
         console.log('대화 종료 요청 실패');
       }
     } catch (error) {
       console.error('대화 종료 요청 오류:', error);
     }
-
-    router.push('/Feedback');
   };
 
   return (
