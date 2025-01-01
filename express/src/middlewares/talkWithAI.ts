@@ -4,8 +4,6 @@ import dotenv from "dotenv";
 
 dotenv.config(); // .env 파일 로드
 
-console.log(process.env.OPENAI_API_KEY);
-
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });

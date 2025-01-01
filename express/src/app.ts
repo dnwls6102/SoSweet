@@ -39,11 +39,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// MongoDB 연결
-mongoose
-  .connect(process.env.MONGO_URI || "mongodb://localhost:27017/sosweet", {})
-  .then(() => console.log("MongoDB 연결 성공!"))
-  .catch((error: unknown) => console.error("MongoDB 연결 실패: ", error));
+// // MongoDB 연결
+// mongoose
+//   .connect(process.env.MONGO_URI || "mongodb://localhost:27017/sosweet", {})
+//   .then(() => console.log("MongoDB 연결 성공!"))
+//   .catch((error: unknown) => console.error("MongoDB 연결 실패: ", error));
 
 // Socket에서 사용할 전역 변수
 export let global_id: string = "";
