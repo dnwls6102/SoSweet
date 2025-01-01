@@ -6,6 +6,9 @@ import styles from './page.module.css';
 import Videobox from '../../../components/videobox';
 
 export default function Chat() {
+
+  const ID = 'userID12';
+
   const isRecording = useRef(false);
   const [transcript, setTranscript] = useState('');
   const [feedback, setFeedback] = useState('');
@@ -102,7 +105,7 @@ export default function Chat() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ script }),
+        body: JSON.stringify({ script, ID }),
       });
 
       if (response.ok) {
@@ -264,7 +267,7 @@ export default function Chat() {
         <textarea
           className={styles.textarea}
           readOnly
-          value={feedback}
+          value={transcript}
         ></textarea>
         <button className={styles.endButton} onClick={handleNavigation}>
           대화 종료
