@@ -8,6 +8,7 @@ import Videobox from '../../../components/videobox';
 export default function Chat() {
   const isRecording = useRef(false);
   const [transcript, setTranscript] = useState('');
+  const [feedback, setFeedback] = useState('');
   const scriptRef = useRef('');
   const router = useRouter();
   const recognition = useRef<SpeechRecognition | null>(null);
@@ -69,6 +70,31 @@ export default function Chat() {
     }
   };
 
+  const tryNlp = async (script: string) => {
+    try {
+      const response = await fetch('http://localhost:5050/api/nlp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ script }),
+      });
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result.message);
+        setFeedback((prev) =>
+          prev ? prev + '\n' + result.message : result.message,
+        );
+      } else {
+        const result = await response.json();
+        console.log(result.error);
+        setFeedback((prev) => (prev ? prev + result.message : result.message));
+      }
+    } catch (error) {
+      console.log('서버 오류 발생');
+    }
+  };
+
   const trySendScript = async (script: string) => {
     try {
       const response = await fetch('/api/ai/dialog', {
@@ -110,6 +136,7 @@ export default function Chat() {
         }
       }
       console.log('Transcription result: ', scriptRef.current);
+      tryNlp(scriptRef.current);
       //trySendScript(scriptRef.current)
       //여기에다가 음성 인식 결과를 보낼 경우 : 변환 결과를 바로바로 보내주기 때문에
       //말을 끊었는지 여부도 조금 더 명확하게 판단 가능할수도 있다
@@ -233,7 +260,7 @@ export default function Chat() {
         <textarea
           className={styles.textarea}
           readOnly
-          value={transcript}
+          value={feedback}
         ></textarea>
         <button className={styles.endButton} onClick={handleNavigation}>
           대화 종료
