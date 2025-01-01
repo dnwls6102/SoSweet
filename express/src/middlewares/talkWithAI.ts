@@ -87,7 +87,7 @@ async function chatMiddleware(req: Request, res: Response, next: NextFunction): 
     console.log(conversation);
 
     // TTS 처리를 위해서 AI 답변 req에 저장
-    req.responseText = assistantAnswer.replace(/【.*?】/g, "");
+    req.body.script = assistantAnswer.replace(/【.*?】/g, "");
 
     // 다음 미들웨어로 넘어가기
     next();
@@ -97,9 +97,11 @@ async function chatMiddleware(req: Request, res: Response, next: NextFunction): 
   }
 };
 
-function endChat(req: Request, res: Response): Response {
+function endChatWithAI(req: Request, res: Response, next: NextFunction): void {
+  req.body.script = conversation;
+  console.log(req.body.script);
   conversation = null;
-  return res.status(200).json({ message: "대화를 종료했습니다. 새로운 대화를 시작하려면 메시지를 다시 보내세요." });
+  next();
 }
 
-export { chatMiddleware, endChat };
+export { chatMiddleware, endChatWithAI };
