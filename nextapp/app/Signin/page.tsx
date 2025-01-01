@@ -69,7 +69,7 @@ export default function Signin() {
 
   const handleCheckId = async () => {
     try {
-      const response = await fetch('/users/check', {
+      const response = await fetch('http://localhost:4000/users/check', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,8 +81,10 @@ export default function Signin() {
         const result = await response.json();
         if (result.isExists) {
           console.log('이미 사용 중인 아이디입니다.');
+          alert('이미 사용 중인 아이디입니다.')
         } else {
           console.log('사용 가능한 아이디입니다.');
+          alert('사용 가능한 아이디입니다!')
         }
       } else {
         console.log('아이디 중복 확인에 실패했습니다.');
@@ -97,16 +99,16 @@ export default function Signin() {
       alert('비밀번호 체크를 다시 한 번 해보세요');
     } else {
       const userData = {
-        id,
-        password,
-        birthdate,
-        job,
-        name,
-        gender,
+        user_id: id,
+        user_password: password,
+        user_nickname: name,
+        user_birth: birthdate,
+        user_job: job,
+        user_gender: gender,
       };
 
       try {
-        const response = await fetch('/users', {
+        const response = await fetch('http://localhost:4000/users', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -116,6 +118,7 @@ export default function Signin() {
 
         if (response.ok) {
           console.log('회원가입 성공');
+          alert('회원가입 성공!');
         } else {
           console.error('회원가입 실패');
         }
