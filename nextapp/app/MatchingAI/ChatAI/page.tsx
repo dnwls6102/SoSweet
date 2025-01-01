@@ -12,6 +12,63 @@ export default function Chat() {
   const router = useRouter();
   const recognition = useRef<SpeechRecognition | null>(null);
 
+  const videoStreamRef = useRef<MediaStream | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+
+  //대화 영상 전체 / n분 간격으로 서버로 보내는 함수
+  const startVideoStream = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoStreamRef.current = stream;
+
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      const chunks: Blob[] = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunks.push(event.data);
+        }
+      };
+
+      console.log('TEST');
+
+      //mediaRecorder.stop이 호출되면 실행됨
+      //useEffect로 페이지 들어오자마자 시작하고, 페이지를 나가면 실행되게끔
+      mediaRecorder.onstop = async () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const formData = new FormData();
+        formData.append('video', blob);
+
+        try {
+          const response = await fetch('/api/video/upload', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (response.ok) {
+            console.log('비디오 전송 성공');
+          } else {
+            console.error('비디오 전송 실패');
+            console.log(
+              'MediaRecorder state:',
+              mediaRecorderRef.current?.state,
+            );
+            mediaRecorder.stop();
+            console.log('진짜끝');
+          }
+        } catch (error) {
+          console.error('비디오 업로드 중 오류 발생:', error);
+        }
+      };
+
+      // 비디오 스트림 녹화 시작
+      mediaRecorder.start(1000); // 1초마다 데이터 청크 생성
+    } catch (error) {
+      console.error('비디오 스트림 가져오기 실패:', error);
+    }
+  };
+
   const trySendScript = async (script: string) => {
     try {
       const response = await fetch('/api/ai/dialog', {
@@ -89,6 +146,22 @@ export default function Chat() {
     recognition.current.start();
   };
 
+  const stopAllMediaDevices = async () => {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+
+    devices.forEach((device) => {
+      if (device.kind === 'videoinput' || device.kind === 'audioinput') {
+        const tracks = videoStreamRef.current?.getTracks() || [];
+        tracks.forEach((track) => {
+          track.stop();
+          console.log(`Stopped track for device: ${device.label}`);
+        });
+      }
+    });
+
+    console.log('All media devices stopped.');
+  };
+
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window)) {
       alert('지원하지 않는 브라우저입니다.');
@@ -99,15 +172,55 @@ export default function Chat() {
     recognition.current.lang = 'ko';
     recognition.current.continuous = true;
 
+    startVideoStream();
     handleStartRecording();
 
     return () => {
+      // MediaRecorder 종료 처리
+      console.log('MediaRecorder state1:', mediaRecorderRef.current?.state);
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state !== 'inactive'
+      )
+        try {
+          console.log('MediaRecorder state2:', mediaRecorderRef.current?.state);
+          mediaRecorderRef.current.stop(); // 명확하게 중지
+          console.log('MediaRecorder stopped.');
+          console.log('MediaRecorder state3:', mediaRecorderRef.current?.state);
+        } catch (error) {
+          console.error('Error stopping MediaRecorder:', error);
+        }
+
+      // 비디오 스트림 트랙 정리
+      if (videoStreamRef.current) {
+        videoStreamRef.current.getTracks().forEach((track) => {
+          try {
+            track.stop();
+            console.log(`Track ${track.kind} stopped.`);
+          } catch (error) {
+            console.error(`Error stopping track ${track.kind}:`, error);
+          }
+        });
+      }
+
+      stopAllMediaDevices();
+
+      videoStreamRef.current = null;
+      mediaRecorderRef.current = null;
+
       recognition.current?.stop();
       isRecording.current = false;
     };
   }, []);
 
   const handleNavigation = () => {
+    if (videoStreamRef.current) {
+      videoStreamRef.current.getTracks().forEach((track) => {
+        track.stop(); // 트랙 강제 종료
+      });
+      console.log('Camera tracks stopped during navigation.');
+    }
+
     router.push('/Feedback');
   };
 
