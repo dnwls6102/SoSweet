@@ -74,7 +74,7 @@ export default function Chat() {
 
   const trySendScript = async (script: string) => {
     try {
-      const response = await fetch('/api/ai/dialog', {
+      const response = await fetch('http://localhost:4000/api/ai/dialog', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,6 +83,10 @@ export default function Chat() {
       });
 
       if (response.ok) {
+        const audioBlob = await response.blob(); // 서버 응답 데이터를 Blob으로 변환
+        const audioUrl = URL.createObjectURL(audioBlob); // Blob에서 재생 가능한 URL 생성
+        const audio = new Audio(audioUrl); // Audio 객체 생성
+        audio.play(); // 음성 파일 재생
         console.log('전송 성공');
       } else {
         console.log('오류 발생');
@@ -113,7 +117,8 @@ export default function Chat() {
         }
       }
       console.log('Transcription result: ', scriptRef.current);
-      //trySendScript(scriptRef.current)
+      tryNlp(scriptRef.current);
+      trySendScript(scriptRef.current)
       //여기에다가 음성 인식 결과를 보낼 경우 : 변환 결과를 바로바로 보내주기 때문에
       //말을 끊었는지 여부도 조금 더 명확하게 판단 가능할수도 있다
       //이렇게 되면 남,녀 구분은 어떻게 해야할지?

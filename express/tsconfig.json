@@ -17,7 +17,7 @@
     "paths": {
       "@/*": ["./src/*"] // Alias를 프론트와 맞춤
     },
-    "typeRoots": ["./node_modules/@types"]
+    "typeRoots": ["./node_modules/@types", "./src/types"], // 커스텀 타입을 추가해줌
   },
   "include": ["src/**/*.ts"], // 소스 파일 경로 포함
   "exclude": ["node_modules", "dist"] // 제외할 디렉토리
