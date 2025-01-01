@@ -136,7 +136,10 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
     req.body.script = assistantAnswer;
     
     // 다음 미들웨어로 넘어가기
-    res.send("대화 분석 완료!")
+    res.json({ 
+      message: "대화 분석 완료!",
+      analysis: assistantAnswer 
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send("Failed to generate response from OpenAI.");

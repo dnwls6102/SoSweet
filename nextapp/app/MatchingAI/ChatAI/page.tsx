@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import Videobox from '../../../components/videobox';
 import { useDispatch } from 'react-redux';
-import { setSummary } from '../../../store/summarySlice';
+import { setSummary } from '../../../store/feedbackSlice';
 
 export default function Chat() {
   const ID = 'userID12';
@@ -94,7 +94,7 @@ export default function Chat() {
         }
       }
       console.log('Transcription result: ', scriptRef.current);
-      // tryNlp(scriptRef.current);
+      tryNlp(scriptRef.current);
       trySendScript(scriptRef.current);
       //여기에다가 음성 인식 결과를 보낼 경우 : 변환 결과를 바로바로 보내주기 때문에
       //말을 끊었는지 여부도 조금 더 명확하게 판단 가능할수도 있다
@@ -211,7 +211,7 @@ export default function Chat() {
         const data = await response.json();
         console.log('대화 종료 요청 성공');
         // AI 응답을 Redux store에 저장
-        dispatch(setSummary(data.summary));
+        dispatch(setSummary(data.analysis));
         router.push('/Feedback');
       } else {
         console.log('대화 종료 요청 실패');
