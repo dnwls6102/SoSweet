@@ -12,7 +12,7 @@ const openai = new OpenAI({
 // TTS 미들웨어
 async function ttsMiddleware(req: Request, res: Response): Promise<void> {
   try {
-    const text: string | undefined = req.responseText; // 클라이언트에서 텍스트를 전달받음
+    const text: string | undefined = req.body.script; // 클라이언트에서 텍스트를 전달받음
     if (!text) {
       res.status(500).send("AI 응답 데이터가 없습니다.");
       return;

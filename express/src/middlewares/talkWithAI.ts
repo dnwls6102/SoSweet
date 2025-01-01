@@ -87,7 +87,7 @@ async function chatMiddleware(req: Request, res: Response, next: NextFunction): 
     console.log(conversation);
 
     // TTS 처리를 위해서 AI 답변 req에 저장
-    req.responseText = assistantAnswer.replace(/【.*?】/g, "");
+    req.body.script = assistantAnswer.replace(/【.*?】/g, "");
 
     // 다음 미들웨어로 넘어가기
     next();
