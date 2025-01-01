@@ -6,6 +6,8 @@ import styles from './page.module.css';
 import Videobox from '../../../components/videobox';
 
 export default function Chat() {
+  const ID = 'userID12';
+
   const isRecording = useRef(false);
   const [transcript, setTranscript] = useState('');
   const [feedback, setFeedback] = useState('');
@@ -45,15 +47,19 @@ export default function Chat() {
 
   const trySendScript = async (script: string) => {
     try {
-      const response = await fetch('/api/ai/dialog', {
+      const response = await fetch('http://localhost:4000/api/ai/dialog', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ script }),
+        body: JSON.stringify({ script, ID }),
       });
 
       if (response.ok) {
+        const audioBlob = await response.blob(); // 서버 응답 데이터를 Blob으로 변환
+        const audioUrl = URL.createObjectURL(audioBlob); // Blob에서 재생 가능한 URL 생성
+        const audio = new Audio(audioUrl); // Audio 객체 생성
+        audio.play(); // 음성 파일 재생
         console.log('전송 성공');
       } else {
         console.log('오류 발생');
