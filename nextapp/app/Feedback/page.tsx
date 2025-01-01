@@ -6,6 +6,8 @@ import styles from './page.module.css';
 import Image from 'next/image';
 import Link from 'next/link';
 import { VictoryPie } from 'victory';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
 
 const COLORS = [
   '#FF6384',
@@ -25,6 +27,15 @@ export default function Feedback() {
   const [verbal, setVerbal] = useState(null);
   const [nonverbal, setNonverbal] = useState(null);
   const [summary, setSummary] = useState('');
+
+  // Redux store에서 데이터 가져오기
+  const feedbackData = useSelector((state: RootState) => state.feedback);
+
+  useEffect(() => {
+    if (feedbackData.summary) {
+      setSummary(feedbackData.summary);
+    }
+  }, [feedbackData.summary]);
 
   // 표정 정보 받아오기
   const fetchEmotionData = async () => {
