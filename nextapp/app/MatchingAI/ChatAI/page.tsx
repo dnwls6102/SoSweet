@@ -8,6 +8,7 @@ import Videobox from '../../../components/videobox';
 export default function Chat() {
   const isRecording = useRef(false);
   const [transcript, setTranscript] = useState('');
+  const [feedback, setFeedback] = useState('');
   const scriptRef = useRef('');
   const router = useRouter();
   const recognition = useRef<SpeechRecognition | null>(null);
@@ -69,9 +70,34 @@ export default function Chat() {
     }
   };
 
+  const tryNlp = async (script: string) => {
+    try {
+      const response = await fetch('http://localhost:5050/api/nlp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ script }),
+      });
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result.message);
+        setFeedback((prev) =>
+          prev ? prev + '\n' + result.message : result.message,
+        );
+      } else {
+        const result = await response.json();
+        console.log(result.error);
+        setFeedback((prev) => (prev ? prev + result.message : result.message));
+      }
+    } catch (error) {
+      console.log('서버 오류 발생');
+    }
+  };
+
   const trySendScript = async (script: string) => {
     try {
-      const response = await fetch('/api/ai/dialog', {
+      const response = await fetch('http://localhost:4000/api/ai/dialog', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,6 +106,10 @@ export default function Chat() {
       });
 
       if (response.ok) {
+        const audioBlob = await response.blob(); // 서버 응답 데이터를 Blob으로 변환
+        const audioUrl = URL.createObjectURL(audioBlob); // Blob에서 재생 가능한 URL 생성
+        const audio = new Audio(audioUrl); // Audio 객체 생성
+        audio.play(); // 음성 파일 재생
         console.log('전송 성공');
       } else {
         console.log('오류 발생');
@@ -110,7 +140,8 @@ export default function Chat() {
         }
       }
       console.log('Transcription result: ', scriptRef.current);
-      //trySendScript(scriptRef.current)
+      tryNlp(scriptRef.current);
+      trySendScript(scriptRef.current)
       //여기에다가 음성 인식 결과를 보낼 경우 : 변환 결과를 바로바로 보내주기 때문에
       //말을 끊었는지 여부도 조금 더 명확하게 판단 가능할수도 있다
       //이렇게 되면 남,녀 구분은 어떻게 해야할지?
@@ -233,7 +264,7 @@ export default function Chat() {
         <textarea
           className={styles.textarea}
           readOnly
-          value={transcript}
+          value={feedback}
         ></textarea>
         <button className={styles.endButton} onClick={handleNavigation}>
           대화 종료

@@ -11,9 +11,19 @@ export default function Chat() {
   const keys = '행복';
   const value = 30;
 
-  const handleNavigation = () => {
+  const handleNavigation = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/api/match', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      });
+    } catch {}
     router.push('/Comment');
   };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.left}>

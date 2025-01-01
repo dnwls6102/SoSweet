@@ -1,23 +1,61 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import React from 'react';
 import styles from './page.module.css';
 import Image from 'next/image';
 import Link from 'next/link';
 import { VictoryPie } from 'victory';
 
-const data = [
-  { x: '슬픔', y: 30.0 },
-  { x: '놀람', y: 25.0 },
-  { x: '무난', y: 20.0 },
-  { x: '분노', y: 10.0 },
-  { x: '행복', y: 8.0 },
-  { x: '설렘', y: 7.0 },
-];
+// const data = [
+//   { x: '슬픔', y: 30.0 },
+//   { x: '놀람', y: 25.0 },
+//   { x: '무난', y: 20.0 },
+//   { x: '분노', y: 10.0 },
+//   { x: '행복', y: 8.0 },
+//   { x: '설렘', y: 7.0 },
+// ];
 
 const COLORS = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
 
 export default function Feedback() {
+  const [id, setId] = useState('');
+  const [emotionData, setEmotionData] = useState([]);
+  const [sortedData, setSortedData] = useState([]);
+
+  // API에서 감정 데이터 가져오기
+  const fetchEmotionData = async () => {
+    try {
+      const response = await fetch('/api/feedback/faceinfo/{userID}', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if(response.ok) {
+        const data = await response.json();
+        setEmotionData(data);
+      } else {
+        console.error('데이터 가져오기 실패:', response.status);
+      }
+    } catch (error) {
+      console.error('서버 오류:', error);
+    }
+  };
+
+  // 감정 데이터 순위 매기기
+  useEffect(() => {
+    if (emotionData.length > 0) {
+      const rankedData = [...emotionData].sort((a, b => b.y - a.y);
+      setSortedData(rankedData);
+    }
+  }, [emotionData]);
+
+  useEffect(() => {
+    fetchEmotionData();
+  }, []);
+
   return (
     <div className={styles.container}>
       <div className={styles.logo}>💖소스윗</div>
@@ -43,9 +81,11 @@ export default function Feedback() {
       <div className={styles.chartDetails}>
         <h3>Top 3 감정 순위</h3>
         <ul>
-          <li>1위: 슬픔 (30.0%)</li>
-          <li>2위: 놀람 (25.0%)</li>
-          <li>3위: 무난 (20.0%)</li>
+          {sortedData.slice(0, 3).map((item, index) => (
+            <li key={index}>
+              {index + 1}위: {item.x} ({item.y}%)
+            </li>
+          ))}
         </ul>
       </div>
 
