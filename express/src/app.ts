@@ -3,8 +3,10 @@ import mongoose from "mongoose";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes";
 import path from "path";
-import { chatMiddleware } from "./middlewares/talkWithAI";
+import { chatMiddleware, endChatWithAI } from "./middlewares/talkWithAI";
 import { ttsMiddleware } from "./middlewares/tts";
+import { recordConversation } from "./middlewares/record";
+import { chatAnalysis } from "./middlewares/chatAnalysis";
 import dotenv from "dotenv";
 
 dotenv.config(); // .env 파일 로드
@@ -67,7 +69,9 @@ app.post("/api/match", (req: Request, res: Response) => {
 
 app.post("/api/ai/dialog", chatMiddleware, ttsMiddleware);
 
-app.post("/api/human/dialog")
+app.post("/api/ai/dialog/end", endChatWithAI, chatAnalysis);
+
+app.post("/api/human/dialog", recordConversation);
 
 export default app;
 
