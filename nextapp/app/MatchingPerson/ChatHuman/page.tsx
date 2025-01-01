@@ -34,10 +34,13 @@ export default function Chat() {
     }
 
     // 소켓 연결 초기화
-    const newSocket = io('http://localhost:4000', {
-      path: '/api/match',
-      transports: ['websocket'],
-    });
+    const newSocket = io(
+      process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:4000',
+      {
+        path: '/api/match',
+        transports: ['websocket'],
+      },
+    );
     setSocket(newSocket);
 
     // PeerConnection 초기화
