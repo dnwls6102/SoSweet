@@ -8,7 +8,25 @@ import styles from './page.module.css';
 const MatchingPerson = () => {
   const router = useRouter();
 
-  const handleMatching = () => {
+  const man = { id: 'dnwls6102', name: '한량', job: '한량', gender: '남성' };
+
+  const handleMatching = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/api/match', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(man),
+      });
+
+      if (response.ok) {
+        console.log('매칭 성공');
+        router.push('/MatchingPerson/ChatHuman');
+      }
+    } catch {
+      console.log('매칭 실패');
+    }
     router.push('/MatchingPerson/ChatHuman');
   };
 
