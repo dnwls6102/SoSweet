@@ -6,12 +6,12 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 
-export default function MatchingPerson() {
+export default function MatchingPerson2() {
   const router = useRouter();
   const [isMatching, setIsMatching] = useState(false);
   const [socket, setSocket] = useState<any>(null);
 
-  const man = { id: 'dnwls6102', name: '한량', job: '한량', gender: '남성' };
+  const man = { id: 'rgb10', name: '여자', job: '여자', gender: '여성' };
 
   useEffect(() => {
     // 소켓 연결 초기화
@@ -28,7 +28,7 @@ export default function MatchingPerson() {
 
     newSocket.on('matchSuccess', (data: { room: string }) => {
       console.log('Match success:', data);
-      router.push(`/MatchingPerson/ChatHuman?room=${data.room}`);
+      router.push(`/MatchingPerson2/ChatHuman?room=${data.room}`);
     });
 
     return () => {

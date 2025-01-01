@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import MiddleForm from '@/components/middleForm';
 import IDInput from '@/components/idInput';
 import TitleInput from '@/components/titleInput';
@@ -18,6 +19,8 @@ export default function Signin() {
   const [gender, setGender] = useState('');
   const [msg, setMsg] = useState('');
   const [flag, setFlag] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     function checkPassword() {
@@ -81,10 +84,10 @@ export default function Signin() {
         const result = await response.json();
         if (result.isExists) {
           console.log('이미 사용 중인 아이디입니다.');
-          alert('이미 사용 중인 아이디입니다.')
+          alert('이미 사용 중인 아이디입니다.');
         } else {
           console.log('사용 가능한 아이디입니다.');
-          alert('사용 가능한 아이디입니다!')
+          alert('사용 가능한 아이디입니다!');
         }
       } else {
         console.log('아이디 중복 확인에 실패했습니다.');
@@ -119,6 +122,7 @@ export default function Signin() {
         if (response.ok) {
           console.log('회원가입 성공');
           alert('회원가입 성공!');
+          router.push('/');
         } else {
           console.error('회원가입 실패');
         }
