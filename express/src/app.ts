@@ -1,9 +1,11 @@
 import express, { Request, Response } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import dotenv from "dotenv";
 import userRoutes from "./routes/userRoutes";
 import path from "path";
+import { chatMiddleware } from "./middlewares/talkWithAI";
+import { ttsMiddleware } from "./middlewares/tts";
+import dotenv from "dotenv";
 
 dotenv.config(); // .env 파일 로드
 
@@ -62,5 +64,7 @@ app.post("/api/match", (req: Request, res: Response) => {
 // app.get("/", (req: Request, res: Response) => {
 //   res.send("SoSweet 서버가 실행 중입니다");
 // });
+
+app.post("/api/ai/dialog", chatMiddleware, ttsMiddleware);
 
 export default app;

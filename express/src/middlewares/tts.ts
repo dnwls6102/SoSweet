@@ -1,9 +1,14 @@
 import { Request, Response } from 'express';
 import { OpenAI } from 'openai';
+import dotenv from "dotenv";
+
+dotenv.config(); // .env 파일 로드
+
+console.log(process.env.OPENAI_API_KEY);
 
 // OpenAI API 초기화
 const openai = new OpenAI({
-  apiKey: "apikey"
+  apiKey: process.env.OPENAI_API_KEY
 });
 
 // TTS 미들웨어
@@ -39,4 +44,4 @@ async function ttsMiddleware(req: Request, res: Response): Promise<void> {
   }
 }
 
-export default ttsMiddleware;
+export { ttsMiddleware };
