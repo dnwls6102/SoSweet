@@ -17,58 +17,6 @@ export default function Chat() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   //대화 영상 전체 / n분 간격으로 서버로 보내는 함수
-  const startVideoStream = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      videoStreamRef.current = stream;
-
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      const chunks: Blob[] = [];
-
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          chunks.push(event.data);
-        }
-      };
-
-      console.log('TEST');
-
-      //mediaRecorder.stop이 호출되면 실행됨
-      //useEffect로 페이지 들어오자마자 시작하고, 페이지를 나가면 실행되게끔
-      mediaRecorder.onstop = async () => {
-        const blob = new Blob(chunks, { type: 'video/webm' });
-        const formData = new FormData();
-        formData.append('video', blob);
-
-        try {
-          const response = await fetch('/api/video/upload', {
-            method: 'POST',
-            body: formData,
-          });
-
-          if (response.ok) {
-            console.log('비디오 전송 성공');
-          } else {
-            console.error('비디오 전송 실패');
-            console.log(
-              'MediaRecorder state:',
-              mediaRecorderRef.current?.state,
-            );
-            mediaRecorder.stop();
-            console.log('진짜끝');
-          }
-        } catch (error) {
-          console.error('비디오 업로드 중 오류 발생:', error);
-        }
-      };
-
-      // 비디오 스트림 녹화 시작
-      mediaRecorder.start(1000); // 1초마다 데이터 청크 생성
-    } catch (error) {
-      console.error('비디오 스트림 가져오기 실패:', error);
-    }
-  };
 
   const tryNlp = async (script: string) => {
     try {
@@ -137,7 +85,7 @@ export default function Chat() {
       }
       console.log('Transcription result: ', scriptRef.current);
       tryNlp(scriptRef.current);
-      //trySendScript(scriptRef.current)
+      trySendScript(scriptRef.current);
       //여기에다가 음성 인식 결과를 보낼 경우 : 변환 결과를 바로바로 보내주기 때문에
       //말을 끊었는지 여부도 조금 더 명확하게 판단 가능할수도 있다
       //이렇게 되면 남,녀 구분은 어떻게 해야할지?
@@ -199,7 +147,6 @@ export default function Chat() {
     recognition.current.lang = 'ko';
     recognition.current.continuous = true;
 
-    startVideoStream();
     handleStartRecording();
 
     return () => {
@@ -240,12 +187,22 @@ export default function Chat() {
     };
   }, []);
 
-  const handleNavigation = () => {
-    if (videoStreamRef.current) {
-      videoStreamRef.current.getTracks().forEach((track) => {
-        track.stop(); // 트랙 강제 종료
+  const handleNavigation = async () => {
+    try {
+      const response = await fetch('/api/ai/dialog/end', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ flag: 'end' }),
       });
-      console.log('Camera tracks stopped during navigation.');
+      if (response.ok) {
+        console.log('대화 종료 요청 성공');
+      } else {
+        console.log('대화 종료 요청 실패');
+      }
+    } catch (error) {
+      console.error('대화 종료 요청 오류:', error);
     }
 
     router.push('/Feedback');
