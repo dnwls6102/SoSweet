@@ -17,6 +17,15 @@ const PORT = process.env.PORT ?? 3000;
 //     });
 //   }
 // })();
+
+// 도현이형 코드드
+// 사용자 ID 병합
+const genConId = (userId1: string, userId2: string): {'conversationId' : string} => {
+  const sortedUsers = [userId1, userId2].sort();
+  const conversationId = `${sortedUsers[0]}-${sortedUsers[1]}`;
+  return {'conversationId': conversationId};
+}
+
 export const initializeSocketServer = (server: http.Server) => {
   const io = new Server(server, {
     path: "/api/match",
@@ -58,7 +67,9 @@ export const initializeSocketServer = (server: http.Server) => {
       user.save();
 
       // 방 참가 메세지 전송
-      socket.broadcast.emit("joined");
+      // 도현이형 요청 사용
+      const conversationId = genConId(matchedId, user_id);
+      socket.broadcast.emit("joined", conversationId);
     } else {
       // 유저 id 이름의 소켓 방 생성 및 기본 방 제거
       socket.join(user_id);
@@ -75,6 +86,11 @@ export const initializeSocketServer = (server: http.Server) => {
     }
 
     // console.log('isInitiator in server', isInitiator);
+
+    // 이미지 받아보기
+    socket.on('video-chunk', (image_buffer) => {
+      // console.log(image_buffer[0]);
+    })
 
     // 메세지 받으면, 해당 방의 다른 클라이언트에게 메세지 전송
     socket.on("message", async (message: any) => {
