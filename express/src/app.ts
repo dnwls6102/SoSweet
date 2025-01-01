@@ -27,9 +27,12 @@ app.use(
 // CORS 설정
 app.use(
   cors({
-    origin: process.env.CLIENT_URL, // 허용할 클라이언트 도메인
-    methods: ["GET", "POST", "PUT", "DELETE"], // 허용할 HTTP 메서드
-    credentials: true, // 쿠키 허용
+    origin: "*",
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"],
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204
   })
 );
 
