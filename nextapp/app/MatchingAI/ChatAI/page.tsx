@@ -8,6 +8,7 @@ import Videobox from '../../../components/videobox';
 export default function Chat() {
   const isRecording = useRef(false);
   const [transcript, setTranscript] = useState('');
+  const [feedback, setFeedback] = useState('');
   const scriptRef = useRef('');
   const router = useRouter();
   const recognition = useRef<SpeechRecognition | null>(null);
@@ -69,9 +70,34 @@ export default function Chat() {
     }
   };
 
+  const tryNlp = async (script: string) => {
+    try {
+      const response = await fetch('http://localhost:5050/api/nlp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ script }),
+      });
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result.message);
+        setFeedback((prev) =>
+          prev ? prev + '\n' + result.message : result.message,
+        );
+      } else {
+        const result = await response.json();
+        console.log(result.error);
+        setFeedback((prev) => (prev ? prev + result.message : result.message));
+      }
+    } catch (error) {
+      console.log('서버 오류 발생');
+    }
+  };
+
   const trySendScript = async (script: string) => {
     try {
-      const response = await fetch('http://localhost:5000/api/ai/dialog', {
+      const response = await fetch('http://localhost:4000/api/ai/dialog', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -238,7 +264,7 @@ export default function Chat() {
         <textarea
           className={styles.textarea}
           readOnly
-          value={transcript}
+          value={feedback}
         ></textarea>
         <button className={styles.endButton} onClick={handleNavigation}>
           대화 종료
