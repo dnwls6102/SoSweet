@@ -1,23 +1,39 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import React from 'react';
 import styles from './page.module.css';
 import Image from 'next/image';
 import Link from 'next/link';
 import { VictoryPie } from 'victory';
 
-const data = [
-  { x: '슬픔', y: 30.0 },
-  { x: '놀람', y: 25.0 },
-  { x: '무난', y: 20.0 },
-  { x: '분노', y: 10.0 },
-  { x: '행복', y: 8.0 },
-  { x: '설렘', y: 7.0 },
-];
+// const data = [
+//   { x: '슬픔', y: 30.0 },
+//   { x: '놀람', y: 25.0 },
+//   { x: '무난', y: 20.0 },
+//   { x: '분노', y: 10.0 },
+//   { x: '행복', y: 8.0 },
+//   { x: '설렘', y: 7.0 },
+// ];
 
 const COLORS = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
 
 export default function Feedback() {
+  const [id, setId] = useState('');
+  const [emotionData, setEmotionData] = useState([]);
+  const [sortedData, setSortedData] = useState([]);
+
+  const handleEmotionData = async () => {
+    try {
+      const response = await fetch('/api/feedback/faceinfo/{userID}', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    }
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.logo}>💖소스윗</div>
