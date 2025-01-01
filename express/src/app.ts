@@ -3,8 +3,10 @@ import mongoose from "mongoose";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes";
 import path from "path";
-import { chatMiddleware } from "./middlewares/talkWithAI";
+import { chatMiddleware, endChatWithAI } from "./middlewares/talkWithAI";
 import { ttsMiddleware } from "./middlewares/tts";
+import { recordConversation } from "./middlewares/record";
+import { chatAnalysis } from "./middlewares/chatAnalysis";
 import dotenv from "dotenv";
 
 dotenv.config(); // .env 파일 로드
@@ -27,9 +29,12 @@ app.use(
 // CORS 설정
 app.use(
   cors({
-    origin: process.env.CLIENT_URL, // 허용할 클라이언트 도메인
-    methods: ["GET", "POST", "PUT", "DELETE"], // 허용할 HTTP 메서드
-    credentials: true, // 쿠키 허용
+    origin: "*",
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"],
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204
   })
 );
 
@@ -39,11 +44,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// // MongoDB 연결
-// mongoose
-//   .connect(process.env.MONGO_URI || "mongodb://localhost:27017/sosweet", {})
-//   .then(() => console.log("MongoDB 연결 성공!"))
-//   .catch((error: unknown) => console.error("MongoDB 연결 실패: ", error));
+// MongoDB 연결
+mongoose
+  .connect(process.env.MONGO_URI || "mongodb://localhost:27017/sosweet", {})
+  .then(() => console.log("MongoDB 연결 성공!"))
+  .catch((error: unknown) => console.error("MongoDB 연결 실패: ", error));
 
 // Socket에서 사용할 전역 변수
 export let global_id: string = "";
@@ -66,6 +71,10 @@ app.post("/api/match", (req: Request, res: Response) => {
 // });
 
 app.post("/api/ai/dialog", chatMiddleware, ttsMiddleware);
+
+app.post("/api/ai/dialog/end", endChatWithAI, chatAnalysis);
+
+app.post("/api/human/dialog", recordConversation);
 
 export default app;
 
