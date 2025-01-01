@@ -31,7 +31,7 @@ export default function Chat() {
       path: '/api/match',
       transports: ['websocket'],
       query: {
-        userId: 'dnwls6102', // 첫 번째 사용자 ID
+        userId: 'rgb10', // 두 번째 사용자 ID
       },
     });
     setSocket(newSocket);
@@ -57,7 +57,7 @@ export default function Chat() {
         });
 
         // 연결이 성공하면 시그널링 시작
-        newSocket.emit('startMatching', { id: 'dnwls6102', gender: '남성' });
+        newSocket.emit('startMatching', { id: 'rgb10', gender: '여성' });
       } catch (err) {
         console.error('Error accessing media devices:', err);
       }

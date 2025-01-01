@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import io from 'socket.io-client';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
@@ -8,7 +9,30 @@ import styles from './page.module.css';
 const MatchingPerson = () => {
   const router = useRouter();
 
-  const man = { id: 'dnwls6102', name: '한량', job: '한량', gender: '남성' };
+  const man = { id: 'rgb10', name: '여자', job: '여자', gender: '여자' };
+
+  // useEffect(() => {
+  //   const socket = io('http://localhost:4000', {
+  //     path: '/api/match',
+  //     withCredentials: true,
+  //   });
+
+  //   socket.on('connect', () => {
+  //     console.log(`Socket connected in MP: ${socket.id}`);
+  //   });
+
+  //   socket.on('disconnect', () => {
+  //     console.log('Socket disconnected');
+  //   });
+
+  //   socket.on('connect_error', (err) => {
+  //     console.error('Connection error:', err);
+  //   });
+
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, []);
 
   const handleMatching = async () => {
     try {
@@ -27,7 +51,6 @@ const MatchingPerson = () => {
     } catch {
       console.log('매칭 실패');
     }
-    router.push('/MatchingPerson/ChatHuman');
   };
 
   return (
