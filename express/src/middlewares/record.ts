@@ -23,17 +23,24 @@ function genConId(userId1: string, userId2: string): string {
 //   res.status(200).json({"message": "대화 기록 저장 완료"});
 // }
 
-let conversation: {role: string; content: string; name:string}[] = [];
+const conversation: {role: string; content: string; name:string}[] = [];
 
 function recordConversation(req: Request, res: Response) {
-  const { userId, script} = req.body;
-  console.log(req.body);
-  console.log( userId, script);
+  const { ID, script} = req.body
 
-  conversation.push({ role: "user", content: script, name: userId });
+  conversation.push({ role: "user", content: script, name: ID });
   console.log(conversation);
   
-  res.status(200).json({"message": "대화 기록 저장 완료"});
+  // req.body.script = conversation;
+  res.status(200).json({ message: "대화 저장 완료"})
 }
 
-export {genConId, recordConversation};
+
+function endChat(req: Request, res: Response, next: NextFunction): void {
+  req.body.script = conversation;
+  console.log(req.body.script);
+  conversation.length = 0;
+  next();
+}
+
+export { genConId, recordConversation, endChat };
