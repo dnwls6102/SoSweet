@@ -33,8 +33,16 @@ export default function Chat() {
       return;
     }
 
-    let localStream: MediaStream | null = null;
-    let newPeerConnection: RTCPeerConnection | null = null;
+    // 소켓 연결 초기화
+    const newSocket = io('http://localhost:4000', {
+      path: '/api/match',
+      transports: ['websocket'],
+    });
+    setSocket(newSocket);
+
+    // PeerConnection 초기화
+    const newPeerConnection = new RTCPeerConnection(pcConfig);
+    setPeerConnection(newPeerConnection);
 
     // 미디어 스트림 초기화
     const initializeMedia = async () => {
@@ -44,141 +52,108 @@ export default function Chat() {
           audio: true,
         });
 
-        localStream = stream;
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
         }
+
+        stream.getTracks().forEach((track) => {
+          newPeerConnection.addTrack(track, stream);
+        });
+
+        // 연결되면 시그널링 시작
+        newSocket.emit('join', { room });
       } catch (err) {
         console.error('Error accessing media devices:', err);
       }
     };
 
-    // WebRTC 초기화
-    const initializeWebRTC = () => {
-      // PeerConnection 초기화
-      newPeerConnection = new RTCPeerConnection(pcConfig);
-      setPeerConnection(newPeerConnection);
+    initializeMedia();
 
-      if (localStream) {
-        localStream.getTracks().forEach((track) => {
-          if (newPeerConnection) {
-            newPeerConnection.addTrack(track, localStream!);
-          }
+    // PeerConnection 이벤트 핸들러 설정
+    newPeerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        console.log('Sending ICE candidate');
+        newSocket.emit('candidate', {
+          candidate: event.candidate,
+          room: room,
         });
       }
-
-      // PeerConnection 이벤트 핸들러 설정
-      newPeerConnection.onicecandidate = (event) => {
-        if (event.candidate && socket) {
-          console.log('Sending ICE candidate');
-          socket.emit('candidate', {
-            candidate: event.candidate,
-            room: room,
-          });
-        }
-      };
-
-      newPeerConnection.ontrack = (event) => {
-        console.log('Received remote track');
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.srcObject = event.streams[0];
-        }
-      };
     };
 
-    // 소켓 연결 및 이벤트 설정
-    const initializeSocket = () => {
-      const newSocket = io(
-        process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:4000',
-        {
-          path: '/api/match',
-          transports: ['websocket'],
-        },
-      );
-      setSocket(newSocket);
-
-      newSocket.on('connect', () => {
-        console.log('Socket connected:', newSocket.id);
-        // 소켓 연결 후 방 참가
-        newSocket.emit('join', { room });
-      });
-
-      newSocket.on('ready', async () => {
-        if (newPeerConnection) {
-          try {
-            const offer = await newPeerConnection.createOffer();
-            await newPeerConnection.setLocalDescription(offer);
-            newSocket.emit('offer', { offer, room });
-          } catch (error) {
-            console.error('Error creating offer:', error);
-          }
-        }
-      });
-
-      newSocket.on('offer', async (offer: RTCSessionDescription) => {
-        if (newPeerConnection) {
-          try {
-            await newPeerConnection.setRemoteDescription(
-              new RTCSessionDescription(offer),
-            );
-            const answer = await newPeerConnection.createAnswer();
-            await newPeerConnection.setLocalDescription(answer);
-            newSocket.emit('answer', { answer, room });
-          } catch (error) {
-            console.error('Error handling offer:', error);
-          }
-        }
-      });
-
-      newSocket.on('answer', async (answer: RTCSessionDescription) => {
-        if (newPeerConnection) {
-          try {
-            await newPeerConnection.setRemoteDescription(
-              new RTCSessionDescription(answer),
-            );
-          } catch (error) {
-            console.error('Error handling answer:', error);
-          }
-        }
-      });
-
-      newSocket.on('candidate', async (candidate: RTCIceCandidate) => {
-        if (newPeerConnection) {
-          try {
-            await newPeerConnection.addIceCandidate(
-              new RTCIceCandidate(candidate),
-            );
-          } catch (error) {
-            console.error('Error handling ICE candidate:', error);
-          }
-        }
-      });
-
-      return newSocket;
+    newPeerConnection.ontrack = (event) => {
+      console.log('Received remote track');
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = event.streams[0];
+      }
     };
 
-    // 초기화 순서 관리
-    const initialize = async () => {
-      await initializeMedia();
-      initializeWebRTC();
-      const newSocket = initializeSocket();
+    // 소켓 이벤트 핸들러 설정
+    newSocket.on('connect', () => {
+      console.log('Socket connected:', newSocket.id);
+    });
 
-      // 정리 함수 반환
-      return () => {
-        if (localStream) {
-          localStream.getTracks().forEach((track) => track.stop());
-        }
-        if (newPeerConnection) {
-          newPeerConnection.close();
-        }
-        if (newSocket) {
-          newSocket.disconnect();
-        }
-      };
+    // 방에 참가한 후 offer 생성
+    newSocket.on('ready', async () => {
+      try {
+        const offer = await newPeerConnection.createOffer();
+        await newPeerConnection.setLocalDescription(offer);
+        newSocket.emit('offer', { offer, room });
+      } catch (error) {
+        console.error('Error creating offer:', error);
+      }
+    });
+
+    newSocket.on('offer', async (offer: RTCSessionDescription) => {
+      console.log('Received offer');
+      try {
+        await newPeerConnection.setRemoteDescription(
+          new RTCSessionDescription(offer),
+        );
+        const answer = await newPeerConnection.createAnswer();
+        await newPeerConnection.setLocalDescription(answer);
+        newSocket.emit('answer', { answer, room });
+      } catch (error) {
+        console.error('Error handling offer:', error);
+      }
+    });
+
+    newSocket.on('answer', async (answer: RTCSessionDescription) => {
+      console.log('Received answer');
+      try {
+        await newPeerConnection.setRemoteDescription(
+          new RTCSessionDescription(answer),
+        );
+      } catch (error) {
+        console.error('Error handling answer:', error);
+      }
+    });
+
+    newSocket.on('candidate', async (candidate: RTCIceCandidate) => {
+      console.log('Received ICE candidate');
+      try {
+        await newPeerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+      } catch (error) {
+        console.error('Error handling ICE candidate:', error);
+      }
+    });
+
+    // 상대방 연결 종료 처리
+    newSocket.on('peerDisconnected', () => {
+      console.log('Peer disconnected');
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = null;
+      }
+    });
+
+    // 정리 함수
+    return () => {
+      if (newPeerConnection) {
+        newPeerConnection.close();
+      }
+      if (newSocket) {
+        newSocket.disconnect();
+      }
     };
-
-    // 초기화 실행
-    initialize();
   }, [room]);
 
   const handleNavigation = () => {
