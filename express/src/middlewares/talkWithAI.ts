@@ -14,27 +14,25 @@ type ChatCompletionMessageParam = {
   name?: string; // 'name' 속성이 필요한 경우 추가
 };
 
-
-// 대화 기록 변수 (유저별 대화 기록 저장 가능하도록 확장 가능)
-let conversation: ChatCompletionMessageParam[] | null = null;
+// 대화 기록을 사용자별로 저장할 수 있도록 객체로 변경
+let conversations: { [userId: string]: ChatCompletionMessageParam[] } = {};
 
 // 미들웨어로 분리된 챗봇 로직
-// req.body.text를 받아 LLM으로 전송
-// LLM 응답을 req.responseText에 저장 후 next()로 전달
 async function chatMiddleware(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const userText: string = req.body.script;
+  const { script, ID } = req.body;
 
   // text가 입력되지 않았을 경우에 오류 처리
-  if (!userText) {
+  if (!script) {
     res.status(400).send("No text provided.");
     return;
   }
 
   try {
-    if (!conversation) {
-      conversation = [{
+    // 사용자 ID에 해당하는 대화 기록이 없으면 초기화
+    if (!conversations[ID]) {
+      conversations[ID] = [{
         role: "system",
-        content:  `John은 영동세브란스병원에서 일하는 30세의 의사로, 클라이밍을 취미로 즐깁니다. 그는 친구의 소개로 참석한 소개팅에서 새로운 영감을 기대하고 있습니다. 
+        content: `John은 영동세브란스병원에서 일하는 30세의 의사로, 클라이밍을 취미로 즐깁니다. 그는 친구의 소개로 참석한 소개팅에서 새로운 영감을 기대하고 있습니다. 
         이 만남은 따뜻한 카페에서 진행되며, John은 상대방이 긴장하지 않도록 밝고 따뜻하게 대화를 시작합니다. 그는 상대방의 말에 집중하며, 자연스럽게 질문을 제시하고 적절한 리액션으로 매끄럽게 대화를 이어갑니다. 
         특히 상대방의 흥미를 끄는 취미나 이야기에 열정적으로 반응하여 상대방이 편안함을 느끼도록 합니다. 
     
@@ -57,20 +55,19 @@ async function chatMiddleware(req: Request, res: Response, next: NextFunction): 
     }
 
     // 대화 기록에 입력받은 유저 메세지 추가
-    conversation.push({
+    conversations[ID].push({
       role: "user",
-      content: userText,
+      content: script,
+      name: ID,
     });
 
     // ChatCompletion API 호출 == LLM에 유저 메세지 전달
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini", // 혹은 'gpt-4' 등 다른 모델로 변경 가능
-      messages: conversation,
+      messages: conversations[ID],
       temperature: 1.0, // 톤 조절(창의성 정도)
       // max_tokens, top_p, frequency_penalty 등 추가 옵션 설정 가능
     });
-
-    
 
     // AI 응답 받기
     const assistantAnswer: string | null = response.choices[0].message.content;
@@ -79,12 +76,13 @@ async function chatMiddleware(req: Request, res: Response, next: NextFunction): 
     }
     
     // 대화 기록에 AI 대답 저장
-    conversation.push({
+    conversations[ID].push({
       role: "assistant",
       content: assistantAnswer,
+      name: "AI",
     });
 
-    console.log(conversation);
+    console.log(conversations[ID]);
 
     // TTS 처리를 위해서 AI 답변 req에 저장
     req.body.script = assistantAnswer.replace(/【.*?】/g, "");
@@ -98,9 +96,10 @@ async function chatMiddleware(req: Request, res: Response, next: NextFunction): 
 };
 
 function endChatWithAI(req: Request, res: Response, next: NextFunction): void {
-  req.body.script = conversation;
+  console.log(req.body.ID);
+  req.body.script = conversations[req.body.ID];
   console.log(req.body.script);
-  conversation = null;
+  conversations[req.body.ID] = [];
   next();
 }
 

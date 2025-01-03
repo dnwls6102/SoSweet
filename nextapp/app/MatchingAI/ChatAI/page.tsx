@@ -204,7 +204,7 @@ export default function Chat() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ script: 'end' }),
+        body: JSON.stringify({ script: 'end', ID }),
       });
 
       if (response.ok) {
