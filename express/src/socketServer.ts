@@ -29,15 +29,6 @@ const PORT = process.env.PORT ?? 3000;
 //     });
 //   }
 // })();
-
-// 도현이형 코드드
-// 사용자 ID 병합
-const genConId = (userId1: string, userId2: string): {'conversationId' : string} => {
-  const sortedUsers = [userId1, userId2].sort();
-  const conversationId = `${sortedUsers[0]}-${sortedUsers[1]}`;
-  return {'conversationId': conversationId};
-}
-
 export const initializeSocketServer = (server: http.Server) => {
   const io = new Server(server, {
     path: "/api/match",
