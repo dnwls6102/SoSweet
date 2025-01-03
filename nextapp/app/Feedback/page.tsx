@@ -213,18 +213,9 @@ export default function Feedback() {
       {/* 언어적 분석 */}
       <div className={styles.section}>
         <h2 className={styles.sectionTitle}>언어적 분석</h2>
-        {verbal ? (
+        {feedbackData.summary ? (
           // <p>verbal</p>
-          <>
-            <p>
-              대화 중 사용자가 말한 비율이 70% 이상입니다. 조금 더 경청해
-              주세요~
-            </p>
-            <p>
-              '음', '아니', '어..' 같은 표현이 10회 이상입니다. 이러한 표현은
-              자신감 없는 인상을 주기에 줄이는 연습을 해보세요~
-            </p>
-          </>
+          <>{feedbackData.summary}</>
         ) : (
           <p>언어적 분석 데이터를 불러오는 중입니다.</p>
         )}
