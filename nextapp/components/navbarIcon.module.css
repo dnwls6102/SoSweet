@@ -25,6 +25,10 @@
   margin-right: 8px;
 }
 
+.heart:hover {
+  transform: scale(1.1);
+}
+
 .text {
   color: #000000;
 }
@@ -38,11 +42,21 @@
 .logout {
   font-size: 18px;
   color: #aaaaaa;
+  transition: color 0.2s ease;
+}
+
+.logout:hover {
+  color: #ff4757;
 }
 
 .link {
   text-decoration: none;
   color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+.link:hover {
+  opacity: 0.8;
 }
 
 body, html {
