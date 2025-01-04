@@ -29,7 +29,7 @@ app.use(
 // CORS 설정
 app.use(
   cors({
-    origin: "*",
+    origin: process.env.CLIENT_URL || 'http://localhost:3000',
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"],
     credentials: true,
