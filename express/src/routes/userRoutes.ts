@@ -14,23 +14,15 @@ router.post('/check', checkUserId);
 // 로그인
 router.post('/login', logIn, (req, res) => {
   console.log("로그인 성공!");
-<<<<<<< HEAD
-  res.redirect("/MainPage");
-=======
   res.status(200).json({ message: '로그인 성공'});
   // res.redirect("/MainPage");
->>>>>>> woojin
 });
 
 // 로그아웃
 router.post('/logout', logOut, (req, res) => {
   console.log("로그아웃!");
-<<<<<<< HEAD
-  res.redirect("/");
-=======
   res.status(200).json({ message: '로그아웃 성공' });
   // res.redirect("/");
->>>>>>> woojin
 });
 
 // 로그인된 사용자만 접근 가능 예시
