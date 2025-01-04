@@ -8,20 +8,20 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function LoginClient() {
-  const [id, setId] = useState('');
-  const [password, setPassword] = useState('');
+  const [user_id, setId] = useState('');
+  const [user_password, setPassword] = useState('');
   const router = useRouter();
 
   const tryLogin = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/login`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/users/login`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ id, password }),
+          body: JSON.stringify({ user_id, user_password }),
         },
       );
       if (response.ok) {
@@ -44,14 +44,14 @@ export default function LoginClient() {
         <p className={styles.logo}>💖소스윗</p>
         <Input
           placeholder="아이디"
-          value={id}
+          value={user_id}
           onChange={(e) => setId(e.target.value)}
           type="text"
         />
         <div className={styles.contentwrapper}>
           <Input
             placeholder="비밀번호"
-            value={password}
+            value={user_password}
             onChange={(e) => setPassword(e.target.value)}
             type="password"
           />
