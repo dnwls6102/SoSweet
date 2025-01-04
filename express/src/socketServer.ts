@@ -33,22 +33,10 @@ export const initializeSocketServer = (server: http.Server) => {
   const io = new Server(server, {
     path: "/api/match",
     cors: {
-      origin: "*",
+      origin: process.env.CLIENT_URL || 'http://localhost:3000',
       credentials: true,
       methods: ["GET", "POST", "OPTIONS"],
-      allowedHeaders: ["*"]
     },
-    allowEIO3: true,
-    pingTimeout: 60000,
-    pingInterval: 25000
-  });
-
-  // 연결 디버깅을 위한 이벤트 리스너
-  io.engine.on("connection_error", (err) => {
-    console.log("Connection Error:", err.req);      // request object
-    console.log("Error message:", err.code);        // error code
-    console.log("Error message:", err.message);     // error message
-    console.log("Error context:", err.context);     // additional error context
   });
 
   // 대기 중인 사용자 관리를 위한 Map
