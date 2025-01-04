@@ -16,6 +16,8 @@
     "@tensorflow/tfjs": "^4.22.0",
     "dotenv": "^16.4.7",
     "faceapi": "^1.0.1",
+    "js-cookie": "^3.0.5",
+    "jwt-decode": "^4.0.0",
     "mongoose": "^8.9.2",
     "next": "15.1.2",
     "openai": "^4.77.0",
@@ -30,6 +32,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/js-cookie": "^3.0.6",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^20.17.10",
     "@types/react": "^19",

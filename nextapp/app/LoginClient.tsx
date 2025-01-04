@@ -4,27 +4,62 @@ import styles from './page.module.css';
 import SmallForm from '@/components/smallForm';
 import Input from '@/components/input';
 import Link from 'next/link';
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
+
+interface UserPayload {
+  user_id: string;
+  iat: number;
+  exp: number;
+}
 
 export default function LoginClient() {
   const [user_id, setId] = useState('');
   const [user_password, setPassword] = useState('');
   const router = useRouter();
 
+  useEffect(() => {
+    // 이미 로그인되어 있는지 확인
+    const token = Cookies.get('access');
+    console.log('hihi');
+    if (token) {
+      try {
+        const decoded = jwtDecode<UserPayload>(token);
+        console.log('현재 로그인된 유저 정보:', decoded);
+        // 필요한 경우 상태에 저장
+        setId(decoded.user_id);
+      } catch (error) {
+        console.error('토큰 디코딩 실패:', error);
+      }
+    } else {
+      console.log('test2');
+    }
+  }, []);
+
   const tryLogin = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/users/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/users/login`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_id, user_password }),
+          credentials: 'include',
         },
-        body: JSON.stringify({ user_id, user_password }),
-        credentials: 'include',
-      });
+      );
 
       if (response.ok) {
         console.log('로그인 성공');
+        // 로그인 성공 후 토큰 확인
+        const token = Cookies.get('access');
+        if (token) {
+          const decoded = jwtDecode<UserPayload>(token);
+          console.log('로그인된 유저 정보:', decoded);
+        }
         alert('로그인 성공!');
         router.replace('/MainPage');
       } else {

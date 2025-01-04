@@ -23,7 +23,7 @@ const setCookies = ( token: string, res:Response, type: cookieType ): void => {
   const time = type === 'access' ? 3 : 24;
 
   res.cookie( type, token, {
-    httpOnly: true,
+    httpOnly: false,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax', // 조정 가능
     maxAge: 3600000 * time
