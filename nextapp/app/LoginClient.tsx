@@ -14,23 +14,28 @@ export default function LoginClient() {
 
   const tryLogin = async () => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/users/login`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ user_id, user_password }),
+      const response = await fetch(`http://localhost:4000/users/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({ user_id, user_password }),
+        credentials: 'include',
+      });
+
       if (response.ok) {
         console.log('로그인 성공');
         alert('로그인 성공!');
-        router.push('/MainPage');
+        router.replace('/MainPage');
       } else {
-        console.error('로그인 실패');
-        alert('로그인 실패: 아이디 또는 비밀번호를 확인해주세요.');
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: '로그인 실패' }));
+        console.error('로그인 실패:', errorData.message);
+        alert(
+          errorData.message ||
+            '로그인 실패: 아이디 또는 비밀번호를 확인해주세요.',
+        );
       }
     } catch (error) {
       console.error('서버 오류:', error);
