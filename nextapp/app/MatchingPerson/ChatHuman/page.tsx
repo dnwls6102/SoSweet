@@ -10,17 +10,19 @@ import Videobox from '@/components/videobox';
 export default function Chat() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const [peerConnection, setPeerConnection] =
-    useState<RTCPeerConnection | null>(null);
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [socketApi, setSocketApi] = useState<Socket | null>(null);
+
+  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);  // WEBRTC용
+  const [socketApi, setSocketApi] = useState<Socket | null>(null);  // SoSweet_API용
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);  // 다시보기 녹화용 (Blob)
+  const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);  // 녹화 데이터 쌓는 배열
+  
   const router = useRouter();
   const searchParams = useSearchParams();
   const room = searchParams.get('room');
   const keys = '행복';
   const value = 30;
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-
+  
 
   const pcConfig = {
     iceServers: [
@@ -68,19 +70,44 @@ export default function Chat() {
           audio: true,
         });
 
+        // 내 로컬 비디오에 스트림 할당하기
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
         }
 
+        // PeerConnection에 트랙 추가
         stream.getTracks().forEach((track) => {
           newPeerConnection.addTrack(track, stream);
         });
 
-        // 연결되면 시그널링 시작
+        // 연결되면 시그널링 시작 (방에 참가)
         rtcSocket.emit('join', { room });
+
+        // 여기서 MediaRecorder로 '전체 영상 Blob' 저장 로직 구현하기 => 대화 끝나고 S3 업로드 할 때 필요
+
+        setupMediaRecorder(stream);
       } catch (err) {
         console.error('Error accessing media devices:', err);
       }
+    };
+
+    const setupMediaRecorder = (stream: MediaStream) => {
+      const recorder = new MediaRecorder(stream, {
+        mimeType: 'video/webm; codecs=vp8'
+      });
+      mediaRecorderRef.current = recorder;
+
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          // Blob 조각 쌓아두기
+          setRecordedChunks((prev) => [...prev, event.data]);
+        }
+      };
+
+      recorder.onstop = () => {
+        // 최종적으로 recordedChunks 가 전체 동영상임
+        console.log('녹화 중지됨. recordedChunks:', recordedChunks);
+      };
     };
 
     initializeMedia();
@@ -103,7 +130,7 @@ export default function Chat() {
       }
     };
 
-    // 소켓 이벤트 핸들러 설정
+    // WebRTC 소켓 이벤트 핸들러 설정
     rtcSocket.on('connect', () => {
       console.log('Socket connected:', rtcSocket.id);
     });
@@ -153,39 +180,44 @@ export default function Chat() {
       }
     });
 
-    // 영상 보내기
-    const sendImage = () => {
-      navigator.mediaDevices
-        .getUserMedia({
-          video: true,
-        })
-        .then((stream) => {
-          // 감정 분석용 비디오 요소
-          mediaRecorderRef.current = new MediaRecorder(stream);
+    // Canvas로 동영상 이미지로 캡쳐하고 서버로 전송하기
+    const captureAndSendFrame = () => {
+      if (!localVideoRef.current) return;
+      const videoEl = localVideoRef.current;
+      
+      // 현재 비디오 크기 가져오기
+      const vWidth = videoEl.videoWidth;
+      const vHeight = videoEl.videoHeight;
 
-          mediaRecorderRef.current.ondataavailable = (event) => {
-              if (event.data.size > 0 ) {
-                  console.log(event.data);
-                // && ++send_time_cnt >= send_time_limit) {
-                  // $.ajax({
-                  //   url: "http://localhost:5000/api/analyze",
-                  //   type: "POST",
-                  //   contentType: "application/json",
-                  //   data: JSON.stringify({
-                  //     user_id: "test",
-                  //     frame: event.data
-                  //   })
-                  // })
-                  apiSocket.emit('video-chunk', event.data);
-                  // image_buffer = [];
-              }
-          }
+      if (!vWidth || !vHeight) {
+        // 영상 아직 준비 안 되었으면 스킵하기
+        return;
+      }
 
-    mediaRecorderRef.current.start(1000);
-  });
-    }
+      // canvas 생성하기
+      const canvas = document.createElement('canvas');
+      canvas.width = vWidth;
+      canvas.height = vHeight;
 
-    sendImage();
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // canvas에 비디오 그리기
+      ctx.drawImage(videoEl, 0, 0, vWidth, vHeight);
+
+      // toDataURL로 이미지(Base64) 추출
+      const dataURL = canvas.toDataURL('image/png');
+
+      //소켓을 통해 서버로 전송 (감정, 동작 두 종류)
+      apiSocket.emit('emotion-chunk', { user_id: 'test', frame: dataURL });
+      apiSocket.emit('action-chunk', { user_id: 'test', frame: dataURL });
+    };
+
+    // 일정 간격(1초)에 한 번씩 캡쳐하기
+    const intervalId = setInterval(() => {
+      captureAndSendFrame();
+    }, 1000);  // 1초마다
+
 
     // 상대방 연결 종료 처리
     rtcSocket.on('peerDisconnected', () => {
@@ -203,10 +235,16 @@ export default function Chat() {
       if (rtcSocket) {
         rtcSocket.disconnect();
       }
+
+      clearInterval(intervalId);
     };
-  }, [room]);
+  }, [room, recordedChunks]);
 
   const handleNavigation = () => {
+    mediaRecorderRef.current.stop();
+    console.log('녹화 중지!')
+
+    // 페이지 이동하기 (여기에 recordedChunks를 합쳐서 S3 업로드 추가 로직 구현해야함)
     router.push('/Comment');
   };
 
