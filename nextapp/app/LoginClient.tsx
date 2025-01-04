@@ -5,7 +5,7 @@ import SmallForm from '@/components/smallForm';
 import Input from '@/components/input';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 
@@ -19,24 +19,6 @@ export default function LoginClient() {
   const [user_id, setId] = useState('');
   const [user_password, setPassword] = useState('');
   const router = useRouter();
-
-  useEffect(() => {
-    // 이미 로그인되어 있는지 확인
-    const token = Cookies.get('access');
-    console.log('hihi');
-    if (token) {
-      try {
-        const decoded = jwtDecode<UserPayload>(token);
-        console.log('현재 로그인된 유저 정보:', decoded);
-        // 필요한 경우 상태에 저장
-        setId(decoded.user_id);
-      } catch (error) {
-        console.error('토큰 디코딩 실패:', error);
-      }
-    } else {
-      console.log('test2');
-    }
-  }, []);
 
   const tryLogin = async () => {
     try {
@@ -54,7 +36,6 @@ export default function LoginClient() {
 
       if (response.ok) {
         console.log('로그인 성공');
-        // 로그인 성공 후 토큰 확인
         const token = Cookies.get('access');
         if (token) {
           const decoded = jwtDecode<UserPayload>(token);
