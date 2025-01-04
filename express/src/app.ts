@@ -1,12 +1,9 @@
 import express, { Request, Response } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import userRoutes from "./routes/userRoutes";
 import path from "path";
-import { chatMiddleware, endChatWithAI } from "./middlewares/talkWithAI";
-import { ttsMiddleware } from "./middlewares/tts";
-import { recordConversation } from "./middlewares/record";
-import { chatAnalysis } from "./middlewares/chatAnalysis";
+import userRoutes from "./routes/userRoutes";
+import apiRoutes from "./routes/apiRoutes";
 import dotenv from "dotenv";
 
 dotenv.config(); // .env 파일 로드
@@ -58,25 +55,19 @@ export let global_gender: string = "";
 app.get("/chat", (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "public", "chat.html"));
 });
+// user 라우트
 app.use("/users", userRoutes);
+// api 라우트
+app.use("/api", apiRoutes);
+
 app.post("/api/match", (req: Request, res: Response) => {
   global_id = req.body.id;
   global_gender = req.body.gender;
   res.send("응답");
 });
-
 // // 기본 경로
 // app.get("/", (req: Request, res: Response) => {
 //   res.send("SoSweet 서버가 실행 중입니다");
 // });
 
-app.post("/api/ai/dialog", chatMiddleware, ttsMiddleware);
-
-app.post("/api/ai/dialog/end", endChatWithAI, chatAnalysis);
-
-app.post("/api/human/dialog", recordConversation);
-
 export default app;
-
-
-

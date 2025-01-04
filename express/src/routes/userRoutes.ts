@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { loginUser, registerUser, checkUserId, logoutUser } from '../controllers/userController';
+import { registerUser, checkUserId } from '../controllers/userController';
 import { loginRequired } from '../middlewares/authMiddleware';
 import { logIn, logOut } from '../middlewares/userService'
 
-const router = Router();
+const  router = Router();
 
 // 회원가입
 router.post('/', registerUser);
@@ -14,13 +14,13 @@ router.post('/check', checkUserId);
 // 로그인
 router.post('/login', logIn, (req, res) => {
   console.log("로그인 성공!");
-  res.redirect("/MainPage");
+  res.status(200).json( { message: "로그인되었습니다!" });
 });
 
 // 로그아웃
 router.post('/logout', logOut, (req, res) => {
   console.log("로그아웃!");
-  res.redirect("/");
+  res.status(200).json({ message: "로그아웃되었습니다."});
 });
 
 // 로그인된 사용자만 접근 가능 예시

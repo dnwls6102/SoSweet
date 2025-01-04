@@ -22,12 +22,13 @@ export default function LoginClient() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ user_id, user_password }),
+          credentials: "include",
         },
       );
       if (response.ok) {
         console.log('로그인 성공');
         alert('로그인 성공!');
-        router.push('/MainPage');
+        router.replace('/MainPage');
       } else {
         console.error('로그인 실패');
         alert('로그인 실패: 아이디 또는 비밀번호를 확인해주세요.');
