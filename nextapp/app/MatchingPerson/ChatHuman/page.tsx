@@ -13,7 +13,7 @@ export default function Chat() {
   const [peerConnection, setPeerConnection] =
     useState<RTCPeerConnection | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
-  // const [socketForApi, setSocketForApi] = useState<Socket | null>(null);
+  const [socketApi, setSocketApi] = useState<Socket | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const room = searchParams.get('room');
@@ -100,6 +100,7 @@ export default function Chat() {
 
     recognition.current.start();
   };
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   const pcConfig = {
     iceServers: [
@@ -126,12 +127,21 @@ export default function Chat() {
       return;
     }
 
-    // 소켓 연결 초기화
-    const newSocket = io('http://localhost:4000', {
-      path: '/api/match',
+    // 소켓 연결 초기화 - WebRTC 연결용 Socket
+    const rtcSocket = io(
+      process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:4000',
+      {
+        path: '/api/match',
+        transports: ['websocket'],
+      },
+    );
+    setSocket(rtcSocket);
+
+    // 소켓 연결 초기화 - SoSweet_API
+    const apiSocket = io('http://localhost:5000', {
       transports: ['websocket'],
     });
-    setSocket(newSocket);
+    setSocketApi(apiSocket);
 
     // PeerConnection 초기화
     const newPeerConnection = new RTCPeerConnection(pcConfig);
@@ -154,7 +164,7 @@ export default function Chat() {
         });
 
         // 연결되면 시그널링 시작
-        newSocket.emit('join', { room });
+        rtcSocket.emit('join', { room });
       } catch (err) {
         console.error('Error accessing media devices:', err);
       }
@@ -166,7 +176,7 @@ export default function Chat() {
     newPeerConnection.onicecandidate = (event) => {
       if (event.candidate) {
         console.log('Sending ICE candidate');
-        newSocket.emit('candidate', {
+        rtcSocket.emit('candidate', {
           candidate: event.candidate,
           room: room,
         });
@@ -181,22 +191,22 @@ export default function Chat() {
     };
 
     // 소켓 이벤트 핸들러 설정
-    newSocket.on('connect', () => {
-      console.log('Socket connected:', newSocket.id);
+    rtcSocket.on('connect', () => {
+      console.log('Socket connected:', rtcSocket.id);
     });
 
     // 방에 참가한 후 offer 생성
-    newSocket.on('ready', async () => {
+    rtcSocket.on('ready', async () => {
       try {
         const offer = await newPeerConnection.createOffer();
         await newPeerConnection.setLocalDescription(offer);
-        newSocket.emit('offer', { offer, room });
+        rtcSocket.emit('offer', { offer, room });
       } catch (error) {
         console.error('Error creating offer:', error);
       }
     });
 
-    newSocket.on('offer', async (offer: RTCSessionDescription) => {
+    rtcSocket.on('offer', async (offer: RTCSessionDescription) => {
       console.log('Received offer');
       try {
         await newPeerConnection.setRemoteDescription(
@@ -204,13 +214,13 @@ export default function Chat() {
         );
         const answer = await newPeerConnection.createAnswer();
         await newPeerConnection.setLocalDescription(answer);
-        newSocket.emit('answer', { answer, room });
+        rtcSocket.emit('answer', { answer, room });
       } catch (error) {
         console.error('Error handling offer:', error);
       }
     });
 
-    newSocket.on('answer', async (answer: RTCSessionDescription) => {
+    rtcSocket.on('answer', async (answer: RTCSessionDescription) => {
       console.log('Received answer');
       try {
         await newPeerConnection.setRemoteDescription(
@@ -221,7 +231,7 @@ export default function Chat() {
       }
     });
 
-    newSocket.on('candidate', async (candidate: RTCIceCandidate) => {
+    rtcSocket.on('candidate', async (candidate: RTCIceCandidate) => {
       console.log('Received ICE candidate');
       try {
         await newPeerConnection.addIceCandidate(new RTCIceCandidate(candidate));
@@ -230,8 +240,42 @@ export default function Chat() {
       }
     });
 
+    // 영상 보내기
+    const sendImage = () => {
+      navigator.mediaDevices
+        .getUserMedia({
+          video: true,
+        })
+        .then((stream) => {
+          // 감정 분석용 비디오 요소
+          mediaRecorderRef.current = new MediaRecorder(stream);
+
+          mediaRecorderRef.current.ondataavailable = (event) => {
+            if (event.data.size > 0) {
+              console.log(event.data);
+              // && ++send_time_cnt >= send_time_limit) {
+              // $.ajax({
+              //   url: "http://localhost:5000/api/analyze",
+              //   type: "POST",
+              //   contentType: "application/json",
+              //   data: JSON.stringify({
+              //     user_id: "test",
+              //     frame: event.data
+              //   })
+              // })
+              apiSocket.emit('video-chunk', event.data);
+              // image_buffer = [];
+            }
+          };
+
+          mediaRecorderRef.current.start(1000);
+        });
+    };
+
+    sendImage();
+
     // 상대방 연결 종료 처리
-    newSocket.on('peerDisconnected', () => {
+    rtcSocket.on('peerDisconnected', () => {
       console.log('Peer disconnected');
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = null;
@@ -245,8 +289,8 @@ export default function Chat() {
       if (newPeerConnection) {
         newPeerConnection.close();
       }
-      if (newSocket) {
-        newSocket.disconnect();
+      if (rtcSocket) {
+        rtcSocket.disconnect();
       }
 
       recognition.current?.stop();
