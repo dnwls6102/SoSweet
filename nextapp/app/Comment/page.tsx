@@ -4,16 +4,32 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import MiddleForm from '@/components/middleForm';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
+
+interface UserPayload {
+  user_id: string;
+  iat: number;
+  exp: number;
+}
 
 export default function RatingPage() {
   const [rating, setRating] = useState(0); // 선택된 별점
   const [feedback, setFeedback] = useState(''); // 텍스트 입력 값
+  const router = useRouter();
+  const token = Cookies.get('access');
+  let ID = '';
+  if (token) {
+    const decoded = jwtDecode<UserPayload>(token);
+    ID = decoded.user_id;
+  } else {
+    alert('유효하지 않은 접근입니다.');
+    router.replace('/');
+  }
 
   const handleStarClick = (index: number) => {
     setRating(index + 1); // 클릭한 별까지 색칠
   };
-
-  const router = useRouter();
 
   const handleSubmit = async () => {
     const data = {

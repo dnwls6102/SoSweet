@@ -6,15 +6,31 @@ import styles from './page.module.css';
 import Videobox from '../../../components/videobox';
 import { useDispatch } from 'react-redux';
 import { setSummary } from '../../../store/feedbackSlice';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
+
+interface UserPayload {
+  user_id: string;
+  iat: number;
+  exp: number;
+}
 
 export default function Chat() {
-  const ID = 'userID12';
+  const router = useRouter();
+  const token = Cookies.get('access');
+  let ID = '';
+  if (token) {
+    const decoded = jwtDecode<UserPayload>(token);
+    ID = decoded.user_id;
+  } else {
+    alert('유효하지 않은 접근입니다.');
+    router.replace('/');
+  }
 
   const isRecording = useRef(false);
   const [transcript, setTranscript] = useState('');
   const [feedback, setFeedback] = useState('');
   const scriptRef = useRef('');
-  const router = useRouter();
   const recognition = useRef<SpeechRecognition | null>(null);
 
   const videoStreamRef = useRef<MediaStream | null>(null);

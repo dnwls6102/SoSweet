@@ -6,6 +6,14 @@ import io, { Socket } from 'socket.io-client';
 import 'webrtc-adapter';
 import styles from './page.module.css';
 import Videobox from '@/components/videobox';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
+
+interface UserPayload {
+  user_id: string;
+  iat: number;
+  exp: number;
+}
 
 export default function Chat() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -15,11 +23,21 @@ export default function Chat() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [socketApi, setSocketApi] = useState<Socket | null>(null);
   const router = useRouter();
+  const token = Cookies.get('access');
+  let ID = '';
+  if (token) {
+    const decoded = jwtDecode<UserPayload>(token);
+    ID = decoded.user_id;
+  } else {
+    alert('유효하지 않은 접근입니다.');
+    router.replace('/');
+  }
+
   const searchParams = useSearchParams();
   const room = searchParams.get('room');
   const keys = '행복';
   const value = 30;
-  const userID = 'dnwls6102';
+  const userID = ID;
 
   const scriptRef = useRef('');
   const isRecording = useRef(false);
