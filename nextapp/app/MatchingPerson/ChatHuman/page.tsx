@@ -19,12 +19,13 @@ export default function Chat() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
-  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
-  const [socket, setSocket] = useState<Socket | null>(null);  // WEBRTC용
-  const [socketApi, setSocketApi] = useState<Socket | null>(null);  // SoSweet_API용
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);  // 다시보기 녹화용 (Blob)
-  const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);  // 녹화 데이터 쌓는 배열
-  
+  const [peerConnection, setPeerConnection] =
+    useState<RTCPeerConnection | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null); // WEBRTC용
+  const [socketApi, setSocketApi] = useState<Socket | null>(null); // SoSweet_API용
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null); // 다시보기 녹화용 (Blob)
+  const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]); // 녹화 데이터 쌓는 배열
+
   const router = useRouter();
   const token = Cookies.get('access');
   let ID = '';
@@ -121,7 +122,6 @@ export default function Chat() {
 
     recognition.current.start();
   };
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   const pcConfig = {
     iceServers: [
@@ -199,7 +199,7 @@ export default function Chat() {
 
     const setupMediaRecorder = (stream: MediaStream) => {
       const recorder = new MediaRecorder(stream, {
-        mimeType: 'video/webm; codecs=vp8'
+        mimeType: 'video/webm; codecs=vp8',
       });
       mediaRecorderRef.current = recorder;
 
@@ -290,7 +290,7 @@ export default function Chat() {
     const captureAndSendFrame = () => {
       if (!localVideoRef.current) return;
       const videoEl = localVideoRef.current;
-      
+
       // 현재 비디오 크기 가져오기
       const vWidth = videoEl.videoWidth;
       const vHeight = videoEl.videoHeight;
@@ -322,8 +322,7 @@ export default function Chat() {
     // 일정 간격(1초)에 한 번씩 캡쳐하기
     const intervalId = setInterval(() => {
       captureAndSendFrame();
-    }, 1000);  // 1초마다
-
+    }, 1000); // 1초마다
 
     // 상대방 연결 종료 처리
     rtcSocket.on('peerDisconnected', () => {
@@ -353,7 +352,7 @@ export default function Chat() {
 
   const handleNavigation = () => {
     mediaRecorderRef.current.stop();
-    console.log('녹화 중지!')
+    console.log('녹화 중지!');
 
     // 페이지 이동하기 (여기에 recordedChunks를 합쳐서 S3 업로드 추가 로직 구현해야함)
     router.push('/Comment');

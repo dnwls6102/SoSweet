@@ -42,7 +42,7 @@ export default function Chat() {
 
   const tryNlp = async (script: string) => {
     try {
-      const response = await fetch('http://localhost:5050/api/nlp', {
+      const response = await fetch('http://localhost:5000/api/nlp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
