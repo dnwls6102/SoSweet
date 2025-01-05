@@ -3,7 +3,6 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { genAccessToken, genRefreshToken, TokenPayload } from './jwt';
 import { error } from 'console';
-import { error } from 'console';
 import User, { IUser } from '../models/User';
 const secretKey = process.env.JWT_SECRET_KEY as string;
 
