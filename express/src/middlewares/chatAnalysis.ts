@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { OpenAI } from 'openai';
 import dotenv from "dotenv";
 
-dotenv.config(); // .env 파일 로드
+dotenv.config();
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
@@ -11,15 +11,15 @@ const openai = new OpenAI({
 type ChatCompletionMessageParam = {
   role: 'system' | 'user' | 'assistant';
   content: string;
-  name?: string; // 'name' 속성이 필요한 경우 추가
+  name?: string;
 };
 
 const completedChat: ChatCompletionMessageParam[] = [];
-// AiPrompt를 함수로 변경하여 ID를 동적으로 할당해주기
+
 function createAiPrompt(ID: string): ChatCompletionMessageParam {
-  return { role: "system",
-    content:
-    `나는 소개팅 대화 평가 AI DatingTalkAnalyzer입니다. 
+  return {
+    role: "system",
+    content: `나는 소개팅 대화 평가 AI DatingTalkAnalyzer입니다. 
   다음은 두 사람이 소개팅 어플리케이션을 통해 나눈 대화입니다. 
   이 대화를 한국어로 분석하되, 최종 피드백은 **두 사람 중 name이 ${ID}인 사람**에 대해서만 작성해주세요.
   
@@ -90,56 +90,48 @@ function createAiPrompt(ID: string): ChatCompletionMessageParam {
   
   **[대화 시작]**
   
-  DatingTalkAnalyzer는 분석을 시작하세요.` 
+  DatingTalkAnalyzer는 분석을 시작하세요.`
   };
 }
 
-// 미들웨어로 분리된 챗봇 로직
-// req.body.text를 받아 LLM으로 전송
-// LLM 응답을 req.responseText에 저장 후 next()로 전달
 async function chatAnalysis(req: Request, res: Response): Promise<void> {
   const { script, ID } = req.body;
-  // AiPrompt 동적으로 생성하여 대화 기록에 넣어주기. *
   const AiPrompt = createAiPrompt(ID);
   completedChat.push(AiPrompt);
 
   const newMessages: ChatCompletionMessageParam[] = script;
-  // 타입 체크: req.body가 올바른 타입인지 확인 (선택 사항)
+
   if (!Array.isArray(newMessages) || !newMessages.every(msg => msg.role && msg.content)) {
     res.status(400).send("Invalid data format.");
     return;
   }
 
-  // 첫 번째 요소 제거
   const firstMessage = newMessages[0];
   if (firstMessage && firstMessage.role === "system") {
-    newMessages.shift(); // 첫 번째 요소 제거
+    newMessages.shift();
     console.log("AI 아바타 프롬프트 제거:", firstMessage);
   }
 
-  // completedChat 배열에 이어붙이기
-  completedChat.push(...newMessages); // 배열 자체가 아니라, 배열의 요소를 넣어주기 위해서 앞에 ...을 찍어준다.
+  completedChat.push(...newMessages);
   console.log("분석용 대화 기록 완성");
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4",
       messages: completedChat,
-      temperature: 0.7,// 톤 조절(창의성 정도) // max_tokens, top_p, frequency_penalty 등 추가 옵션 설정 가능
+      temperature: 0.7,
     });
     
-    const assistantAnswer: string | null = response.choices[0].message.content;
-    if (assistantAnswer === null) {
+    const assistantAnswer = response.choices[0].message.content;
+    if (!assistantAnswer) {
       throw new Error("AI 답변 생성에 실패했습니다.");
     }
-    completedChat.length = 0; // completedChat 초기화 
-    console.log(completedChat);
+
+    completedChat.length = 0;
     console.log(assistantAnswer);
 
-    // 클라이언트 렌더링을 위해 분석 내용 저장
     req.body.script = assistantAnswer;
     
-    // assistantAnswer를 응답으로 전송
     res.json({ 
       message: "대화 분석 완료!",
       analysis: assistantAnswer 
@@ -148,6 +140,6 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
     console.error(err);
     res.status(500).send("Failed to generate response from OpenAI.");
   }
-};
+}
 
 export { chatAnalysis };
