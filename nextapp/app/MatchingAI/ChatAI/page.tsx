@@ -18,10 +18,10 @@ interface UserPayload {
 export default function Chat() {
   const router = useRouter();
   const token = Cookies.get('access');
-  let ID = '';
+  let user_id = '';
   if (token) {
     const decoded = jwtDecode<UserPayload>(token);
-    ID = decoded.user_id;
+    user_id = decoded.user_id;
   } else {
     alert('유효하지 않은 접근입니다.');
     router.replace('/');
@@ -72,7 +72,7 @@ export default function Chat() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ script, ID }),
+        body: JSON.stringify({ script, user_id }),
       });
 
       if (response.ok) {
@@ -220,7 +220,7 @@ export default function Chat() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ script: 'end', ID }),
+        body: JSON.stringify({ script: 'end', user_id }),
       });
 
       if (response.ok) {

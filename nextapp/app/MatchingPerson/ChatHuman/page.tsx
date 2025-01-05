@@ -34,10 +34,10 @@ export default function Chat() {
   }
 
   const searchParams = useSearchParams();
-  const room = searchParams.get('room');
+  const room_id = searchParams.get('room');
   const keys = '행복';
   const value = 30;
-  const userID = ID;
+  const user_id = ID;
 
   const scriptRef = useRef('');
   const isRecording = useRef(false);
@@ -50,7 +50,7 @@ export default function Chat() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userID, script, room }),
+        body: JSON.stringify({ user_id, script, room_id }),
       });
 
       if (response.ok) {
@@ -140,7 +140,7 @@ export default function Chat() {
 
     handleStartRecording();
 
-    if (!room) {
+    if (!room_id) {
       console.error('No room provided');
       return;
     }
@@ -182,7 +182,7 @@ export default function Chat() {
         });
 
         // 연결되면 시그널링 시작
-        rtcSocket.emit('join', { room });
+        rtcSocket.emit('join', { room_id });
       } catch (err) {
         console.error('Error accessing media devices:', err);
       }
@@ -196,7 +196,7 @@ export default function Chat() {
         console.log('Sending ICE candidate');
         rtcSocket.emit('candidate', {
           candidate: event.candidate,
-          room: room,
+          room_id: room_id,
         });
       }
     };
@@ -218,7 +218,7 @@ export default function Chat() {
       try {
         const offer = await newPeerConnection.createOffer();
         await newPeerConnection.setLocalDescription(offer);
-        rtcSocket.emit('offer', { offer, room });
+        rtcSocket.emit('offer', { offer, room_id });
       } catch (error) {
         console.error('Error creating offer:', error);
       }
@@ -232,7 +232,7 @@ export default function Chat() {
         );
         const answer = await newPeerConnection.createAnswer();
         await newPeerConnection.setLocalDescription(answer);
-        rtcSocket.emit('answer', { answer, room });
+        rtcSocket.emit('answer', { answer, room_id });
       } catch (error) {
         console.error('Error handling offer:', error);
       }
@@ -314,7 +314,7 @@ export default function Chat() {
       recognition.current?.stop();
       isRecording.current = false;
     };
-  }, [room]);
+  }, [room_id]);
 
   const handleNavigation = () => {
     router.push('/Comment');
