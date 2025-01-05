@@ -7,6 +7,7 @@ export default async function Main() {
   const token = cookieStore.get('access');
 
   if (token) {
+    console.log('토큰 있음');
     redirect('/MainPage');
   }
 

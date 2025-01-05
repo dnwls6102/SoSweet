@@ -77,15 +77,22 @@ const logOut = (req: Request, res: Response, next: NextFunction): void => {
   const accessToken = req.cookies?.access;
   const refreshToken = req.cookies?.refresh;
 
-  if(!accessToken || !refreshToken) {
-    res.status(400).json({ message: "토큰이 없습니다, 로그인 상태를 확인하세요."});
-    return;
-  }
+  if(accessToken)
+    console.log('access 토큰 있음');
+  if(refreshToken)
+    console.log('refresh 토큰 있음');
+
+  // if(!accessToken || !refreshToken) {
+  //   console.log('토큰 없음');
+  //   res.status(400).json({ message: "토큰이 없습니다, 로그인 상태를 확인하세요."});
+  //   return;
+  // }
 
   res.clearCookie('access');
+  console.log('access 토큰 삭제');
 
   try {
-    jwt.verify(refreshToken, secretKey);
+    // jwt.verify(refreshToken, secretKey);
     res.clearCookie('refresh');
     next();
   } catch(error) {
