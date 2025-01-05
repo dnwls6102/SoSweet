@@ -19,7 +19,7 @@ redisClient.connect().catch((err) => {
 
 async function recordDialog(req: Request, res: Response): Promise<void> {
   try {
-    const { room_id,user_id, script} = req.body;
+    const { room_id, user_id, script} = req.body;
     // 아쉽게도 Redis는 문자열 기반 저장소이기 때문에, 키와 밸류 모두 문자열로 저장해야 한다.
     await redisClient.rPush(`conversations:${room_id}`, JSON.stringify({ role: "user", content: script, name:user_id}));
     const record = await redisClient.lRange(`conversations:${room_id}`, 0, -1);
