@@ -4,8 +4,16 @@ import styles from './page.module.css';
 import SmallForm from '@/components/smallForm';
 import Input from '@/components/input';
 import Link from 'next/link';
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
+
+interface UserPayload {
+  user_id: string;
+  iat: number;
+  exp: number;
+}
 
 export default function LoginClient() {
   const [user_id, setId] = useState('');
@@ -22,16 +30,28 @@ export default function LoginClient() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ user_id, user_password }),
-          credentials: "include",
+          credentials: 'include',
         },
       );
+
       if (response.ok) {
         console.log('로그인 성공');
+        const token = Cookies.get('access');
+        if (token) {
+          const decoded = jwtDecode<UserPayload>(token);
+          console.log('로그인된 유저 정보:', decoded);
+        }
         alert('로그인 성공!');
         router.replace('/MainPage');
       } else {
-        console.error('로그인 실패');
-        alert('로그인 실패: 아이디 또는 비밀번호를 확인해주세요.');
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: '로그인 실패' }));
+        console.error('로그인 실패:', errorData.message);
+        alert(
+          errorData.message ||
+            '로그인 실패: 아이디 또는 비밀번호를 확인해주세요.',
+        );
       }
     } catch (error) {
       console.error('서버 오류:', error);
