@@ -34,6 +34,7 @@ export default function RatingPage() {
 
   const handleSubmit = async () => {
     const data = {
+      user_id,
       rating,
       comment,
       like,
