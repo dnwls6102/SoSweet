@@ -38,6 +38,7 @@
 .logout {
   font-size: 18px;
   color: #aaaaaa;
+  cursor: pointer;
 }
 
 .link {
