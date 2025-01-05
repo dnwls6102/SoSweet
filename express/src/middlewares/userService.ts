@@ -87,7 +87,7 @@ const logOut = (req: Request, res: Response, next: NextFunction): void => {
   console.log('access 토큰 삭제');
 
   try {
-    jwt.verify(refreshToken, secretKey);
+    // jwt.verify(refreshToken, secretKey);
     res.clearCookie('refresh');
     next();
   } catch(error) {
