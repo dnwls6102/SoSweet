@@ -59,31 +59,31 @@ export default function MatchingPerson() {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        <div className={styles.rank}>
-          <span className={styles.rankText}>나의 등급:</span>
-          <div className={styles.rankIcon}>
+        <div className={styles.leftSection}>
+          <Image
+            src="/matching-illustration.jpg"
+            alt="Matching Illustration"
+            width={500}
+            height={500}
+            className={styles.matchImage}
+          />
+        </div>
+        <div className={styles.rightSection}>
+          <div className={styles.rankContainer}>
+            <span className={styles.rankText}>나의 등급</span>
             <Image
               src="/bronze-icon.svg"
               alt="Rank Icon"
-              width={80}
-              height={80}
+              width={60}
+              height={60}
+              className={styles.rankIcon}
             />
+            <span className={styles.rankLevel}>브론즈</span>
           </div>
-          <span className={styles.rankLevel}>브론즈</span>
+          <button className={styles.matchButton} onClick={handleMatching}>
+            매칭 시작
+          </button>
         </div>
-
-        <div className={styles.unknownPerson}>
-          <Image
-            className={styles.unknownPersonImage}
-            src="/anonymous.png"
-            alt="Unknown Person"
-            width={225}
-            height={225}
-          />
-        </div>
-        <button className={styles.matchButton} onClick={handleMatching}>
-          매칭 시작
-        </button>
       </div>
     </div>
   );
