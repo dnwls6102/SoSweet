@@ -5,6 +5,7 @@ import path from "path";
 import userRoutes from "./routes/userRoutes";
 import apiRoutes from "./routes/apiRoutes";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 
 dotenv.config(); // .env 파일 로드
 
@@ -22,6 +23,8 @@ app.use(
   "/node_modules",
   express.static(path.join(__dirname, "..", "node_modules"))
 );
+// 쿠키 뜯어볼 수 있게 쿠키 파서 설정
+app.use(cookieParser());
 
 // CORS 설정
 app.use(
