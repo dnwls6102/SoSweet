@@ -144,14 +144,10 @@ export const initializeSocketServer = (server: http.Server) => {
       // 피드백을 작성한 유저 수 확인
       const userCount = Object.keys(evaluations[room]).length
       if (userCount === 2) {
-        // 상대방에게 내가 작성한 피드백 전송
+        // 상대방에게 내가 작성한 피드백 전송 => 소켓 종료
         socket.broadcast.to(room).emit("receiveFeedback", evaluations[room][user_id]);
-        // 참여자들에게 피드백이 끝났음을 알림 -> 소켓 종료
-        io.to(room).emit("feedbackComplete");
         // 피드백 삭제
         delete evaluations[room];
-        // 피드백을 보냈으므로 소켓을 종료
-        socket.disconnect();
       }
     })
 
