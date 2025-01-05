@@ -50,7 +50,7 @@ export default function Chat() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userID, script }),
+        body: JSON.stringify({ userID, script, room }),
       });
 
       if (response.ok) {
