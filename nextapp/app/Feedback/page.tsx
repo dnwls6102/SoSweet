@@ -40,21 +40,24 @@ export default function Feedback() {
   // 표정 정보 받아오기
   const fetchEmotionData = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/api/feedback/faceinfo/${userID}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `http://localhost:4000/api/feedback/faceinfo/${userID}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       if (response.ok) {
         const data = await response.json();
         setEmotionData(data);
       } else {
-        console.error('데이터 가져오기 실패:', response.status);
+        console.log('데이터 가져오기 실패:', response.status);
       }
     } catch (error) {
-      console.error('서버 오류:', error);
+      console.log('서버 오류:', error);
     }
   };
 
@@ -69,87 +72,99 @@ export default function Feedback() {
   // 언어적 분석 받아오기
   const fetchVerbalData = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/api/feedback/talk/${userID}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `http://localhost:4000/api/feedback/talk/${userID}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       if (response.ok) {
         const data = await response.json();
         setVerbal(data); // verbal 데이터 상태에 저장
       } else {
-        console.error('언어적 데이터 가져오기 실패:', response.status);
+        console.log('언어적 데이터 가져오기 실패:', response.status);
       }
     } catch (error) {
-      console.error('서버 오류:', error);
+      console.log('서버 오류:', error);
     }
   };
 
   // 비언어적 분석 받아오기
   const fetchNonverbalData = async () => {
     try {
-      const response = await fetch(`http://localhost:4000//api/feedback/notalk/${userID}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `http://localhost:4000//api/feedback/notalk/${userID}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       if (response.ok) {
         const data = await response.json();
         setNonverbal(data); // nonverbal 데이터 상태에 저장
       } else {
-        console.error('비언어적 데이터 가져오기 실패:', response.status);
+        console.log('비언어적 데이터 가져오기 실패:', response.status);
       }
     } catch (error) {
-      console.error('서버 오류:', error);
+      console.log('서버 오류:', error);
     }
   };
 
   // 비언어적 습관 몇 분 몇 초에 했는지 받아오기
   const fetchNonverbalTimeline = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/api/feedback/timeline/${userID}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `http://localhost:4000/api/feedback/timeline/${userID}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       if (response.ok) {
         const timelineData = await response.json();
         console.log('비언어적 습관 시간 데이터:', timelineData); // 테스트용, 나중에 삭제 가능
       } else {
-        console.error(
+        console.log(
           '비언어적 습관 시간 데이터 가져오기 실패:',
           response.status,
         );
       }
     } catch (error) {
-      console.error('서버 오류:', error);
+      console.log('서버 오류:', error);
     }
   };
 
   // 사용자 대화 한 줄 평가 받아오기
   const fetchSummary = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/api/feedback?userID=${userID}&number=${number}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
+      const response = await fetch(
+        `http://localhost:4000/api/feedback?userID=${userID}&number=${number}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-    });
+      );
 
       if (response.ok) {
         const summary = await response.json();
         setSummary(summary.comment);
       } else {
-        console.error('한 줄 평가 데이터 가져오기 실패:', response.status);
+        console.log('한 줄 평가 데이터 가져오기 실패:', response.status);
       }
     } catch (error) {
-      console.error('서버 오류:', error);
+      console.log('서버 오류:', error);
     }
   };
 
@@ -211,6 +226,7 @@ export default function Feedback() {
         <h2 className={styles.sectionTitle}>비언어적 분석</h2>
         {nonverbal ? (
           <p>{nonverbal}</p>
+        ) : (
           // <>
           //   <p>
           //     전반적으로 슬픔이 많습니다. 편안하게 긴장을 풀고, 자연스러운
@@ -222,7 +238,6 @@ export default function Feedback() {
           //     만지는 습관이 있으신 것 같아요!
           //   </p>
           // </>
-        ) : (
           <p>비언어적 분석 데이터를 불러오는 중입니다.</p>
         )}
       </div>
