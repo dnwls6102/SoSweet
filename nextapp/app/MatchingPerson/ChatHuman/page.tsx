@@ -331,9 +331,8 @@ export default function Chat() {
       try {
         // Node 백엔드로 POST 요청
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/faceinfo`,
+          'http://localhost:4000/api/human/faceinfo',
           {
-            // const response = await fetch('http://localhost:4000/api/human/faceinfo', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -365,16 +364,6 @@ export default function Chat() {
     const intervalId = setInterval(() => {
       captureAndSendFrame();
     }, 1000); // 1초마다
-
-    // 상대방 연결 종료 처리
-    rtcSocket.on('peerDisconnected', () => {
-      console.log('Peer disconnected');
-      if (remoteVideoRef.current) {
-        remoteVideoRef.current.srcObject = null;
-      }
-      //소켓 연결 종료시키고
-      //상대방 평가 화면으로 router.push 시켜주기
-    });
 
     // 정리 함수
     return () => {
