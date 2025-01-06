@@ -22,7 +22,6 @@ export default function Chat() {
   const [peerConnection, setPeerConnection] =
     useState<RTCPeerConnection | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null); // WEBRTC용
-  const [socketApi, setSocketApi] = useState<Socket | null>(null); // SoSweet_API용
   const mediaRecorderRef = useRef<MediaRecorder | null>(null); // 다시보기 녹화용 (Blob)
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]); // 녹화 데이터 쌓는 배열
 
@@ -55,6 +54,7 @@ export default function Chat() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ user_id, script, room_id }),
+        mode: 'cors',
       });
 
       if (response.ok) {
@@ -157,12 +157,6 @@ export default function Chat() {
       },
     );
     setSocket(rtcSocket);
-
-    // 소켓 연결 초기화 - SoSweet_API
-    const apiSocket = io('http://localhost:5000', {
-      transports: ['websocket'],
-    });
-    setSocketApi(apiSocket);
 
     // PeerConnection 초기화
     const newPeerConnection = new RTCPeerConnection(pcConfig);
@@ -287,13 +281,13 @@ export default function Chat() {
     });
 
     // Canvas로 동영상 이미지로 캡쳐하고 서버로 전송하기
-    const captureAndSendFrame = () => {
-      if (!localVideoRef.current) return;
+    const captureAndSendFrame = async () => {
       const videoEl = localVideoRef.current;
+      if (!videoEl) return;
 
       // 현재 비디오 크기 가져오기
-      const vWidth = videoEl.videoWidth;
-      const vHeight = videoEl.videoHeight;
+      const vWidth = videoEl.videoWidth / 3; // 기존 해당도의 1/3 로 줄이기
+      const vHeight = videoEl.videoHeight / 3;
 
       if (!vWidth || !vHeight) {
         // 영상 아직 준비 안 되었으면 스킵하기
@@ -309,14 +303,41 @@ export default function Chat() {
       if (!ctx) return;
 
       // canvas에 비디오 그리기
-      ctx.drawImage(videoEl, 0, 0, vWidth, vHeight);
+      ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
 
-      // toDataURL로 이미지(Base64) 추출
-      const dataURL = canvas.toDataURL('image/png');
+      // JPEG 포맷으로 Base64 인코딩
+      const dataURL = canvas.toDataURL('image/jpeg', 0.7); // 70% 품질로 압축
 
-      //소켓을 통해 서버로 전송 (감정, 동작 두 종류)
-      apiSocket.emit('emotion-chunk', { user_id: 'test', frame: dataURL });
-      apiSocket.emit('action-chunk', { user_id: 'test', frame: dataURL });
+      try {
+        // Node 백엔드로 POST 요청
+        const response = await fetch(
+          'http://localhost:4000/api/human/faceinfo',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              frame: dataURL,
+              user_id: user_id,
+              room_id: room_id,
+            }),
+            mode: 'cors',
+            credentials: 'include',
+          },
+        );
+
+        if (!response.ok) {
+          console.error('Node 서버 응답 에러:', response.status);
+          return;
+        }
+
+        // Flask -> Node -> 클라이언트로 넘어온 최종 결과
+        const result = await response.json();
+        console.log('분석 결과:', result);
+      } catch (error) {
+        console.error('전송 에러: ', error);
+      }
     };
 
     // 일정 간격(1초)에 한 번씩 캡쳐하기
@@ -351,9 +372,15 @@ export default function Chat() {
   }, [room_id, recordedChunks]);
 
   const handleNavigation = () => {
-    mediaRecorderRef.current.stop();
-    console.log('녹화 중지!');
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      console.log('녹화 중지됨!');
 
+      const completeBlob = new Blob(recordedChunks, { type: 'video/webm' });
+      console.log('완성된 영상 Blob: ', completeBlob);
+
+      // S3 업로드 로직
+    }
     // 페이지 이동하기 (여기에 recordedChunks를 합쳐서 S3 업로드 추가 로직 구현해야함)
     router.push('/Comment');
   };

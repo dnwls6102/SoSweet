@@ -31,12 +31,17 @@ app.use(
   cors({
     origin: process.env.CLIENT_URL || 'http://localhost:3000',
     methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
     credentials: true,
     preflightContinue: false,
     optionsSuccessStatus: 204
   })
 );
+
+app.options('*', cors()); // CORS 사전 요청 허용
+
+app.use(express.json({ limit: '50mb' }));  // JSON 요청 크기 제한 증가
+app.use(express.urlencoded({ limit: '50mb', extended: true }));  // form-urlencoded 데이터 크기 제한
 
 // 요청 로깅 미들웨어
 app.use((req, res, next) => {
