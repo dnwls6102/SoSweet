@@ -45,14 +45,16 @@ export default function Chat() {
 
   const tryNlp = async (script: string) => {
     try {
-      const response = await fetch('http://localhost:5000/api/nlp', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/nlp`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ script }),
         },
-        // credentials: 'include',
-        body: JSON.stringify({ script }),
-      });
+      );
       if (response.ok) {
         const result = await response.json();
         console.log(result.message);
@@ -76,6 +78,7 @@ export default function Chat() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ script, user_id }),
       });
 
@@ -225,6 +228,7 @@ export default function Chat() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ script: 'end', user_id }),
+        credentials: 'include',
       });
 
       if (response.ok) {
