@@ -15,7 +15,8 @@ export default function MatchingPerson2() {
 
   useEffect(() => {
     // 소켓 연결 초기화
-    const newSocket = io('http://localhost:4000', {
+    const newSocket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`, {
+    // const newSocket = io('http://localhost:4000', {
       path: '/api/match',
       transports: ['websocket'],
     });

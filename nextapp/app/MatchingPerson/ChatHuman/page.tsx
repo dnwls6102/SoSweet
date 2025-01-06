@@ -52,14 +52,18 @@ export default function Chat() {
 
   const trySendScript = async (script: string) => {
     try {
-      const response = await fetch('http://localhost:4000/api/human/dialog', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog`,
+        {
+          // const response = await fetch('http://localhost:4000/api/human/dialog', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_id, script, room_id }),
+          mode: 'cors',
         },
-        body: JSON.stringify({ user_id, script, room_id }),
-        mode: 'cors',
-      });
+      );
 
       if (response.ok) {
         console.log('전송 성공');
