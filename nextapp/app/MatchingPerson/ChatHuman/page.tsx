@@ -164,7 +164,7 @@ export default function Chat() {
     dispatch(setReduxSocket(rtcSocket));
     dispatch(setRoom(room_id));
 
-    // 소켓 연결 확인
+    // 소켓 연결 확인 및 방 참가
     rtcSocket.on('connect', () => {
       console.log('Socket connected and stored in Redux:', rtcSocket.id);
       // 연결 후 방에 참가
@@ -173,7 +173,6 @@ export default function Chat() {
 
     // PeerConnection 초기화
     const newPeerConnection = new RTCPeerConnection(pcConfig);
-    // setPeerConnection(newPeerConnection);
 
     // 미디어 스트림 초기화
     const initializeMedia = async () => {
@@ -193,11 +192,7 @@ export default function Chat() {
           newPeerConnection.addTrack(track, stream);
         });
 
-        // 연결되면 시그널링 시작 (방에 참가)
-        rtcSocket.emit('join', { room_id });
-
-        // 여기서 MediaRecorder로 '전체 영상 Blob' 저장 로직 구현하기 => 대화 끝나고 S3 업로드 할 때 필요
-
+        // 연기서 MediaRecorder로 '전체 영상 Blob' 저장 로직 구현하기
         setupMediaRecorder(stream);
       } catch (err) {
         console.error('Error accessing media devices:', err);
@@ -244,11 +239,6 @@ export default function Chat() {
     };
 
     // WebRTC 소켓 이벤트 핸들러 설정
-    rtcSocket.on('connect', () => {
-      console.log('Socket connected:', rtcSocket.id);
-    });
-
-    // 상대방 연결 종료 처리
     rtcSocket.on('peerDisconnected', () => {
       console.log('Peer disconnected - from rtcSocket');
       if (remoteVideoRef.current) {
