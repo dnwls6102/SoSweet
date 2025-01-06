@@ -7,13 +7,14 @@ import { ttsMiddleware } from "../middlewares/tts";
 import { sendFaceInfoToFlask, sendMotionInfoFlask } from "../controllers/flaskController";
 
 
-  const api = Router();
 
-  api.post("/ai/dialog", chatMiddleware, ttsMiddleware);
+const api = Router();
 
-  api.post("/ai/dialog/end", endChatWithAI, chatAnalysis);
+api.post("/ai/dialog", chatMiddleware, ttsMiddleware);
 
-  api.post("/human/dialog", recordDialog);
+api.post("/ai/dialog/end", endChatWithAI, chatAnalysis);
+
+api.post("/human/dialog", recordDialog);
 
 api.post("/human/dialog/end", endChat, chatAnalysis);
 

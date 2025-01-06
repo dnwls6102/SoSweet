@@ -142,9 +142,9 @@ export const initializeSocketServer = (server: http.Server) => {
       evaluations[room][user_id] = { rating, comment, like};
       console.log(`${user_id}로부터의 피드백이 도착했습니다.`);
       // 피드백을 작성한 유저 수 확인
-      const userCount = Object.keys(evaluations[room]).length;
+      const room_users = Object.keys(evaluations[room]);
+      const userCount = room_users.length;
       if (userCount === 2) {
-        const room_users = Object.keys(evaluations[room]);
         const partner_id = room_users.find((id) => id !== user_id);
         if (!partner_id) {
           throw new Error("상대방의 ID를 찾을 수 없습니다.")
