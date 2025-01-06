@@ -14,8 +14,8 @@ export default function SelectInput({
   onChange,
 }: SelectInputProps) {
   return (
-    <div className={styles.input}>
-      <span className={styles.title}>{title}</span>
+    <div className={styles.inputGroup}>
+      <span className={styles.label}>{title}</span>
       <div className={styles.buttonGroup}>
         {options.map((option) => (
           <button

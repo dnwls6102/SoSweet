@@ -1,0 +1,11 @@
+.relationshipContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.relationshipSet {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+} 

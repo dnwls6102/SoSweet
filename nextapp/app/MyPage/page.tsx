@@ -60,9 +60,9 @@ export default function MyPage() {
 
   return (
     <div className={styles.wrapper}>
-      <MiddleForm>
+      <div className={styles.content}>
         <div className={styles.userInfo}>
-          <h2>마이 페이지</h2>
+          <h2 className={styles.sectionTitle}>마이 페이지</h2>
           <div className={styles.userDetails}>
             <div>
               <label htmlFor="profileUpload">
@@ -82,28 +82,35 @@ export default function MyPage() {
                 style={{ display: 'none' }}
               />
             </div>
-            <div>
+            <div className={styles.userInfoText}>
               {isEditingName ? (
-                <input
-                  type="text"
-                  value={userInfo.name}
-                  onChange={handleNameChange}
-                  className={styles.inputField}
-                />
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>이름</span>
+                  <input
+                    type="text"
+                    value={userInfo.name}
+                    onChange={handleNameChange}
+                    className={styles.inputField}
+                  />
+                </div>
               ) : (
-                <h3>
-                  {userInfo.name}{' '}
+                <div className={styles.infoRow}>
+                  <span className={styles.infoLabel}>이름</span>
+                  <span className={styles.readOnlyField}>{userInfo.name}</span>
                   <button
                     onClick={() => setIsEditingName(true)}
                     className={styles.editButton}
                   >
                     수정
                   </button>
-                </h3>
+                </div>
               )}
-              <p>생년월일: {userInfo.birthDate}</p>
-              <p>
-                직업:{' '}
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>생년월일</span>
+                <span className={styles.readOnlyField}>{userInfo.birthDate}</span>
+              </div>
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>직업</span>
                 <input
                   type="text"
                   value={userInfo.job}
@@ -112,9 +119,9 @@ export default function MyPage() {
                   }
                   className={styles.inputField}
                 />
-              </p>
-              <p>
-                성별:{' '}
+              </div>
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>성별</span>
                 <input
                   type="text"
                   value={userInfo.gender}
@@ -123,7 +130,7 @@ export default function MyPage() {
                   }
                   className={styles.inputField}
                 />
-              </p>
+              </div>
               <button onClick={handleSave} className={styles.editButton}>
                 저장
               </button>
@@ -131,7 +138,7 @@ export default function MyPage() {
           </div>
         </div>
         <div className={styles.userRank}>
-          <h2>나의 소개팅 등급</h2>
+          <h2 className={styles.sectionTitle}>나의 소개팅 등급</h2>
           <Image
             src="/bronze-icon.svg"
             alt="등급 이미지"
@@ -144,7 +151,7 @@ export default function MyPage() {
           </p>
           <p>총 소개팅 전적: {userInfo.score}</p>
         </div>
-      </MiddleForm>
+      </div>
     </div>
   );
 }

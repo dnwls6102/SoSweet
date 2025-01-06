@@ -2,7 +2,6 @@
 
 import styles from './page.module.css';
 import SmallForm from '@/components/smallForm';
-import Input from '@/components/input';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -63,19 +62,26 @@ export default function LoginClient() {
     <div className={styles.wrapper}>
       <SmallForm>
         <p className={styles.logo}>💖소스윗</p>
-        <Input
-          placeholder="아이디"
-          value={user_id}
-          onChange={(e) => setId(e.target.value)}
-          type="text"
-        />
         <div className={styles.contentwrapper}>
-          <Input
-            placeholder="비밀번호"
-            value={user_password}
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-          />
+          <div className={styles.inputWrapper}>
+            <label className={styles.label}>아이디</label>
+            <input
+              className={styles.input}
+              placeholder="아이디를 입력하세요"
+              value={user_id}
+              onChange={(e) => setId(e.target.value)}
+            />
+          </div>
+          <div className={styles.inputWrapper}>
+            <label className={styles.label}>비밀번호</label>
+            <input
+              className={styles.input}
+              type="password"
+              placeholder="비밀번호를 입력하세요"
+              value={user_password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
         </div>
         <div className={styles.inlinewrapper}>
           <Link href="/Signin">
