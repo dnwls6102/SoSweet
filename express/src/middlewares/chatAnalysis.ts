@@ -16,24 +16,24 @@ type ChatCompletionMessageParam = {
 
 const completedChat: ChatCompletionMessageParam[] = [];
 
-function createAiPrompt(ID: string): ChatCompletionMessageParam {
+function createAiPrompt(user_id: string): ChatCompletionMessageParam {
   return {
     role: "system",
     content: `나는 소개팅 대화 평가 AI DatingTalkAnalyzer입니다. 
   다음은 두 사람이 소개팅 어플리케이션을 통해 나눈 대화입니다. 
-  이 대화를 한국어로 분석하되, 최종 피드백은 **두 사람 중 name이 ${ID}인 사람**에 대해서만 작성해주세요.
+  이 대화를 한국어로 분석하되, 최종 피드백은 **두 사람 중 name이 ${user_id}인 사람**에 대해서만 작성해주세요.
   
   ### 평가 기준
   
   **발화량 분석**
   
-  - 두 사람이 대화한 내용을 모두 확인하되, 피드백은 name이 ${ID}인 사람에 대해서만 작성합니다.
+  - 두 사람이 대화한 내용을 모두 확인하되, 피드백은 name이 ${user_id}인 사람에 대해서만 작성합니다.
   - 두 사람의 전체 발화량이 적당했는지(시간 대비).
   - 상대에 비해 발화량 비율이 7:3을 넘거나 3:7 이하인 경우 지적.
   
   **대화 주제 적합성**
   
-  - 두 사람이 대화 주제에 맞추어 이야기했는지 확인한 뒤, name이 ${ID}인 사람과 관련된 지적 사항만 피드백에 반영합니다.
+  - 두 사람이 대화 주제에 맞추어 이야기했는지 확인한 뒤, name이 ${user_id}인 사람과 관련된 지적 사항만 피드백에 반영합니다.
   
   **발화의 유창성**
   
@@ -76,12 +76,12 @@ function createAiPrompt(ID: string): ChatCompletionMessageParam {
   
   ### 결과 작성 방식
   
-  - 분석 결과: 대화 전반을 참고하여, **name이 ${ID}인 사람**이 위 항목들을 지키지 못한 부분이 있다면 간단히 정리.
-  - 결론: name이 ${ID}인 사람의 대화 태도를 종합적으로 요약.
+  - 분석 결과: 대화 전반을 참고하여, **name이 ${user_id}인 사람**이 위 항목들을 지키지 못한 부분이 있다면 간단히 정리.
+  - 결론: name이 ${user_id}인 사람의 대화 태도를 종합적으로 요약.
   
   ### 예시
   
-  - 분석 결과: (여자, ID=123)이 발화량이 7:3 수준으로 많았고, 공감 표현이 다소 부족했음.
+  - 분석 결과: (여자, user_id=123)이 발화량이 7:3 수준으로 많았고, 공감 표현이 다소 부족했음.
   - 결론: 전체적으로 대화 흐름은 유지했으나, 질문과 응답에서 균형이 살짝 아쉬웠음.
   
   대화를 아래 형식으로 제공됩니다:
@@ -95,8 +95,8 @@ function createAiPrompt(ID: string): ChatCompletionMessageParam {
 }
 
 async function chatAnalysis(req: Request, res: Response): Promise<void> {
-  const { script, ID } = req.body;
-  const AiPrompt = createAiPrompt(ID);
+  const { script, user_id } = req.body;
+  const AiPrompt = createAiPrompt(user_id);
   completedChat.push(AiPrompt);
 
   const newMessages: ChatCompletionMessageParam[] = script;
@@ -117,7 +117,7 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o",
       messages: completedChat,
       temperature: 0.7,
     });
