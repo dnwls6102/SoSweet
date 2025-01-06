@@ -9,6 +9,7 @@ import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 import { setPartnerFeedback } from '../../store/feedbackSlice';
+import { setIsAIChat } from '../../store/aiFlagSlice';
 
 interface UserPayload {
   user_id: string;
@@ -51,11 +52,11 @@ export default function RatingPage() {
       console.log('전체 피드백 데이터 수신:', feedbacks);
       // 상대방의 피드백 찾기
       const partnerFeedback = Object.entries(feedbacks).find(
-        ([id, _]) => id !== user_id,
+        ([id]) => id !== user_id,
       );
 
       if (partnerFeedback) {
-        const [_, feedback] = partnerFeedback;
+        const [, feedback] = partnerFeedback;
         // boolean으로 변환하여 저장
         const partnerData = {
           rating: feedback.rating,
@@ -64,8 +65,11 @@ export default function RatingPage() {
         };
         console.log('상대방의 피드백:', partnerData);
         dispatch(setPartnerFeedback(partnerData));
+        dispatch(setIsAIChat(false));
       }
-
+      //소켓 연결 해제
+      socket.off('receiveFeedback');
+      socket.disconnect();
       router.push('/Feedback');
     });
 

@@ -30,6 +30,7 @@ export default function Feedback() {
 
   // Redux store에서 데이터 가져오기
   const feedbackData = useSelector((state: RootState) => state.feedback);
+  const isAIChat = useSelector((state: RootState) => state.aiFlag.isAIChat);
 
   useEffect(() => {
     if (feedbackData.summary) {
@@ -248,21 +249,25 @@ export default function Feedback() {
       </div>
 
       {/* 상대방의 피드백 */}
-      <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>상대방의 평가</h2>
-        {feedbackData.partnerFeedback ? (
-          <div className={styles.partnerFeedback}>
-            <p>별점: {'★'.repeat(feedbackData.partnerFeedback.rating)}</p>
-            <p>코멘트: {feedbackData.partnerFeedback.comment}</p>
-            <p>
-              재매칭 의사:{' '}
-              {feedbackData.partnerFeedback.like ? '만나고 싶어요' : '다음에요'}
-            </p>
-          </div>
-        ) : (
-          <p>상대방의 평가 데이터를 불러오는 중입니다.</p>
-        )}
-      </div>
+      {!isAIChat && (
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>상대방의 평가</h2>
+          {feedbackData.partnerFeedback ? (
+            <div className={styles.partnerFeedback}>
+              <p>별점: {'★'.repeat(feedbackData.partnerFeedback.rating)}</p>
+              <p>코멘트: {feedbackData.partnerFeedback.comment}</p>
+              <p>
+                재매칭 의사:{' '}
+                {feedbackData.partnerFeedback.like
+                  ? '만나고 싶어요'
+                  : '다음에요'}
+              </p>
+            </div>
+          ) : (
+            <p>상대방의 평가 데이터를 불러오는 중입니다.</p>
+          )}
+        </div>
+      )}
 
       {/* 종합 평가 */}
       <div className={styles.overallSection}>
