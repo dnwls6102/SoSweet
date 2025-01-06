@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { setSummary } from '../../../store/feedbackSlice';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
+import { setIsAIChat } from '../../../store/aiFlagSlice';
 
 interface UserPayload {
   user_id: string;
@@ -73,15 +74,18 @@ export default function Chat() {
 
   const trySendScript = async (script: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/dialog`, {
-      // const response = await fetch('http://localhost:4000/api/ai/dialog', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/dialog`,
+        {
+          // const response = await fetch('http://localhost:4000/api/ai/dialog', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({ script, user_id }),
         },
-        credentials: 'include',
-        body: JSON.stringify({ script, user_id }),
-      });
+      );
 
       if (response.ok) {
         const audioBlob = await response.blob(); // 서버 응답 데이터를 Blob으로 변환
@@ -176,21 +180,26 @@ export default function Chat() {
 
   const handleNavigation = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/dialog/end`, {
-      // const response = await fetch('http://localhost:4000/api/ai/dialog/end', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/dialog/end`,
+        {
+          // const response = await fetch('http://localhost:4000/api/ai/dialog/end', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ script: 'end', user_id }),
+          credentials: 'include',
         },
-        body: JSON.stringify({ script: 'end', user_id }),
-        credentials: 'include',
-      });
+      );
 
       if (response.ok) {
         const data = await response.json();
         console.log('대화 종료 요청 성공');
         // AI 응답을 Redux store에 저장
         dispatch(setSummary(data.analysis));
+        dispatch(setIsAIChat(true));
+
         router.push('/Feedback');
       } else {
         console.log('대화 종료 요청 실패');

@@ -35,7 +35,7 @@ const evaluations: {
   [room_id:string]: {
     [user_id: string]: {
       rating: number;
-      like: number;
+      like: boolean;
       comment: string;
     }
   } 
@@ -132,7 +132,7 @@ export const initializeSocketServer = (server: http.Server) => {
       socket.to(data.room).emit("candidate", data.candidate);
     });
     // 상대방에게 평가 보내고, 평가 받기. 양쪽 다 평가를 완료하면 소켓을 닫고 피드백 페이지로 이동하기.
-    socket.on("submitFeedback", (data: { comment: string, rating: number, like: number, room: string, user_id: string }) => {
+    socket.on("submitFeedback", (data: { comment: string, rating: number, like: boolean, room: string, user_id: string }) => {
       const { comment, rating, like, room, user_id } = data;
       console.log("피드백 데이터 수신:", { room, user_id, rating, like });
 
@@ -151,16 +151,9 @@ export const initializeSocketServer = (server: http.Server) => {
       if (userCount === 2) {
         console.log("두 명의 피드백이 모두 도착했습니다. receiveFeedback 이벤트 전송");
         
-        // 방의 모든 소켓 가져오기
-        const sockets = io.sockets.adapter.rooms.get(room);
-        if (sockets) {
-          console.log("방에 있는 소켓들:", Array.from(sockets));
-          // 방의 모든 소켓에 이벤트 전송
-          io.to(room).emit("receiveFeedback");
-          console.log("피드백 이벤트 전송 완료");
-        } else {
-          console.log("방을 찾을 수 없음:", room);
-        }
+        // 방의 모든 소켓에 전체 평가 데이터 전송
+        io.to(room).emit("receiveFeedback", evaluations[room]);
+        console.log("전체 피드백 데이터 전송 완료:", evaluations[room]);
         
         // 피드백 삭제
         delete evaluations[room];
