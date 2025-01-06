@@ -6,13 +6,22 @@ import styles from './page.module.css';
 import MiddleForm from '@/components/middleForm';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
+import { setPartnerFeedback } from '../../store/feedbackSlice';
 
 interface UserPayload {
   user_id: string;
   iat: number;
   exp: number;
+}
+
+interface Comments {
+  [user_id: string]: {
+    rating: number;
+    like: boolean;
+    comment: string;
+  };
 }
 
 export default function RatingPage() {
@@ -23,6 +32,7 @@ export default function RatingPage() {
   const router = useRouter();
   const socket = useSelector((state: RootState) => state.socket.socket);
   const room = useSelector((state: RootState) => state.socket.room);
+  const dispatch = useDispatch();
 
   const token = Cookies.get('access');
   let user_id = '';
@@ -37,15 +47,32 @@ export default function RatingPage() {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on('receiveFeedback', () => {
-      console.log('receiveFeedback 이벤트 수신');
+    socket.on('receiveFeedback', (feedbacks: Comments) => {
+      console.log('전체 피드백 데이터 수신:', feedbacks);
+      // 상대방의 피드백 찾기
+      const partnerFeedback = Object.entries(feedbacks).find(
+        ([id, _]) => id !== user_id,
+      );
+
+      if (partnerFeedback) {
+        const [_, feedback] = partnerFeedback;
+        // boolean으로 변환하여 저장
+        const partnerData = {
+          rating: feedback.rating,
+          comment: feedback.comment,
+          like: feedback.like,
+        };
+        console.log('상대방의 피드백:', partnerData);
+        dispatch(setPartnerFeedback(partnerData));
+      }
+
       router.push('/Feedback');
     });
 
     return () => {
       socket.off('receiveFeedback');
     };
-  }, [socket, router]);
+  }, [socket, router, dispatch, user_id]);
 
   const handleStarClick = (index: number) => {
     setRating(index + 1); // 클릭한 별까지 색칠
