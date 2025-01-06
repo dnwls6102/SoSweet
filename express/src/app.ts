@@ -10,7 +10,8 @@ import cookieParser from "cookie-parser";
 dotenv.config(); // .env 파일 로드
 
 const app = express();
-
+// 쿠키 파싱 미들웨어: 최상단에 위치해야 한다고 함
+app.use(cookieParser());
 // JSON 파싱 미들웨어
 app.use(express.json());
 // URL 쿼리 파싱 미들웨어
@@ -25,6 +26,8 @@ app.use(
 );
 // 쿠키 뜯어볼 수 있게 쿠키 파서 설정
 app.use(cookieParser());
+
+
 
 // CORS 설정
 app.use(

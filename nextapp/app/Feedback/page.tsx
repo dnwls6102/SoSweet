@@ -155,7 +155,7 @@ export default function Feedback() {
             'Content-Type': 'application/json',
           },
         },
-      );
+    });
 
       if (response.ok) {
         const summary = await response.json();

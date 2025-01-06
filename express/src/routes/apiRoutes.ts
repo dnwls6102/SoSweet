@@ -7,9 +7,8 @@ import { ttsMiddleware } from "../middlewares/tts";
 import { sendFaceInfoToFlask, sendMotionInfoFlask } from "../controllers/flaskController";
 
 
-const api = Router();
 
-api.use("/", logInRequired);
+const api = Router();
 
 api.post("/ai/dialog", chatMiddleware, ttsMiddleware);
 
@@ -18,6 +17,8 @@ api.post("/ai/dialog/end", endChatWithAI, chatAnalysis);
 api.post("/human/dialog", recordDialog);
 
 api.post("/human/dialog/end", endChat, chatAnalysis);
+
+
 // flask 서버와 연결
 api.post("/human/faceinfo", (req, res) => {
     console.log("Face info 요청 들어옴:", req.body);
@@ -29,4 +30,4 @@ api.post("/human/actioninfo", (req, res) => {
     sendMotionInfoFlask(req, res);
 });
 
-export default api;
+  export default api;

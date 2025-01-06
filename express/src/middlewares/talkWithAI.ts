@@ -19,7 +19,7 @@ let conversations: { [userId: string]: ChatCompletionMessageParam[] } = {};
 
 // 미들웨어로 분리된 챗봇 로직
 async function chatMiddleware(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const { script, ID } = req.body;
+  const { script, user_id } = req.body;
 
   // text가 입력되지 않았을 경우에 오류 처리
   if (!script) {
@@ -29,8 +29,8 @@ async function chatMiddleware(req: Request, res: Response, next: NextFunction): 
 
   try {
     // 사용자 ID에 해당하는 대화 기록이 없으면 초기화
-    if (!conversations[ID]) {
-      conversations[ID] = [{
+    if (!conversations[user_id]) {
+      conversations[user_id] = [{
         role: "system",
         content: `John은 영동세브란스병원에서 일하는 30세의 의사로, 클라이밍을 취미로 즐깁니다. 그는 친구의 소개로 참석한 소개팅에서 새로운 영감을 기대하고 있습니다. 
         이 만남은 따뜻한 카페에서 진행되며, John은 상대방이 긴장하지 않도록 밝고 따뜻하게 대화를 시작합니다. 그는 상대방의 말에 집중하며, 자연스럽게 질문을 제시하고 적절한 리액션으로 매끄럽게 대화를 이어갑니다. 
@@ -55,16 +55,16 @@ async function chatMiddleware(req: Request, res: Response, next: NextFunction): 
     }
 
     // 대화 기록에 입력받은 유저 메세지 추가
-    conversations[ID].push({
+    conversations[user_id].push({
       role: "user",
       content: script,
-      name: ID,
+      name: user_id,
     });
 
     // ChatCompletion API 호출 == LLM에 유저 메세지 전달
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini", // 혹은 'gpt-4' 등 다른 모델로 변경 가능
-      messages: conversations[ID],
+      messages: conversations[user_id],
       temperature: 1.0, // 톤 조절(창의성 정도)
       // max_tokens, top_p, frequency_penalty 등 추가 옵션 설정 가능
     });
@@ -76,13 +76,13 @@ async function chatMiddleware(req: Request, res: Response, next: NextFunction): 
     }
     
     // 대화 기록에 AI 대답 저장
-    conversations[ID].push({
+    conversations[user_id].push({
       role: "assistant",
       content: assistantAnswer,
       name: "AI",
     });
 
-    console.log(conversations[ID]);
+    console.log(conversations[user_id]);
 
     // TTS 처리를 위해서 AI 답변 req에 저장
     req.body.script = assistantAnswer.replace(/【.*?】/g, "");
@@ -96,10 +96,10 @@ async function chatMiddleware(req: Request, res: Response, next: NextFunction): 
 };
 
 function endChatWithAI(req: Request, res: Response, next: NextFunction): void {
-  console.log(req.body.ID);
-  req.body.script = conversations[req.body.ID];
+  console.log(req.body.user_id);
+  req.body.script = conversations[req.body.user_id];
   console.log(req.body.script);
-  conversations[req.body.ID] = [];
+  conversations[req.body.user_id] = [];
   next();
 }
 

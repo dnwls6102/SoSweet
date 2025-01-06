@@ -53,8 +53,8 @@ const renewToken = (access: string, refresh: string): string | null => {
       return null;
     }
 
-    const payload: TokenPayload = decodedAccess;
-
+    const {exp, iat, ...payload } = decodedAccess;
+    console.log(payload);
     const newToken: string = genAccessToken(payload);
     return newToken;
   } catch(error) {
