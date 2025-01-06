@@ -2,7 +2,6 @@
 
 import styles from './page.module.css';
 import SmallForm from '@/components/smallForm';
-import Input from '@/components/input';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -61,31 +60,38 @@ export default function LoginClient() {
 
   return (
     <div className={styles.wrapper}>
-    <SmallForm>
-      <p className={styles.logo}>💖소스윗</p>
-      <div className={styles.contentwrapper}>
-        <div className={styles.inputWrapper}>
-          <label className={styles.label}>아이디</label>
-          <input className={styles.input} placeholder="아이디를 입력하세요" />
+      <SmallForm>
+        <p className={styles.logo}>💖소스윗</p>
+        <div className={styles.contentwrapper}>
+          <div className={styles.inputWrapper}>
+            <label className={styles.label}>아이디</label>
+            <input
+              className={styles.input}
+              placeholder="아이디를 입력하세요"
+              value={user_id}
+              onChange={(e) => setId(e.target.value)}
+            />
+          </div>
+          <div className={styles.inputWrapper}>
+            <label className={styles.label}>비밀번호</label>
+            <input
+              className={styles.input}
+              type="password"
+              placeholder="비밀번호를 입력하세요"
+              value={user_password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
         </div>
-        <div className={styles.inputWrapper}>
-          <label className={styles.label}>비밀번호</label>
-          <input 
-            className={styles.input} 
-            type="password" 
-            placeholder="비밀번호를 입력하세요" 
-          />
+        <div className={styles.inlinewrapper}>
+          <Link href="/Signin">
+            <button className={styles.button}>회원가입</button>
+          </Link>
+          <button className={styles.button} onClick={tryLogin}>
+            로그인
+          </button>
         </div>
-      </div>
-      <div className={styles.inlinewrapper}>
-        <Link href="/Signin">
-          <button className={styles.button}>회원가입</button>
-        </Link>
-        <Link href="/MainPage">
-          <button className={styles.button}>로그인</button>
-        </Link>
-      </div>
-    </SmallForm>
-  </div>
+      </SmallForm>
+    </div>
   );
 }

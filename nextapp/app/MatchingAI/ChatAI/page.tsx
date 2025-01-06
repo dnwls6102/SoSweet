@@ -255,11 +255,13 @@ export default function Chat() {
             />
             <div className={styles.relationshipExp}>
               <div className={styles.progressBar}>
-                <div 
-                  className={styles.progressFill} 
+                <div
+                  className={styles.progressFill}
                   style={{ width: `${relationshipScore}%` }}
                 >
-                  <span className={styles.progressValue}>{relationshipScore}/100</span>
+                  <span className={styles.progressValue}>
+                    {relationshipScore}/100
+                  </span>
                 </div>
               </div>
             </div>
@@ -273,15 +275,15 @@ export default function Chat() {
           readOnly
           value={feedback}
         ></textarea>
-          <Image
-            className={styles.callEndIcon}
-            onClick={handleNavigation}
-            src="/call-end.svg"
-            alt="대화 종료"
-            width={50}
-            height={50}
-            style={{ cursor: 'pointer' }} 
-          />
+        <Image
+          className={styles.callEndIcon}
+          onClick={handleNavigation}
+          src="/call-end.svg"
+          alt="대화 종료"
+          width={50}
+          height={50}
+          style={{ cursor: 'pointer' }}
+        />
       </div>
     </div>
   );
