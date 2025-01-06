@@ -282,17 +282,17 @@ export default function Chat() {
 
     // Canvas로 동영상 이미지로 캡쳐하고 서버로 전송하기
     const captureAndSendFrame = async () => {
+      if (!room_id) return;
+
       const videoEl = localVideoRef.current;
       if (!videoEl) return;
 
       // 현재 비디오 크기 가져오기
-      const vWidth = videoEl.videoWidth / 3; // 기존 해당도의 1/3 로 줄이기
-      const vHeight = videoEl.videoHeight / 3;
+      const vWidth = videoEl.videoWidth / 4; // 기존 해당도의 1/4 로 줄이기
+      const vHeight = videoEl.videoHeight / 4;
 
-      if (!vWidth || !vHeight) {
-        // 영상 아직 준비 안 되었으면 스킵하기
-        return;
-      }
+      // 영상 아직 준비 안 되었으면 스킵하기
+      if (!vWidth || !vHeight) return;
 
       // canvas 생성하기
       const canvas = document.createElement('canvas');
@@ -313,7 +313,7 @@ export default function Chat() {
 
       try {
         // Node 백엔드로 POST 요청
-        // 1. 감정 분석 요청
+        // 1. 감정, 동작 분석 요청
         const response = await fetch('http://localhost:4000/api/human/frameInfo', {
           method: 'POST',
           headers: {
