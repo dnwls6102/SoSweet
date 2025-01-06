@@ -14,6 +14,7 @@ interface UserPayload {
   iat: number;
   exp: number;
 }
+import Image from 'next/image';
 
 export default function Chat() {
   const router = useRouter();
@@ -37,6 +38,8 @@ export default function Chat() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   const dispatch = useDispatch();
+
+  const [relationshipScore, setRelationshipScore] = useState(48);
 
   //대화 영상 전체 / n분 간격으로 서버로 보내는 함수
 
@@ -241,7 +244,30 @@ export default function Chat() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.left}>
-        <Videobox videoref={null} keys={'호감도'} value={10} />
+        <div className={styles.relationshipContainer}>
+          <div className={styles.relationshipSet}>
+            <Image
+              src="/heart.svg"
+              alt="하트"
+              width={24}
+              height={24}
+              className={styles.heartIcon}
+            />
+            <div className={styles.relationshipExp}>
+              <div className={styles.progressBar}>
+                <div
+                  className={styles.progressFill}
+                  style={{ width: `${relationshipScore}%` }}
+                >
+                  <span className={styles.progressValue}>
+                    {relationshipScore}/100
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <Videobox videoref={null} keys={'호감도'} value={10} />
+        </div>
       </div>
       <div className={styles.right}>
         <textarea
@@ -249,9 +275,15 @@ export default function Chat() {
           readOnly
           value={feedback}
         ></textarea>
-        <button className={styles.endButton} onClick={handleNavigation}>
-          대화 종료
-        </button>
+        <Image
+          className={styles.callEndIcon}
+          onClick={handleNavigation}
+          src="/call-end.svg"
+          alt="대화 종료"
+          width={50}
+          height={50}
+          style={{ cursor: 'pointer' }}
+        />
       </div>
     </div>
   );
