@@ -42,6 +42,7 @@
 .logout {
   font-size: 18px;
   color: #aaaaaa;
+  cursor: pointer;
   transition: color 0.2s ease;
 }
 

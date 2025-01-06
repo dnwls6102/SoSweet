@@ -29,26 +29,26 @@ const PORT = process.env.PORT ?? 3000;
 //     });
 //   }
 // })();
+
+// 평가를 담기 위한 객체 생성
+const evaluations: {
+  [room_id:string]: {
+    [user_id: string]: {
+      rating: number;
+      like: number;
+      comment: string;
+    }
+  } 
+} = {}; 
+
 export const initializeSocketServer = (server: http.Server) => {
   const io = new Server(server, {
     path: "/api/match",
     cors: {
-      origin: "*",
+      origin: process.env.CLIENT_URL || 'http://localhost:3000',
       credentials: true,
       methods: ["GET", "POST", "OPTIONS"],
-      allowedHeaders: ["*"]
     },
-    allowEIO3: true,
-    pingTimeout: 60000,
-    pingInterval: 25000
-  });
-
-  // 연결 디버깅을 위한 이벤트 리스너
-  io.engine.on("connection_error", (err) => {
-    console.log("Connection Error:", err.req);      // request object
-    console.log("Error message:", err.code);        // error code
-    console.log("Error message:", err.message);     // error message
-    console.log("Error context:", err.context);     // additional error context
   });
 
   // 대기 중인 사용자 관리를 위한 Map
@@ -117,20 +117,39 @@ export const initializeSocketServer = (server: http.Server) => {
       }
     });
 
-    socket.on("offer", (data: { offer: RTCSessionDescription; room: string }) => {
+    socket.on("offer", (data: { offer: RTCSessionDescription, room: string }) => {
       console.log("Offer received:", data.room);
       socket.to(data.room).emit("offer", data.offer);
     });
 
-    socket.on("answer", (data: { answer: RTCSessionDescription; room: string }) => {
+    socket.on("answer", (data: { answer: RTCSessionDescription, room: string }) => {
       console.log("Answer received:", data.room);
       socket.to(data.room).emit("answer", data.answer);
     });
 
-    socket.on("candidate", (data: { candidate: RTCIceCandidate; room: string }) => {
+    socket.on("candidate", (data: { candidate: RTCIceCandidate, room: string }) => {
       console.log("ICE candidate received:", data.room);
       socket.to(data.room).emit("candidate", data.candidate);
     });
+    // 상대방에게 평가 보내고, 평가 받기. 양쪽 다 평가를 완료하면 소켓을 닫고 피드백 페이지로 이동하기.
+    socket.on("submitFeedback", (data: { comment: string, rating: number, like: number, room: string, user_id: string }) => {
+      const { comment, rating, like, room, user_id } = data;
+
+      if (!evaluations[room]) {
+        evaluations[room] = {};
+      }
+
+      evaluations[room][user_id] = { rating, comment, like};
+      console.log(`${user_id}로부터의 피드백이 도착했습니다.`);
+      // 피드백을 작성한 유저 수 확인
+      const userCount = Object.keys(evaluations[room]).length
+      if (userCount === 2) {
+        // 상대방에게 내가 작성한 피드백 전송 => 소켓 종료
+        socket.broadcast.to(room).emit("receiveFeedback", evaluations[room][user_id]);
+        // 피드백 삭제
+        delete evaluations[room];
+      }
+    })
 
     // 연결 종료 처리
     socket.on("disconnect", () => {

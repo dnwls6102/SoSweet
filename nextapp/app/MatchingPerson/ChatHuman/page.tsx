@@ -6,18 +6,122 @@ import io, { Socket } from 'socket.io-client';
 import 'webrtc-adapter';
 import styles from './page.module.css';
 import Videobox from '@/components/videobox';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
+
+interface UserPayload {
+  user_id: string;
+  iat: number;
+  exp: number;
+}
 
 export default function Chat() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
+
   const [peerConnection, setPeerConnection] =
     useState<RTCPeerConnection | null>(null);
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null); // WEBRTC용
+  const [socketApi, setSocketApi] = useState<Socket | null>(null); // SoSweet_API용
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null); // 다시보기 녹화용 (Blob)
+  const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]); // 녹화 데이터 쌓는 배열
+
   const router = useRouter();
+  const token = Cookies.get('access');
+  let ID = '';
+  if (token) {
+    const decoded = jwtDecode<UserPayload>(token);
+    ID = decoded.user_id;
+  } else {
+    alert('유효하지 않은 접근입니다.');
+    router.replace('/');
+  }
+
   const searchParams = useSearchParams();
-  const room = searchParams.get('room');
+  const room_id = searchParams.get('room');
   const keys = '행복';
   const value = 30;
+  const user_id = ID;
+
+  const scriptRef = useRef('');
+  const isRecording = useRef(false);
+  const recognition = useRef<SpeechRecognition | null>(null);
+
+  const trySendScript = async (script: string) => {
+    try {
+      const response = await fetch('http://localhost:4000/api/human/dialog', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ user_id, script, room_id }),
+      });
+
+      if (response.ok) {
+        console.log('전송 성공');
+      } else {
+        console.log('오류 발생');
+      }
+    } catch (error) {
+      console.log('서버 오류 발생');
+    }
+  };
+
+  const handleStartRecording = () => {
+    if (!recognition.current) return;
+
+    recognition.current.onstart = () => {
+      isRecording.current = true;
+      console.log('Speech recognition started');
+    };
+
+    recognition.current.onspeechstart = () => {
+      console.log('사용자가 말을 시작함');
+    };
+
+    //onresult : 음성 인식 결과가 발생할때마다 호출됨
+    recognition.current.onresult = (event: SpeechRecognitionEvent) => {
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          scriptRef.current += event.results[i][0].transcript;
+        }
+      }
+      console.log('Transcription result: ', scriptRef.current);
+      trySendScript(scriptRef.current);
+      //여기에다가 음성 인식 결과를 보낼 경우 : 변환 결과를 바로바로 보내주기 때문에
+      //말을 끊었는지 여부도 조금 더 명확하게 판단 가능할수도 있다
+      //이렇게 되면 남,녀 구분은 어떻게 해야할지?
+      //서버에서 문자열을 받을 때마다 (남)표시를 하면 script가 정상적으로 생성될련지
+      //부하가 많이 걸리는지? 실제로 만족스러울 정도로 통신이 될련지는 생각해봐야 함
+      scriptRef.current = '';
+    };
+
+    recognition.current.onspeechend = () => {
+      console.log('onspeechend called');
+      console.log('Final transcript:', scriptRef.current);
+      /* 이곳에 trySendScript로 발화 내용을 전송하면
+         문제점 : 사용자가 발화하지 않는다고 판단하는 시간을 너무 보수적으로 잡음
+         --> chunk 내용이 엄청 길어지게 됨
+      */
+      // scriptRef.current = '';
+    };
+
+    recognition.current.onend = () => {
+      console.log('Speech recognition session ended.');
+      console.log('isRecording:', isRecording.current);
+      if (isRecording.current) {
+        console.log('Restarting speech recognition...');
+        recognition.current?.start();
+      }
+    };
+
+    recognition.current.onerror = (event) => {
+      if (event.error !== 'no-speech')
+        console.error('Speech recognition error:', event.error);
+    };
+
+    recognition.current.start();
+  };
 
   const pcConfig = {
     iceServers: [
@@ -28,24 +132,41 @@ export default function Chat() {
   };
 
   useEffect(() => {
-    if (!room) {
+    if (!('webkitSpeechRecognition' in window)) {
+      alert('지원하지 않는 브라우저입니다.');
+      return;
+    }
+
+    recognition.current = new (window as any).webkitSpeechRecognition();
+    recognition.current.lang = 'ko';
+    recognition.current.continuous = true;
+
+    handleStartRecording();
+
+    if (!room_id) {
       console.error('No room provided');
       return;
     }
 
-    // 소켓 연결 초기화
-    const newSocket = io(
+    // 소켓 연결 초기화 - WebRTC 연결용 Socket
+    const rtcSocket = io(
       process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:4000',
       {
         path: '/api/match',
         transports: ['websocket'],
       },
     );
-    setSocket(newSocket);
+    setSocket(rtcSocket);
+
+    // 소켓 연결 초기화 - SoSweet_API
+    const apiSocket = io('http://localhost:5000', {
+      transports: ['websocket'],
+    });
+    setSocketApi(apiSocket);
 
     // PeerConnection 초기화
     const newPeerConnection = new RTCPeerConnection(pcConfig);
-    setPeerConnection(newPeerConnection);
+    // setPeerConnection(newPeerConnection);
 
     // 미디어 스트림 초기화
     const initializeMedia = async () => {
@@ -55,19 +176,44 @@ export default function Chat() {
           audio: true,
         });
 
+        // 내 로컬 비디오에 스트림 할당하기
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
         }
 
+        // PeerConnection에 트랙 추가
         stream.getTracks().forEach((track) => {
           newPeerConnection.addTrack(track, stream);
         });
 
-        // 연결되면 시그널링 시작
-        newSocket.emit('join', { room });
+        // 연결되면 시그널링 시작 (방에 참가)
+        rtcSocket.emit('join', { room_id });
+
+        // 여기서 MediaRecorder로 '전체 영상 Blob' 저장 로직 구현하기 => 대화 끝나고 S3 업로드 할 때 필요
+
+        setupMediaRecorder(stream);
       } catch (err) {
         console.error('Error accessing media devices:', err);
       }
+    };
+
+    const setupMediaRecorder = (stream: MediaStream) => {
+      const recorder = new MediaRecorder(stream, {
+        mimeType: 'video/webm; codecs=vp8',
+      });
+      mediaRecorderRef.current = recorder;
+
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          // Blob 조각 쌓아두기
+          setRecordedChunks((prev) => [...prev, event.data]);
+        }
+      };
+
+      recorder.onstop = () => {
+        // 최종적으로 recordedChunks 가 전체 동영상임
+        console.log('녹화 중지됨. recordedChunks:', recordedChunks);
+      };
     };
 
     initializeMedia();
@@ -76,9 +222,9 @@ export default function Chat() {
     newPeerConnection.onicecandidate = (event) => {
       if (event.candidate) {
         console.log('Sending ICE candidate');
-        newSocket.emit('candidate', {
+        rtcSocket.emit('candidate', {
           candidate: event.candidate,
-          room: room,
+          room_id: room_id,
         });
       }
     };
@@ -90,23 +236,23 @@ export default function Chat() {
       }
     };
 
-    // 소켓 이벤트 핸들러 설정
-    newSocket.on('connect', () => {
-      console.log('Socket connected:', newSocket.id);
+    // WebRTC 소켓 이벤트 핸들러 설정
+    rtcSocket.on('connect', () => {
+      console.log('Socket connected:', rtcSocket.id);
     });
 
     // 방에 참가한 후 offer 생성
-    newSocket.on('ready', async () => {
+    rtcSocket.on('ready', async () => {
       try {
         const offer = await newPeerConnection.createOffer();
         await newPeerConnection.setLocalDescription(offer);
-        newSocket.emit('offer', { offer, room });
+        rtcSocket.emit('offer', { offer, room_id });
       } catch (error) {
         console.error('Error creating offer:', error);
       }
     });
 
-    newSocket.on('offer', async (offer: RTCSessionDescription) => {
+    rtcSocket.on('offer', async (offer: RTCSessionDescription) => {
       console.log('Received offer');
       try {
         await newPeerConnection.setRemoteDescription(
@@ -114,13 +260,13 @@ export default function Chat() {
         );
         const answer = await newPeerConnection.createAnswer();
         await newPeerConnection.setLocalDescription(answer);
-        newSocket.emit('answer', { answer, room });
+        rtcSocket.emit('answer', { answer, room_id });
       } catch (error) {
         console.error('Error handling offer:', error);
       }
     });
 
-    newSocket.on('answer', async (answer: RTCSessionDescription) => {
+    rtcSocket.on('answer', async (answer: RTCSessionDescription) => {
       console.log('Received answer');
       try {
         await newPeerConnection.setRemoteDescription(
@@ -131,7 +277,7 @@ export default function Chat() {
       }
     });
 
-    newSocket.on('candidate', async (candidate: RTCIceCandidate) => {
+    rtcSocket.on('candidate', async (candidate: RTCIceCandidate) => {
       console.log('Received ICE candidate');
       try {
         await newPeerConnection.addIceCandidate(new RTCIceCandidate(candidate));
@@ -140,12 +286,52 @@ export default function Chat() {
       }
     });
 
+    // Canvas로 동영상 이미지로 캡쳐하고 서버로 전송하기
+    const captureAndSendFrame = () => {
+      if (!localVideoRef.current) return;
+      const videoEl = localVideoRef.current;
+
+      // 현재 비디오 크기 가져오기
+      const vWidth = videoEl.videoWidth;
+      const vHeight = videoEl.videoHeight;
+
+      if (!vWidth || !vHeight) {
+        // 영상 아직 준비 안 되었으면 스킵하기
+        return;
+      }
+
+      // canvas 생성하기
+      const canvas = document.createElement('canvas');
+      canvas.width = vWidth;
+      canvas.height = vHeight;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // canvas에 비디오 그리기
+      ctx.drawImage(videoEl, 0, 0, vWidth, vHeight);
+
+      // toDataURL로 이미지(Base64) 추출
+      const dataURL = canvas.toDataURL('image/png');
+
+      //소켓을 통해 서버로 전송 (감정, 동작 두 종류)
+      apiSocket.emit('emotion-chunk', { user_id: 'test', frame: dataURL });
+      apiSocket.emit('action-chunk', { user_id: 'test', frame: dataURL });
+    };
+
+    // 일정 간격(1초)에 한 번씩 캡쳐하기
+    const intervalId = setInterval(() => {
+      captureAndSendFrame();
+    }, 1000); // 1초마다
+
     // 상대방 연결 종료 처리
-    newSocket.on('peerDisconnected', () => {
+    rtcSocket.on('peerDisconnected', () => {
       console.log('Peer disconnected');
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = null;
       }
+      //소켓 연결 종료시키고
+      //상대방 평가 화면으로 router.push 시켜주기
     });
 
     // 정리 함수
@@ -153,13 +339,22 @@ export default function Chat() {
       if (newPeerConnection) {
         newPeerConnection.close();
       }
-      if (newSocket) {
-        newSocket.disconnect();
+      if (rtcSocket) {
+        rtcSocket.disconnect();
       }
+
+      recognition.current?.stop();
+      isRecording.current = false;
+
+      clearInterval(intervalId);
     };
-  }, [room]);
+  }, [room_id, recordedChunks]);
 
   const handleNavigation = () => {
+    mediaRecorderRef.current.stop();
+    console.log('녹화 중지!');
+
+    // 페이지 이동하기 (여기에 recordedChunks를 합쳐서 S3 업로드 추가 로직 구현해야함)
     router.push('/Comment');
   };
 

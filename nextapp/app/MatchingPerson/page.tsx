@@ -5,13 +5,32 @@ import io from 'socket.io-client';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
+
+interface UserPayload {
+  user_id: string;
+  user_gender: string;
+  iat: number;
+  exp: number;
+}
 
 export default function MatchingPerson() {
   const router = useRouter();
   const [isMatching, setIsMatching] = useState(false);
   const [socket, setSocket] = useState<any>(null);
+  const token = Cookies.get('access');
+  let ID = '';
+  let gender = '';
 
-  const man = { id: 'dnwls6102', name: '한량', job: '한량', gender: '남성' };
+  if (token) {
+    const decoded = jwtDecode<UserPayload>(token);
+    ID = decoded.user_id;
+    gender = decoded.user_gender;
+  } else {
+    alert('유효하지 않은 접근입니다.');
+    router.replace('/');
+  }
 
   useEffect(() => {
     // 소켓 연결 초기화
@@ -40,8 +59,8 @@ export default function MatchingPerson() {
     setIsMatching(true);
     if (socket) {
       socket.emit('startMatching', {
-        id: man.id,
-        gender: man.gender,
+        id: ID,
+        gender: gender,
       });
     }
   };

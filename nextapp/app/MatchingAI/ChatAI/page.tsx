@@ -6,16 +6,32 @@ import styles from './page.module.css';
 import Videobox from '../../../components/videobox';
 import { useDispatch } from 'react-redux';
 import { setSummary } from '../../../store/feedbackSlice';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
+
+interface UserPayload {
+  user_id: string;
+  iat: number;
+  exp: number;
+}
 import Image from 'next/image';
 
 export default function Chat() {
-  const ID = 'userID12';
+  const router = useRouter();
+  const token = Cookies.get('access');
+  let user_id = '';
+  if (token) {
+    const decoded = jwtDecode<UserPayload>(token);
+    user_id = decoded.user_id;
+  } else {
+    alert('유효하지 않은 접근입니다.');
+    router.replace('/');
+  }
 
   const isRecording = useRef(false);
   const [transcript, setTranscript] = useState('');
   const [feedback, setFeedback] = useState('');
   const scriptRef = useRef('');
-  const router = useRouter();
   const recognition = useRef<SpeechRecognition | null>(null);
 
   const videoStreamRef = useRef<MediaStream | null>(null);
@@ -29,11 +45,12 @@ export default function Chat() {
 
   const tryNlp = async (script: string) => {
     try {
-      const response = await fetch('http://localhost:5050/api/nlp', {
+      const response = await fetch('http://localhost:5000/api/nlp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        // credentials: 'include',
         body: JSON.stringify({ script }),
       });
       if (response.ok) {
@@ -59,7 +76,7 @@ export default function Chat() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ script, ID }),
+        body: JSON.stringify({ script, user_id }),
       });
 
       if (response.ok) {
@@ -207,7 +224,7 @@ export default function Chat() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ script: 'end' }),
+        body: JSON.stringify({ script: 'end', user_id }),
       });
 
       if (response.ok) {
