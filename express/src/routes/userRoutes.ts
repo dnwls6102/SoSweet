@@ -3,7 +3,7 @@ import { registerUser, checkUserId } from '../controllers/userController';
 import { loginRequired } from '../middlewares/authMiddleware';
 import { logIn, logOut } from '../middlewares/userService'
 
-const  router = Router();
+const router = Router();
 
 // 회원가입
 router.post('/', registerUser);

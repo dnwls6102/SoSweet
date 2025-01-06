@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { OpenAI } from 'openai';
-import { v4 as uuidv4 } from 'uuid';
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -119,7 +118,7 @@ async function createAnalysis( record: ChatCompletionMessageParam[], partner: st
 }
 
 async function chatAnalysis(req: Request, res: Response): Promise<void> {
-  const { script, user_id } = req.body;
+  const { script, user_id, room_id } = req.body;
   const AiPrompt = createAiPrompt(user_id);
   completedChat[user_id] = [];
   completedChat[user_id].push(AiPrompt);
@@ -152,10 +151,8 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
       res.status(500).send("LLM으로부터 응답을 받아오는데 실패했습니다: AI");
     }
   } else {
-    // LLM의 응답을 담을 키 값 생성
-    const request_id = uuidv4();
     // LLM의 응답을 담을 객체 초기화
-    chatAnalysisMap.set(request_id, "");
+    chatAnalysisMap.set(room_id, "");
     // 사람 간의 대화 내용에 대한 분석일 경우, 대화 분석을 위한 LLM에 대한 요청을 비동기로 처리
     (async () => {
       completedChat[user_id].push(...newMessages);
@@ -164,27 +161,27 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
       try {
         const assistantAnswer = await createAnalysis(completedChat[user_id], "사람 간");
         // AI가 분석한 내용 저장
-        chatAnalysisMap.set(request_id, assistantAnswer);
+        chatAnalysisMap.set(room_id, assistantAnswer);
         console.log('사람 간의 대화 분석 기록 저장완료');
       } catch (err) {
         console.error("LLM 대화 분석 실패", err);
-        chatAnalysisMap.set(request_id, "대화 분석 내용을 생성하는데 실패했습니다.")
+        chatAnalysisMap.set(room_id, "대화 분석 내용을 생성하는데 실패했습니다.")
       }   
     })();
   
-    res.status(200).json({ message: "LLM에게 성공적으로 대화 분석을 맡겼습니다.", request_id: request_id, });
+    res.status(200).json({ message: "LLM에게 성공적으로 대화 분석을 맡겼습니다.", room_id: room_id });
   }
 }
 
 async function getAnalysis( req: Request, res: Response): Promise<void> {
-  const { request_id } = req.body;
+  const { room_id } = req.body;
 
-  if(!chatAnalysisMap.has(request_id)) {
+  if(!chatAnalysisMap.has(room_id)) {
     res.status(404).json({ message: "요청을 찾을 수 없습니다."});
     return;
   }
 
-  const analysis = chatAnalysisMap.get(request_id);
+  const analysis = chatAnalysisMap.get(room_id);
   if(!analysis) {
     res.status(202).json({ message: "분석 중입니다. 잠시 후 다시 시도해주세요."});
     return;
