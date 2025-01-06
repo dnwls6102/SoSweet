@@ -353,6 +353,8 @@ export default function Chat() {
       }
       //소켓 연결 종료시키고
       //상대방 평가 화면으로 router.push 시켜주기
+      alert('상대방이 연결을 종료했습니다.');
+      handleNavigation();
     });
 
     // 정리 함수
@@ -360,9 +362,11 @@ export default function Chat() {
       if (newPeerConnection) {
         newPeerConnection.close();
       }
-      if (rtcSocket) {
-        rtcSocket.disconnect();
-      }
+
+      //소켓 연결은 유지시키기
+      // if (rtcSocket) {
+      //   rtcSocket.disconnect();
+      // }
 
       recognition.current?.stop();
       isRecording.current = false;
