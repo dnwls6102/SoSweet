@@ -8,6 +8,8 @@ import styles from './page.module.css';
 import Videobox from '@/components/videobox';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
+import { useDispatch } from 'react-redux';
+import { setReduxSocket, setRoom } from '../../../store/socketSlice';
 
 interface UserPayload {
   user_id: string;
@@ -45,6 +47,8 @@ export default function Chat() {
   const scriptRef = useRef('');
   const isRecording = useRef(false);
   const recognition = useRef<SpeechRecognition | null>(null);
+
+  const dispatch = useDispatch();
 
   const trySendScript = async (script: string) => {
     try {
@@ -157,6 +161,8 @@ export default function Chat() {
       },
     );
     setSocket(rtcSocket);
+    dispatch(setReduxSocket(rtcSocket));
+    dispatch(setRoom(room_id));
 
     // PeerConnection 초기화
     const newPeerConnection = new RTCPeerConnection(pcConfig);
@@ -233,6 +239,19 @@ export default function Chat() {
     // WebRTC 소켓 이벤트 핸들러 설정
     rtcSocket.on('connect', () => {
       console.log('Socket connected:', rtcSocket.id);
+    });
+
+    // 상대방 연결 종료 처리
+    rtcSocket.on('peerDisconnected', () => {
+      console.log('Peer disconnected - from rtcSocket');
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = null;
+      }
+      alert('상대방이 연결을 종료했습니다.');
+      if (mediaRecorderRef.current) {
+        mediaRecorderRef.current.stop();
+      }
+      router.push('/Comment');
     });
 
     // 방에 참가한 후 offer 생성
@@ -345,35 +364,20 @@ export default function Chat() {
       captureAndSendFrame();
     }, 1000); // 1초마다
 
-    // 상대방 연결 종료 처리
-    rtcSocket.on('peerDisconnected', () => {
-      console.log('Peer disconnected');
-      if (remoteVideoRef.current) {
-        remoteVideoRef.current.srcObject = null;
-      }
-      //소켓 연결 종료시키고
-      //상대방 평가 화면으로 router.push 시켜주기
-      alert('상대방이 연결을 종료했습니다.');
-      handleNavigation();
-    });
-
     // 정리 함수
     return () => {
       if (newPeerConnection) {
         newPeerConnection.close();
       }
-
-      //소켓 연결은 유지시키기
-      // if (rtcSocket) {
-      //   rtcSocket.disconnect();
-      // }
-
+      if (mediaRecorderRef.current) {
+        mediaRecorderRef.current.stop();
+      }
+      rtcSocket.off('peerDisconnected');
       recognition.current?.stop();
       isRecording.current = false;
-
       clearInterval(intervalId);
     };
-  }, [room_id, recordedChunks]);
+  }, [room_id, recordedChunks, dispatch, router]);
 
   const handleNavigation = () => {
     if (mediaRecorderRef.current) {
@@ -382,10 +386,17 @@ export default function Chat() {
 
       const completeBlob = new Blob(recordedChunks, { type: 'video/webm' });
       console.log('완성된 영상 Blob: ', completeBlob);
-
-      // S3 업로드 로직
     }
-    // 페이지 이동하기 (여기에 recordedChunks를 합쳐서 S3 업로드 추가 로직 구현해야함)
+
+    // socket 상태 대신 rtcSocket 직접 사용
+    const currentSocket = socket;
+    if (currentSocket) {
+      console.log('Sending endCall event with room:', room_id);
+      currentSocket.emit('endCall', { room: room_id });
+    } else {
+      console.log('Socket is not available');
+    }
+
     router.push('/Comment');
   };
 

@@ -6,6 +6,8 @@ import styles from './page.module.css';
 import MiddleForm from '@/components/middleForm';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 interface UserPayload {
   user_id: string;
@@ -18,6 +20,12 @@ export default function RatingPage() {
   const [comment, setComment] = useState(''); // 텍스트 입력 값
   const [like, setLike] = useState(false);
   const router = useRouter();
+  const socket = useSelector((state: RootState) => state.socket.socket);
+  const room = useSelector((state: RootState) => state.socket.room);
+
+  console.log('Redux Socket: ', socket.id);
+  console.log('Redux Room: ', room);
+
   const token = Cookies.get('access');
   let user_id = '';
   if (token) {
