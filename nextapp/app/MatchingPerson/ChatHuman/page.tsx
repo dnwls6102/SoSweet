@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import io, { Socket } from 'socket.io-client';
 import 'webrtc-adapter';
 import styles from './page.module.css';
+import Image from 'next/image';
 import Videobox from '@/components/videobox';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
@@ -29,13 +30,13 @@ export default function Chat() {
   const router = useRouter();
   const token = Cookies.get('access');
   let ID = '';
-  // if (token) {
-  //   const decoded = jwtDecode<UserPayload>(token);
-  //   ID = decoded.user_id;
-  // } else {
-  //   alert('유효하지 않은 접근입니다.');
-  //   router.replace('/');
-  // }
+  if (token) {
+    const decoded = jwtDecode<UserPayload>(token);
+    ID = decoded.user_id;
+  } else {
+    alert('유효하지 않은 접근입니다.');
+    router.replace('/');
+  }
 
   const searchParams = useSearchParams();
   const room_id = searchParams.get('room');
@@ -361,14 +362,24 @@ export default function Chat() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.left}>
-        <Videobox
-          videoref={localVideoRef}
-          keys={keys}
-          value={value}
-          autoplay={true}
-          playsinline={true}
-          muted={true}
-        />
+        <div className={styles.videoContainer}>
+          <Videobox
+            videoref={localVideoRef}
+            keys={keys}
+            value={value}
+            autoplay={true}
+            playsinline={true}
+            muted={true}
+          />
+          <Image
+            className={styles.callEndIcon}
+            onClick={handleNavigation}
+            src="/call-end.svg"
+            alt="대화 종료"
+            width={50}
+            height={50}
+          />
+        </div>
       </div>
       <div className={styles.right}>
         <Videobox
@@ -379,9 +390,6 @@ export default function Chat() {
           playsinline={true}
           muted={false}
         />
-        <button className={styles.endButton} onClick={handleNavigation}>
-          대화 종료
-        </button>
       </div>
     </div>
   );

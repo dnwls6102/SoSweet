@@ -20,13 +20,13 @@ export default function Chat() {
   const router = useRouter();
   const token = Cookies.get('access');
   let user_id = '';
-  // if (token) {
-  //   const decoded = jwtDecode<UserPayload>(token);
-  //   user_id = decoded.user_id;
-  // } else {
-  //   alert('유효하지 않은 접근입니다.');
-  //   router.replace('/');
-  // }
+  if (token) {
+    const decoded = jwtDecode<UserPayload>(token);
+    user_id = decoded.user_id;
+  } else {
+    alert('유효하지 않은 접근입니다.');
+    router.replace('/');
+  }
 
   const isRecording = useRef(false);
   const [transcript, setTranscript] = useState('');
