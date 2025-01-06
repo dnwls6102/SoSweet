@@ -81,10 +81,10 @@ export default function MatchingPerson() {
       <div className={styles.content}>
         <div className={styles.leftSection}>
           <Image
-            src="/matching-illustration.jpg"
+            src="/matching-illustration.svg"
             alt="Matching Illustration"
-            width={400}
-            height={400}
+            width={650}
+            height={650}
             className={styles.matchImage}
           />
         </div>

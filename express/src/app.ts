@@ -24,6 +24,8 @@ app.use(
   "/node_modules",
   express.static(path.join(__dirname, "..", "node_modules"))
 );
+// 쿠키 뜯어볼 수 있게 쿠키 파서 설정
+app.use(cookieParser());
 
 
 
@@ -34,8 +36,7 @@ app.use(
 // CORS 설정
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
-    // origin: 'http://localhost:3000',
+    origin: process.env.CLIENT_URL || 'http://localhost:3000',
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
     credentials: true,
@@ -71,10 +72,8 @@ app.get("/chat", (req: Request, res: Response) => {
 });
 // user 라우트
 app.use("/users", userRoutes);
-
-// api , flask 서버 라우트
+// api 라우트
 app.use("/api", apiRoutes);
-
 
 app.post("/api/match", (req: Request, res: Response) => {
   global_id = req.body.id;
