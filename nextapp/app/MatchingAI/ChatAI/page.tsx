@@ -73,7 +73,8 @@ export default function Chat() {
 
   const trySendScript = async (script: string) => {
     try {
-      const response = await fetch('http://localhost:4000/api/ai/dialog', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/dialog`, {
+      // const response = await fetch('http://localhost:4000/api/ai/dialog', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -222,7 +223,8 @@ export default function Chat() {
 
   const handleNavigation = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/ai/dialog/end', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/dialog/end`, {
+      // const response = await fetch('http://localhost:4000/api/ai/dialog/end', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

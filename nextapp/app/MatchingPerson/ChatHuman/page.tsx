@@ -48,7 +48,8 @@ export default function Chat() {
 
   const trySendScript = async (script: string) => {
     try {
-      const response = await fetch('http://localhost:4000/api/human/dialog', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog`, {
+      // const response = await fetch('http://localhost:4000/api/human/dialog', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -310,7 +311,8 @@ export default function Chat() {
 
       try {
         // Node 백엔드로 POST 요청
-        const response = await fetch('http://localhost:4000/api/human/faceinfo', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/faceinfo`, {
+        // const response = await fetch('http://localhost:4000/api/human/faceinfo', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

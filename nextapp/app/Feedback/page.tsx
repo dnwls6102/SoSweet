@@ -41,7 +41,8 @@ export default function Feedback() {
   const fetchEmotionData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4000/api/feedback/faceinfo/${userID}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/faceinfo/${userID}`,
+        // `http://localhost:4000/api/feedback/faceinfo/${userID}`,
         {
           method: 'GET',
           headers: {
@@ -73,7 +74,8 @@ export default function Feedback() {
   const fetchVerbalData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4000/api/feedback/talk/${userID}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/talk/${userID}`,
+        // `http://localhost:4000/api/feedback/talk/${userID}`,
         {
           method: 'GET',
           headers: {
@@ -97,7 +99,8 @@ export default function Feedback() {
   const fetchNonverbalData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4000//api/feedback/notalk/${userID}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/notalk/${userID}`,
+        // `http://localhost:4000//api/feedback/notalk/${userID}`,
         {
           method: 'GET',
           headers: {
@@ -121,7 +124,8 @@ export default function Feedback() {
   const fetchNonverbalTimeline = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4000/api/feedback/timeline/${userID}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/timeline/${userID}`,
+        // `http://localhost:4000/api/feedback/timeline/${userID}`,
         {
           method: 'GET',
           headers: {
@@ -148,14 +152,15 @@ export default function Feedback() {
   const fetchSummary = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4000/api/feedback?userID=${userID}&number=${number}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback?userID=${userID}&number=${number}`,
+        // `http://localhost:4000/api/feedback?userID=${userID}&number=${number}`,
         {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
         },
-    });
+    );
 
       if (response.ok) {
         const summary = await response.json();
