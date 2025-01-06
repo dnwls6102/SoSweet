@@ -29,13 +29,13 @@ export default function Chat() {
   const router = useRouter();
   const token = Cookies.get('access');
   let ID = '';
-  if (token) {
-    const decoded = jwtDecode<UserPayload>(token);
-    ID = decoded.user_id;
-  } else {
-    alert('유효하지 않은 접근입니다.');
-    router.replace('/');
-  }
+  // if (token) {
+  //   const decoded = jwtDecode<UserPayload>(token);
+  //   ID = decoded.user_id;
+  // } else {
+  //   alert('유효하지 않은 접근입니다.');
+  //   router.replace('/');
+  // }
 
   const searchParams = useSearchParams();
   const room_id = searchParams.get('room');

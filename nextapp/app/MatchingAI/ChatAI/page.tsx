@@ -20,13 +20,13 @@ export default function Chat() {
   const router = useRouter();
   const token = Cookies.get('access');
   let user_id = '';
-  if (token) {
-    const decoded = jwtDecode<UserPayload>(token);
-    user_id = decoded.user_id;
-  } else {
-    alert('유효하지 않은 접근입니다.');
-    router.replace('/');
-  }
+  // if (token) {
+  //   const decoded = jwtDecode<UserPayload>(token);
+  //   user_id = decoded.user_id;
+  // } else {
+  //   alert('유효하지 않은 접근입니다.');
+  //   router.replace('/');
+  // }
 
   const isRecording = useRef(false);
   const [transcript, setTranscript] = useState('');
@@ -243,45 +243,46 @@ export default function Chat() {
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.left}>
-        <div className={styles.relationshipContainer}>
-          <div className={styles.relationshipSet}>
-            <Image
-              src="/heart.svg"
-              alt="하트"
-              width={24}
-              height={24}
-              className={styles.heartIcon}
-            />
-            <div className={styles.relationshipExp}>
-              <div className={styles.progressBar}>
-                <div 
-                  className={styles.progressFill} 
-                  style={{ width: `${relationshipScore}%` }}
-                >
-                  <span className={styles.progressValue}>{relationshipScore}/100</span>
+      <div className={styles.content}>
+        <div className={styles.left}>
+          <div className={styles.relationshipContainer}>
+            <div className={styles.relationshipSet}>
+              <Image
+                src="/heart.svg"
+                alt="하트"
+                width={24}
+                height={24}
+                className={styles.heartIcon}
+              />
+              <div className={styles.relationshipExp}>
+                <div className={styles.progressBar}>
+                  <div 
+                    className={styles.progressFill} 
+                    style={{ width: `${relationshipScore}%` }}
+                  >
+                    <span className={styles.progressValue}>{relationshipScore}/100</span>
+                  </div>
                 </div>
               </div>
             </div>
+            <Videobox videoref={null} keys={'호감도'} value={10} />
+            <Image
+              className={styles.callEndIcon}
+              onClick={handleNavigation}
+              src="/call-end.svg"
+              alt="대화 종료"
+              width={50}
+              height={50}
+            />
           </div>
-          <Videobox videoref={null} keys={'호감도'} value={10} />
         </div>
-      </div>
-      <div className={styles.right}>
-        <textarea
-          className={styles.textarea}
-          readOnly
-          value={feedback}
-        ></textarea>
-          <Image
-            className={styles.callEndIcon}
-            onClick={handleNavigation}
-            src="/call-end.svg"
-            alt="대화 종료"
-            width={50}
-            height={50}
-            style={{ cursor: 'pointer' }} 
-          />
+        <div className={styles.right}>
+          <textarea
+            className={styles.textarea}
+            readOnly
+            value={feedback}
+          ></textarea>
+        </div>
       </div>
     </div>
   );

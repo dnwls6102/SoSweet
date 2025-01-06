@@ -1,3 +1,15 @@
+@font-face {
+  font-family: 'logoFont';
+  src: url("@/fonts/Cafe24Ssurround-v2.0.ttf") format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'NotoSansKR';
+  src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
+  font-weight: normal;
+}
+
 .navbar {
   width: 100vw;
   height: 100px;
@@ -9,7 +21,10 @@
   align-items: center;
   padding: 0 20px;
   box-sizing: border-box;
-  /* position : fixed; */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
 }
 
 .logo {
@@ -36,7 +51,7 @@
 .rightSection {
   display: flex;
   align-items: center;
-  gap: 16px; /* 간격 설정 */
+  gap: 32px;
 }
 
 .logout {
@@ -44,6 +59,7 @@
   color: #aaaaaa;
   cursor: pointer;
   transition: color 0.2s ease;
+  font-family: 'NotoSansKR', sans-serif;
 }
 
 .logout:hover {

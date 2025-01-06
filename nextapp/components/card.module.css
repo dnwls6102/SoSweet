@@ -1,5 +1,17 @@
+@font-face {
+  font-family: 'titleFont';
+  src: url("@/fonts/NotoSansKR-Black.ttf") format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'contentFont';
+  src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
+  font-weight: normal;
+}
+
 .card {
-  background: linear-gradient(135deg, #fdfbfb, #f9f7f7);
+  background: linear-gradient(135deg, rgba(253, 251, 251, 0.95), rgba(249, 247, 247, 0.95));
   border-radius: 20px;
   width: 280px;
   height: 320px;
@@ -10,40 +22,129 @@
   margin: 40px;
   padding: 30px;
   position: relative;
-  border: 1px solid rgba(236, 236, 236, 0.5);
+  border: 1px solid rgba(255, 182, 193, 0.25);
   box-shadow: 
-    0 10px 20px rgba(0, 0, 0, 0.04),
-    0 2px 6px rgba(0, 0, 0, 0.04),
-    0 0 1px rgba(0, 0, 0, 0.04);
+    0 10px 20px rgba(255, 182, 193, 0.1),
+    0 2px 6px rgba(255, 182, 193, 0.1),
+    0 0 1px rgba(255, 182, 193, 0.1);
   transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  overflow: hidden;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+  transform: rotate(0deg);
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: normal;
+}
+
+.card:hover::before {
+  animation: rotate 3s linear infinite;
+  opacity: 0.4;
 }
 
 .card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-8px) scale(1.02);
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.08),
-    0 8px 16px rgba(0, 0, 0, 0.03);
-  border-color: rgba(255, 255, 255, 0.8);
+    0 15px 35px rgba(255, 182, 193, 0.25),
+    0 0 20px rgba(255, 77, 109, 0.3),
+    0 0 0 2px rgba(255, 77, 109, 0.2);
+  animation: cardPulse 1.5s infinite;
+  border-color: rgba(255, 77, 109, 0.3);
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes cardPulse {
+  0% {
+    box-shadow: 
+      0 15px 35px rgba(255, 182, 193, 0.25),
+      0 0 20px rgba(255, 77, 109, 0.3),
+      0 0 0 2px rgba(255, 77, 109, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 15px 35px rgba(255, 182, 193, 0.35),
+      0 0 30px rgba(255, 77, 109, 0.4),
+      0 0 0 4px rgba(255, 77, 109, 0.3);
+  }
+  100% {
+    box-shadow: 
+      0 15px 35px rgba(255, 182, 193, 0.25),
+      0 0 20px rgba(255, 77, 109, 0.3),
+      0 0 0 2px rgba(255, 77, 109, 0.2);
+  }
 }
 
 .textContent {
   position: relative;
   width: 100%;
-  z-index: 1;
+  z-index: 100;
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 10px;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 1);
 }
 
 .title {
+  font-family: 'titleFont', sans-serif;
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 12px;
-  color: #333;
+  color: #000000;
   letter-spacing: -0.5px;
+  position: relative;
+  z-index: 100;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .job {
+  font-family: 'contentFont', sans-serif;
   font-size: 18px;
-  color: #666;
-  font-weight: 400;
+  color: #222222;
+  font-weight: 500;
   letter-spacing: -0.3px;
+  position: relative;
+  z-index: 100;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 모든 backdrop-filter 효과 제거 */
+.card *,
+.card *::before,
+.card *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* hover 상태에서도 텍스트 선명도 유지 */
+.card:hover .textContent,
+.card:hover .title,
+.card:hover .job {
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
 }

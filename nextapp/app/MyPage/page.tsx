@@ -146,10 +146,10 @@ export default function MyPage() {
             height={80}
             className={styles.rankImage}
           />
-          <p>
+          <p className={styles.rankText}>
             당신의 소개팅 등급은 <strong>{userInfo.rank}</strong> 입니다
           </p>
-          <p>총 소개팅 전적: {userInfo.score}</p>
+          <p className={styles.rankText}>총 소개팅 전적: {userInfo.score}</p>
         </div>
       </div>
     </div>
