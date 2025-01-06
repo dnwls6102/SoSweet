@@ -14,13 +14,13 @@ export default function TitleInput({
   onChange,
 }: inputProps) {
   return (
-    <div className={styles.input}>
-      <span className={styles.title}>{title}</span>
-      <input
-        className={styles.rinput}
+    <div className={styles.inputGroup}>
+      <label className={styles.label}>{title}</label>
+      <input 
+        type="text"
+        className={styles.input}
         placeholder={title}
         value={value}
-        type={type}
         onChange={onChange}
       />
     </div>

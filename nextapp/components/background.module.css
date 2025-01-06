@@ -1,5 +1,5 @@
 :root {
-    --commonBackground: #EBCEC5; 
+    --commonBackground: linear-gradient(135deg, #ffc9c9 0%, #ff8eb2 100%);
   }
   
 :global(*) {

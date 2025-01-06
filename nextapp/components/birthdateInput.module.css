@@ -1,22 +1,43 @@
-.input {
-  display: flex;
-  justify-content: space-between;
-  width: 650px;
-  margin: 0 auto;
-  align-items: center;
-  margin-top : 5px;
+.inputGroup {
+    margin-top: -18px; 
+    margin-bottom: 16px;
+    position: relative;
+    width: 500px;
+    display: flex;
+    flex-direction: row;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: center;
+    gap: 1px;
+}
+
+.label {
+    width: 35%;
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #2d3748;
 }
 
 .select {
-  width: 30%;
-  height: 40px;
-  font-size: 16px;
+    padding: 0 14px;
+    height: 40px;
+    width: 90px;
+    font-size: 14px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: #fff;
+    transition: all 0.2s ease;
+    margin-right: 10px;
 }
 
-.box {
-    margin-left : 25px;
-    margin-bottom : 10px;
-    text-align: left;
-    font-weight: bold;
-    font-size: 16px;
+.select:hover {
+    border-color: #fd79a8;
+}
+
+.select:focus {
+    outline: none;
+    border-color: #fd79a8;
+    box-shadow: 0 0 0 3px rgba(253, 121, 168, 0.1);
 }

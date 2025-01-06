@@ -20,8 +20,8 @@ const COLORS = [
 ];
 
 export default function Feedback() {
-  const [userID, setUserID] = useState('');
-  const [number, setNumber] = useState(0);
+  const [userID, setUserID] = useState(null);
+  const [number, setNumber] = useState(null);
   const [emotionData, setEmotionData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [verbal, setVerbal] = useState(null);
@@ -40,15 +40,12 @@ export default function Feedback() {
   // 표정 정보 받아오기
   const fetchEmotionData = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:5050/api/feedback/faceinfo/${userID}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+      const response = await fetch(`http://localhost:4000/api/feedback/faceinfo/${userID}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -72,15 +69,12 @@ export default function Feedback() {
   // 언어적 분석 받아오기
   const fetchVerbalData = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:5050/api/feedback/talk/${userID}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+      const response = await fetch(`http://localhost:4000/api/feedback/talk/${userID}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -96,15 +90,12 @@ export default function Feedback() {
   // 비언어적 분석 받아오기
   const fetchNonverbalData = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:5050//api/feedback/notalk/${userID}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+      const response = await fetch(`http://localhost:4000//api/feedback/notalk/${userID}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -120,15 +111,12 @@ export default function Feedback() {
   // 비언어적 습관 몇 분 몇 초에 했는지 받아오기
   const fetchNonverbalTimeline = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:5050/api/feedback/timeline/${userID}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+      const response = await fetch(`http://localhost:4000/api/feedback/timeline/${userID}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+      });
 
       if (response.ok) {
         const timelineData = await response.json();
@@ -147,15 +135,12 @@ export default function Feedback() {
   // 사용자 대화 한 줄 평가 받아오기
   const fetchSummary = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:5050/api/feedback?userID=${userID}&number=${number}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+      const response = await fetch(`http://localhost:4000/api/feedback?userID=${userID}&number=${number}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
         },
-      );
+    });
 
       if (response.ok) {
         const summary = await response.json();
@@ -225,18 +210,18 @@ export default function Feedback() {
       <div className={styles.section}>
         <h2 className={styles.sectionTitle}>비언어적 분석</h2>
         {nonverbal ? (
-          // <p>{nonverbal}</p>
-          <>
-            <p>
-              전반적으로 슬픔이 많습니다. 편안하게 긴장을 풀고, 자연스러운
-              표정을 지어볼까요?
-            </p>
-            <p>눈 맞춤 빈도는 80%입니다. 아주 잘하고 계시네요!</p>
-            <p>
-              대화 중 귀를 만지는 횟수가 5회 이상이었습니다. 긴장하실 때 귀를
-              만지는 습관이 있으신 것 같아요!
-            </p>
-          </>
+          <p>{nonverbal}</p>
+          // <>
+          //   <p>
+          //     전반적으로 슬픔이 많습니다. 편안하게 긴장을 풀고, 자연스러운
+          //     표정을 지어볼까요?
+          //   </p>
+          //   <p>눈 맞춤 빈도는 80%입니다. 아주 잘하고 계시네요!</p>
+          //   <p>
+          //     대화 중 귀를 만지는 횟수가 5회 이상이었습니다. 긴장하실 때 귀를
+          //     만지는 습관이 있으신 것 같아요!
+          //   </p>
+          // </>
         ) : (
           <p>비언어적 분석 데이터를 불러오는 중입니다.</p>
         )}
@@ -247,7 +232,7 @@ export default function Feedback() {
         <div className={styles.overallTitle}>종합 평가</div>
         {summary ? (
           <div className={styles.overallText}>
-            {/* <p>{summary}</p> */}
+            <p>{summary}</p>
             <p>
               당신은 <span className={styles.highlight}>연애고자</span> 입니다.
               <br />

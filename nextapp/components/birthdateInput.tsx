@@ -36,46 +36,28 @@ export default function BirthdateInput({ onChange }: BirthdateInputProps) {
   );
 
   return (
-    <>
-      <div className={styles.box}>생년월일</div>
-      <div className={styles.input}>
-        <select
-          value={year}
-          onChange={handleYearChange}
-          className={styles.select}
-        >
+    <div className={styles.inputGroup}>
+      <span className={styles.label}>생년월일</span>
+      <div className={styles.selectGroup}>
+        <select value={year} onChange={handleYearChange} className={styles.select}>
           <option value="">연도</option>
           {years.map((y) => (
-            <option key={y} value={y}>
-              {y}
-            </option>
+            <option key={y} value={y}>{y}</option>
           ))}
         </select>
-        <select
-          value={month}
-          onChange={handleMonthChange}
-          className={styles.select}
-        >
+        <select value={month} onChange={handleMonthChange} className={styles.select}>
           <option value="">월</option>
           {months.map((m) => (
-            <option key={m} value={m}>
-              {m}
-            </option>
+            <option key={m} value={m}>{m}</option>
           ))}
         </select>
-        <select
-          value={day}
-          onChange={handleDayChange}
-          className={styles.select}
-        >
+        <select value={day} onChange={handleDayChange} className={styles.select}>
           <option value="">일</option>
           {days.map((d) => (
-            <option key={d} value={d}>
-              {d}
-            </option>
+            <option key={d} value={d}>{d}</option>
           ))}
         </select>
       </div>
-    </>
+    </div>
   );
 }

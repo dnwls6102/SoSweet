@@ -14,10 +14,10 @@ export default function IDInput({
   onCheck,
 }: inputProps) {
   return (
-    <div className={styles.input}>
-      <span className={styles.title}>{title}</span>
+    <div className={styles.inputGroup}>
+      <span className={styles.label}>{title}</span>
       <input
-        className={styles.rinput}
+        className={styles.input}
         placeholder={title}
         value={value}
         onChange={onChange}
