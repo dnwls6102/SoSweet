@@ -134,6 +134,7 @@ export const initializeSocketServer = (server: http.Server) => {
     // 상대방에게 평가 보내고, 평가 받기. 양쪽 다 평가를 완료하면 소켓을 닫고 피드백 페이지로 이동하기.
     socket.on("submitFeedback", (data: { comment: string, rating: number, like: number, room: string, user_id: string }) => {
       const { comment, rating, like, room, user_id } = data;
+      console.log("피드백 데이터 수신:", { room, user_id, rating, like });
 
       if (!evaluations[room]) {
         evaluations[room] = {};
@@ -141,37 +142,51 @@ export const initializeSocketServer = (server: http.Server) => {
 
       evaluations[room][user_id] = { rating, comment, like};
       console.log(`${user_id}로부터의 피드백이 도착했습니다.`);
+      
       // 피드백을 작성한 유저 수 확인
       const room_users = Object.keys(evaluations[room]);
       const userCount = room_users.length;
+      console.log("현재 피드백 수:", userCount, "방:", room);
+      
       if (userCount === 2) {
-        const partner_id = room_users.find((id) => id !== user_id);
-        if (!partner_id) {
-          throw new Error("상대방의 ID를 찾을 수 없습니다.")
+        console.log("두 명의 피드백이 모두 도착했습니다. receiveFeedback 이벤트 전송");
+        
+        // 방의 모든 소켓 가져오기
+        const sockets = io.sockets.adapter.rooms.get(room);
+        if (sockets) {
+          console.log("방에 있는 소켓들:", Array.from(sockets));
+          // 방의 모든 소켓에 이벤트 전송
+          io.to(room).emit("receiveFeedback");
+          console.log("피드백 이벤트 전송 완료");
+        } else {
+          console.log("방을 찾을 수 없음:", room);
         }
-        // 상대방에게 내가 작성한 피드백 전송
-        socket.broadcast.to(room).emit("receiveFeedback", evaluations[room][user_id]);
-        // 상대방이 작성한 피드백 나한테 전송
-        socket.emit("receiveFeedback", evaluations[room][partner_id]);
+        
         // 피드백 삭제
         delete evaluations[room];
+        console.log("피드백 데이터 삭제 완료");
+      }
+    })
+
+    socket.on("endCall", (data: { room: string}) => {
+      console.log("endCall 이벤트 수신:", data.room);
+      
+      // room 정보를 직접 사용
+      const roomData = activeRooms.get(data.room);
+      if (roomData) {
+        // 상대방에게 연결 종료 알림
+        socket.to(data.room).emit("peerDisconnected");
+        console.log("상대방에게 연결 종료 알림 전송:", data.room);
+        activeRooms.delete(data.room);
+      } else {
+        console.log("해당 room을 찾을 수 없음:", data.room);
       }
     })
 
     // 연결 종료 처리
     socket.on("disconnect", () => {
       // 대기열에서 제거
-      waitingUsers.delete(socket.id);
-      
-      // 활성화된 방에서 제거
-      for (const [room, data] of activeRooms) {
-        if (data.users.includes(socket.id)) {
-          // 상대방에게 연결 종료 알림
-          socket.to(room).emit("peerDisconnected");
-          activeRooms.delete(room);
-          break;
-        }
-      }
+      console.log("연결 종료: ", socket.id);
     });
   });
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import MiddleForm from '@/components/middleForm';
@@ -19,12 +19,10 @@ export default function RatingPage() {
   const [rating, setRating] = useState(0); // 선택된 별점
   const [comment, setComment] = useState(''); // 텍스트 입력 값
   const [like, setLike] = useState(false);
+  const [waiting, setWaiting] = useState(false);
   const router = useRouter();
   const socket = useSelector((state: RootState) => state.socket.socket);
   const room = useSelector((state: RootState) => state.socket.room);
-
-  console.log('Redux Socket: ', socket.id);
-  console.log('Redux Room: ', room);
 
   const token = Cookies.get('access');
   let user_id = '';
@@ -36,37 +34,45 @@ export default function RatingPage() {
     router.replace('/');
   }
 
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on('receiveFeedback', () => {
+      console.log('receiveFeedback 이벤트 수신');
+      router.push('/Feedback');
+    });
+
+    return () => {
+      socket.off('receiveFeedback');
+    };
+  }, [socket, router]);
+
   const handleStarClick = (index: number) => {
     setRating(index + 1); // 클릭한 별까지 색칠
   };
 
   const handleSubmit = async () => {
+    if (!socket || !room) {
+      console.error('소켓 또는 방 정보가 없습니다.');
+      return;
+    }
+
     const data = {
       user_id,
       rating,
       comment,
       like,
+      room,
     };
 
-    try {
-      const response = await fetch('/api/submit-rating', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (response.ok) {
-        alert('평가가 성공적으로 전송되었습니다.');
-      } else {
-        alert('평가 전송에 실패했습니다.');
-        router.push('/Feedback');
-      }
-    } catch (error) {
-      alert('오류가 발생했습니다.');
-    }
+    console.log('피드백 제출:', data);
+    socket.emit('submitFeedback', data);
+    setWaiting(true);
   };
+
+  if (waiting) {
+    return <div>상대방 응답 대기중...</div>;
+  }
 
   return (
     <div className={styles.wrapper}>

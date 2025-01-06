@@ -164,6 +164,13 @@ export default function Chat() {
     dispatch(setReduxSocket(rtcSocket));
     dispatch(setRoom(room_id));
 
+    // 소켓 연결 확인
+    rtcSocket.on('connect', () => {
+      console.log('Socket connected and stored in Redux:', rtcSocket.id);
+      // 연결 후 방에 참가
+      rtcSocket.emit('join', { room: room_id });
+    });
+
     // PeerConnection 초기화
     const newPeerConnection = new RTCPeerConnection(pcConfig);
     // setPeerConnection(newPeerConnection);
