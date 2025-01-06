@@ -308,15 +308,20 @@ export default function Chat() {
       // JPEG 포맷으로 Base64 인코딩
       const dataURL = canvas.toDataURL('image/jpeg', 0.7);  // 70% 품질로 압축
 
+      // 현재 시간으로 타임스탬프
+      const timestamp = Date.now();
+
       try {
         // Node 백엔드로 POST 요청
-        const response = await fetch('http://localhost:4000/api/human/faceinfo', {
+        // 1. 감정 분석 요청
+        const response = await fetch('http://localhost:4000/api/human/frameInfo', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             frame: dataURL,
+            timestamp: timestamp,
             user_id: user_id,
             room_id: room_id,
           }),
@@ -325,13 +330,13 @@ export default function Chat() {
         });
         
         if (!response.ok) {
-          console.error('Node 서버 응답 에러:', response.status);
+          console.error('감정 및 동작 분석 응답 에러:', response.status);
           return;
         }
 
         // Flask -> Node -> 클라이언트로 넘어온 최종 결과
-        const result = await response.json();
-        console.log('분석 결과:', result);
+        const analyzeResult = await response.json();
+        console.log('감정 및 동작 분석 결과:', analyzeResult);
 
       } catch (error) {
         console.error('전송 에러: ', error)
@@ -341,7 +346,7 @@ export default function Chat() {
     // 일정 간격(1초)에 한 번씩 캡쳐하기
     const intervalId = setInterval(() => {
       captureAndSendFrame();
-    }, 1000); // 1초마다
+    }, 1500); // 1.5초마다
 
     // 상대방 연결 종료 처리
     rtcSocket.on('peerDisconnected', () => {
