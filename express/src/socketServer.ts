@@ -134,14 +134,15 @@ export const initializeSocketServer = (server: http.Server) => {
     // 상대방에게 평가 보내고, 평가 받기. 양쪽 다 평가를 완료하면 소켓을 닫고 피드백 페이지로 이동하기.
     socket.on("submitFeedback", (data: { comment: string, rating: number, like: boolean, room: string, user_id: string }) => {
       const { comment, rating, like, room, user_id } = data;
-      console.log("피드백 데이터 수신:", { room, user_id, rating, like });
+      console.log("피드백 데이터 수신:", { room, user_id, rating, like, comment });
 
       if (!evaluations[room]) {
         evaluations[room] = {};
       }
 
-      evaluations[room][user_id] = { rating, comment, like};
+      evaluations[room][user_id] = { rating, comment, like };
       console.log(`${user_id}로부터의 피드백이 도착했습니다.`);
+      console.log("현재 방의 평가 데이터:", evaluations[room]);
       
       // 피드백을 작성한 유저 수 확인
       const room_users = Object.keys(evaluations[room]);
@@ -152,7 +153,8 @@ export const initializeSocketServer = (server: http.Server) => {
         console.log("두 명의 피드백이 모두 도착했습니다. receiveFeedback 이벤트 전송");
         
         // 방의 모든 소켓에 전체 평가 데이터 전송
-        const feedbackData = { ...evaluations[room] };
+        // 객체를 깊은 복사하여 전송
+        const feedbackData = JSON.parse(JSON.stringify(evaluations[room]));
         io.to(room).emit("receiveFeedback", feedbackData);
         console.log("전체 피드백 데이터 전송 완료:", feedbackData);
         
