@@ -95,8 +95,8 @@ function createAiPrompt(ID: string): ChatCompletionMessageParam {
 }
 
 async function chatAnalysis(req: Request, res: Response): Promise<void> {
-  const { script, ID } = req.body;
-  const AiPrompt = createAiPrompt(ID);
+  const { script, user_id } = req.body;
+  const AiPrompt = createAiPrompt(user_id);
   completedChat.push(AiPrompt);
 
   const newMessages: ChatCompletionMessageParam[] = script;

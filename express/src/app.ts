@@ -60,8 +60,10 @@ app.get("/chat", (req: Request, res: Response) => {
 });
 // user 라우트
 app.use("/users", userRoutes);
-// api 라우트
+
+// api , flask 서버 라우트
 app.use("/api", apiRoutes);
+
 
 app.post("/api/match", (req: Request, res: Response) => {
   global_id = req.body.id;
