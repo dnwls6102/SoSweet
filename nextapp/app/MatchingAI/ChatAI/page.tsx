@@ -155,22 +155,6 @@ export default function Chat() {
     recognition.current.start();
   };
 
-  const stopAllMediaDevices = async () => {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-
-    devices.forEach((device) => {
-      if (device.kind === 'videoinput' || device.kind === 'audioinput') {
-        const tracks = videoStreamRef.current?.getTracks() || [];
-        tracks.forEach((track) => {
-          track.stop();
-          console.log(`Stopped track for device: ${device.label}`);
-        });
-      }
-    });
-
-    console.log('All media devices stopped.');
-  };
-
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window)) {
       alert('지원하지 않는 브라우저입니다.');
@@ -185,37 +169,6 @@ export default function Chat() {
 
     return () => {
       // MediaRecorder 종료 처리
-      console.log('MediaRecorder state1:', mediaRecorderRef.current?.state);
-      if (
-        mediaRecorderRef.current &&
-        mediaRecorderRef.current.state !== 'inactive'
-      )
-        try {
-          console.log('MediaRecorder state2:', mediaRecorderRef.current?.state);
-          mediaRecorderRef.current.stop(); // 명확하게 중지
-          console.log('MediaRecorder stopped.');
-          console.log('MediaRecorder state3:', mediaRecorderRef.current?.state);
-        } catch (error) {
-          console.error('Error stopping MediaRecorder:', error);
-        }
-
-      // 비디오 스트림 트랙 정리
-      if (videoStreamRef.current) {
-        videoStreamRef.current.getTracks().forEach((track) => {
-          try {
-            track.stop();
-            console.log(`Track ${track.kind} stopped.`);
-          } catch (error) {
-            console.error(`Error stopping track ${track.kind}:`, error);
-          }
-        });
-      }
-
-      stopAllMediaDevices();
-
-      videoStreamRef.current = null;
-      mediaRecorderRef.current = null;
-
       recognition.current?.stop();
       isRecording.current = false;
     };
