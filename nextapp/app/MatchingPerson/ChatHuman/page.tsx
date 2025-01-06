@@ -24,6 +24,7 @@ export default function Chat() {
   const [socket, setSocket] = useState<Socket | null>(null); // WEBRTC용
   const mediaRecorderRef = useRef<MediaRecorder | null>(null); // 다시보기 녹화용 (Blob)
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]); // 녹화 데이터 쌓는 배열
+  const [feedback, setFeedback] = useState('');
 
   const router = useRouter();
   const token = Cookies.get('access');
@@ -45,6 +46,34 @@ export default function Chat() {
   const scriptRef = useRef('');
   const isRecording = useRef(false);
   const recognition = useRef<SpeechRecognition | null>(null);
+
+  const tryNlp = async (script: string) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/nlp`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ script }),
+        },
+      );
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result.message);
+        setFeedback((prev) =>
+          prev ? prev + '\n' + result.message : result.message,
+        );
+      } else {
+        const result = await response.json();
+        console.log(result.error);
+        setFeedback((prev) => (prev ? prev + result.message : result.message));
+      }
+    } catch (error) {
+      console.log('서버 오류 발생');
+    }
+  };
 
   const trySendScript = async (script: string) => {
     try {
@@ -87,6 +116,8 @@ export default function Chat() {
         }
       }
       console.log('Transcription result: ', scriptRef.current);
+      tryNlp(scriptRef.current);
+
       trySendScript(scriptRef.current);
       //여기에다가 음성 인식 결과를 보낼 경우 : 변환 결과를 바로바로 보내주기 때문에
       //말을 끊었는지 여부도 조금 더 명확하게 판단 가능할수도 있다
