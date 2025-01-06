@@ -2,7 +2,7 @@ import { Router } from "express";
 import logInRequired from "../middlewares/loginRequired";
 import { recordDialog, endChat } from "../middlewares/talkWithPerson";
 import { chatMiddleware ,endChatWithAI } from "../middlewares/talkWithAI";
-import { chatAnalysis } from "../middlewares/chatAnalysis";
+import { chatAnalysis, getAnalysis } from "../middlewares/chatAnalysis";
 import { ttsMiddleware } from "../middlewares/tts";
 import { sendFaceInfoToFlask, sendMotionInfoFlask } from "../controllers/flaskController";
 
@@ -30,4 +30,4 @@ api.post("/human/actioninfo", (req, res) => {
     sendMotionInfoFlask(req, res);
 });
 
-  export default api;
+export default api;
