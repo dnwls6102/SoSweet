@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
-import MiddleForm from '@/components/middleForm';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
@@ -54,6 +53,7 @@ export default function RatingPage() {
       const partnerFeedback = Object.entries(feedbacks).find(
         ([id]) => id !== user_id,
       );
+      console.log('상대방의 피드백: ', partnerFeedback);
 
       if (partnerFeedback) {
         const [, feedback] = partnerFeedback;
@@ -78,7 +78,7 @@ export default function RatingPage() {
     };
   }, [socket, router, dispatch, user_id]);
 
-  const handleStarClick = (index: number) => {
+  const handleHeartClick = (index: number) => {
     setRating(index + 1); // 클릭한 별까지 색칠
   };
 
@@ -107,42 +107,44 @@ export default function RatingPage() {
 
   return (
     <div className={styles.wrapper}>
-      <MiddleForm>
-        <h2>상대와의 대화를 별점으로 매기면?</h2>
-        <div className={styles.stars}>
+      <div className={styles.container}>
+        <h2 className={styles.title}>상대와의 대화는 어떠셨나요?</h2>
+        <div className={styles.hearts}>
           {[...Array(5)].map((_, index) => (
             <span
               key={index}
-              className={index < rating ? styles.filledStar : styles.emptyStar}
-              onClick={() => handleStarClick(index)}
+              className={
+                index < rating ? styles.filledHeart : styles.emptyHeart
+              }
+              onClick={() => handleHeartClick(index)}
             >
-              ★
+              ♥
             </span>
           ))}
         </div>
-        <h2>상대에게 한 마디 부탁드려요!</h2>
+        <h2 className={styles.title}>상대에게 한 마디 남겨주세요!</h2>
         <textarea
           className={styles.textarea}
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          placeholder="상대에게 하고 싶은 말을 적어주세요."
+          placeholder="상대의 느낌이나 인상적이었던 점, 하고 싶은 말을 적어주세요 ♥"
         />
-        <h2>나는 이 사람과 다시</h2>
+        <h2 className={styles.title}>다음에 또 만나고 싶으신가요?</h2>
         <div className={styles.actions}>
           <button className={styles.likeButton} onClick={() => setLike(true)}>
-            만나고 싶다
+            다시 만나고 싶어요 ♥
           </button>
           <button
             className={styles.dislikeButton}
             onClick={() => setLike(false)}
           >
-            보기 싫다
+            만나고 싶지 않아요
           </button>
         </div>
         <button className={styles.submitButton} onClick={handleSubmit}>
-          전송
+          평가 완료하기
         </button>
-      </MiddleForm>
+      </div>
     </div>
   );
 }

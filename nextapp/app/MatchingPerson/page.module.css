@@ -5,7 +5,7 @@
 }
 
 @font-face {
-  font-family: 'NotoSansKR';
+  font-family: 'contentFont';
   src: url("@/fonts/NotoSansKR-Black.ttf") format('truetype');
   font-weight: normal;
 }
@@ -22,22 +22,43 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 80%;
-  max-width: 1200px;
+  width: 90%;
+  max-width: 1500px;
 }
 
 .leftSection {
   flex: 1;
   display: flex;
   justify-content: center;
-  padding-right: 40px;
+  padding-right: 30px;
 }
 
 .matchImage {
-  width: auto;
-  height: auto;
-  border-radius: 20px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;      /* 고정값 대신 비율로 변경 */
+  height: auto;     /* 비율 유지 */
+  max-width: 750px; /* 최대 크기 제한 */
+  max-height: 750px;
+  object-fit: contain; /* 이미지 비율 유지 */
+  transition: transform 0.5s ease;
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 10px 20px rgba(255, 107, 107, 0.2));
+}
+
+.matchImage:hover {
+  transform: scale(1.02) rotate(1deg);
+  filter: drop-shadow(0 15px 30px rgba(255, 107, 107, 0.3));
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 .rightSection {
@@ -52,7 +73,8 @@
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 240, 245, 0.95));
   padding: 35px 50px;
   border-radius: 25px;
-  box-shadow: 0 10px 30px rgba(255, 182, 193, 0.3);
+  box-shadow: 0 15px 35px rgba(255, 182, 193, 0.4),
+              0 5px 15px rgba(255, 107, 107, 0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -62,6 +84,42 @@
   overflow: hidden;
   width: 80%;
   max-width: 400px;
+  transform-style: preserve-3d;
+  transition: all 0.3s ease;
+}
+
+.rankContainer:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(255, 182, 193, 0.5),
+              0 8px 20px rgba(255, 107, 107, 0.4);
+}
+
+.rankContainer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 25px;
+  padding: 2px;
+  background: linear-gradient(45deg, #ff6b6b, #ff8787, #ffa8a8, #ff6b6b);
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: borderRotate 4s linear infinite;
+  background-size: 400% 400%;
+}
+
+@keyframes borderRotate {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .rankContainer::before {
@@ -84,7 +142,7 @@
 .rankText {
   font-size: 18px;
   font-weight: bold;
-  font-family: 'NotoSansKR', sans-serif;
+  font-family: 'contentFont', sans-serif;
   color: #ff6b6b;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -121,8 +179,8 @@
 }
 
 .rankIcon {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   filter: drop-shadow(0 0 15px rgba(255, 107, 107, 0.5));
   animation: pulse 2s infinite ease-in-out;
   z-index: 1;
@@ -174,16 +232,15 @@
   font-weight: bold;
   font-family: 'logoFont', sans-serif;
   color: white;
-  background: linear-gradient(135deg, #ff6b6b, #ff8787);
+  background: linear-gradient(45deg, #ff6b6b, #ff8787, #ff6b6b);
   border: none;
-  border-radius: 20px;
+  border-radius: 30px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
-  width: 80%;
-  max-width: 400px;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+  z-index: 1;
 }
 
 .matchButton::before {
@@ -193,24 +250,48 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.3), 
     transparent
   );
-  transition: 0.5s;
+  animation: shine 2s infinite;
 }
 
-.matchButton:hover::before {
-  left: 100%;
+.matchButton::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, #ff6b6b, #ff8787, #ffa8a8, #ff6b6b);
+  filter: blur(10px);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .matchButton:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(255, 107, 107, 0.5);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 25px rgba(255, 107, 107, 0.4);
+}
+
+.matchButton:hover::after {
+  opacity: 0.7;
 }
 
 .matchButton:active {
-  transform: translateY(-2px);
+  transform: translateY(2px);
+  box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
 }
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  20% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+

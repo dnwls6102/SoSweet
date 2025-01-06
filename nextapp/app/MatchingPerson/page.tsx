@@ -35,7 +35,7 @@ export default function MatchingPerson() {
   useEffect(() => {
     // 소켓 연결 초기화
     const newSocket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`, {
-    // const newSocket = io('http://localhost:4000', {
+      // const newSocket = io('http://localhost:4000', {
       path: '/api/match',
       transports: ['websocket'],
     });
@@ -81,10 +81,10 @@ export default function MatchingPerson() {
       <div className={styles.content}>
         <div className={styles.leftSection}>
           <Image
-            src="/matching-illustration.jpg"
+            src="/matching-illustration.svg"
             alt="Matching Illustration"
-            width={400}
-            height={400}
+            width={650}
+            height={650}
             className={styles.matchImage}
           />
         </div>

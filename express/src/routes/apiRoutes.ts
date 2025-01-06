@@ -2,7 +2,7 @@ import { Router } from "express";
 import logInRequired from "../middlewares/loginRequired";
 import { recordDialog, endChat } from "../middlewares/talkWithPerson";
 import { chatMiddleware ,endChatWithAI } from "../middlewares/talkWithAI";
-import { chatAnalysis } from "../middlewares/chatAnalysis";
+import { chatAnalysis, getAnalysis } from "../middlewares/chatAnalysis";
 import { ttsMiddleware } from "../middlewares/tts";
 import { sendFaceInfoToFlask, sendMotionInfoFlask } from "../controllers/flaskController";
 
@@ -18,6 +18,7 @@ api.post("/human/dialog", recordDialog);
 
 api.post("/human/dialog/end", endChat, chatAnalysis);
 
+api.get("/human/dialog/analysis", getAnalysis);
 
 // flask 서버와 연결
 api.post("/human/faceinfo", (req, res) => {
@@ -30,4 +31,4 @@ api.post("/human/actioninfo", (req, res) => {
     sendMotionInfoFlask(req, res);
 });
 
-  export default api;
+export default api;

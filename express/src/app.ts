@@ -27,8 +27,6 @@ app.use(
 // 쿠키 뜯어볼 수 있게 쿠키 파서 설정
 app.use(cookieParser());
 
-
-
 // CORS 설정
 app.use(
   cors({

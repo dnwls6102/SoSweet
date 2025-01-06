@@ -31,15 +31,19 @@
   width: 280px;
   height: 280px;
   border-radius: 25px;
-  background: rgba(255, 255, 255, 0.8);
+  background: linear-gradient(135deg, rgba(255, 225, 233, 0.85) 0%, rgba(255, 204, 217, 0.85) 100%);
   backdrop-filter: blur(10px);
-  box-shadow: 0 8px 32px rgba(255, 192, 203, 0.2);
+  box-shadow: 
+    0 8px 20px rgba(255, 192, 203, 0.15),
+    inset 0 0 20px rgba(255, 255, 255, 0.2);
   font-size: 2.5rem;
   font-weight: bold;
   font-family: 'contentFont', sans-serif;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(255, 182, 193, 0.25);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 192, 203, 0.2);
+  position: relative;
+  overflow: hidden;
 }
 
 .option.ai {
@@ -59,9 +63,8 @@
 }
 
 .option:hover .icon {
-  transform: scale(1.1) rotate(5deg);
+  transform: scale(1.15);
   color: #FF4D6D;
-  opacity: 1;
 }
 
 .label {
@@ -78,10 +81,10 @@
 }
 
 .option:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 15px 35px rgba(255, 182, 193, 0.25);
-  border: 1px solid rgba(255, 182, 193, 0.35);
-  background: linear-gradient(135deg, rgba(255, 225, 233, 0.95) 0%, rgba(255, 204, 217, 0.95) 100%);
+  transform: scale(1.02);
+  border: 2px solid rgba(255, 77, 109, 0.4);
+  background: linear-gradient(135deg, rgba(255, 225, 233, 1) 0%, rgba(255, 204, 217, 1) 100%);
+  box-shadow: none;
 }
 
 .link {
