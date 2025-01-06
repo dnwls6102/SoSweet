@@ -152,8 +152,9 @@ export const initializeSocketServer = (server: http.Server) => {
         console.log("두 명의 피드백이 모두 도착했습니다. receiveFeedback 이벤트 전송");
         
         // 방의 모든 소켓에 전체 평가 데이터 전송
-        io.to(room).emit("receiveFeedback", evaluations[room]);
-        console.log("전체 피드백 데이터 전송 완료:", evaluations[room]);
+        const feedbackData = { ...evaluations[room] };
+        io.to(room).emit("receiveFeedback", feedbackData);
+        console.log("전체 피드백 데이터 전송 완료:", feedbackData);
         
         // 피드백 삭제
         delete evaluations[room];
