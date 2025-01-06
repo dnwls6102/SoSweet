@@ -63,8 +63,8 @@ export default function MatchingPerson() {
           <Image
             src="/matching-illustration.jpg"
             alt="Matching Illustration"
-            width={500}
-            height={500}
+            width={400}
+            height={400}
             className={styles.matchImage}
           />
         </div>

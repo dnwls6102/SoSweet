@@ -5,9 +5,9 @@
 }
 
 @font-face {
-  font-family: 'NotoSansKR';
-  src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
-  font-weight: normal;
+  font-family: 'contentFont';
+  src: url("@/fonts/NotoSansKR-Black.ttf") format('truetype');
+  font-weight: bold;
 }
 
 .container {
@@ -36,7 +36,7 @@
   box-shadow: 0 8px 32px rgba(255, 192, 203, 0.2);
   font-size: 2.5rem;
   font-weight: bold;
-  font-family: 'NotoSansKR', sans-serif;
+  font-family: 'contentFont', sans-serif;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(255, 182, 193, 0.25);

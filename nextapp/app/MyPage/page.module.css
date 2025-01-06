@@ -4,6 +4,12 @@
   font-weight: bold;
 }
 
+@font-face {
+    font-family: 'contentFont';
+    src: url("@/fonts/NotoSansKR-Black.ttf") format('truetype');
+    font-weight: bold;
+  }
+
 .wrapper {
     display : grid;
     place-items : center;
@@ -42,12 +48,12 @@
     font-size: 28px;
     font-weight: bold;
     text-align: center;
-    color: #ff69b4;
+    /* color: #ff69b4; */
     text-shadow: 2px 2px 4px rgba(255, 105, 180, 0.2);
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 3px solid #ff69b4;
-    font-family: 'logoFont', sans-serif;
+    font-family: 'contentFont', sans-serif;
 }
 
 .userDetails {
@@ -81,6 +87,7 @@
     background: linear-gradient(135deg, #ff6b6b, #ff8787);
     color: white;
     font-weight: 600;
+    font-family: 'logoFont', sans-serif;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     width: 80px;
@@ -178,7 +185,7 @@
     font-weight: bold;
     margin: 15px 0;
     text-shadow: 2px 2px 4px rgba(255, 105, 180, 0.2);
-    font-family: 'logoFont', sans-serif;
+    font-family: 'contentFont', sans-serif;
 }
 
 .userInfoText {
