@@ -18,6 +18,29 @@ api.post("/human/dialog", recordDialog);
 
 api.post("/human/dialog/end", endChat, chatAnalysis);
 
+api.get("/human/dialog/analysis", getAnalysis);
+
+// flask 서버와 연결
+api.post("/human/faceinfo", (req, res) => {
+    // console.log("Face info 요청 들어옴:", req.body);
+    sendFaceInfoToFlask(req, res);
+});
+
+api.post("/human/actioninfo", (req, res) => {
+    console.log("Action info 요청 들어옴:", req.body);
+    sendMotionInfoFlask(req, res);
+});
+
+// flask 서버와 연결
+api.post("/human/faceinfo", (req, res) => {
+    // console.log("Face info 요청 들어옴:", req.body);
+    sendFaceInfoToFlask(req, res);
+});
+
+api.post("/human/actioninfo", (req, res) => {
+    console.log("Action info 요청 들어옴:", req.body);
+    sendMotionInfoFlask(req, res);
+});
 
 // flask 서버와 연결
 api.post("/human/faceinfo", (req, res) => {
