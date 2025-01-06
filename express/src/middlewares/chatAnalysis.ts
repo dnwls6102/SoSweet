@@ -18,7 +18,6 @@ type ChatCompletionMessageParam = {
 const completedChat: { [user: string]: ChatCompletionMessageParam[]} = {};
 
 function createAiPrompt(user_id: string): ChatCompletionMessageParam {
-function createAiPrompt(user_id: string): ChatCompletionMessageParam {
   return {
     role: "system",
     content: `나는 소개팅 대화 평가 AI DatingTalkAnalyzer입니다. 
