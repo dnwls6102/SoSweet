@@ -49,30 +49,34 @@ export const sendFrameInfoToFlask = async (req: Request, res: Response) => {
         if (!roomData[room_id]) {
             roomData[room_id] = {};
         }
-        roomData[room_id][user_id] = flaskResult;    
+        roomData[room_id][user_id] = flaskResult;
 
-        // 두 사용자 정보 모두 존재하는지 확인
         const usersInRoom = Object.keys(roomData[room_id]);
 
-        let usersResponse: any | null = null;
-        
-        
+        // 상대방 정보가 없을 때 기본값 설정
+        let user1 = roomData[room_id][user_id];
+        const user2Id = usersInRoom.find(id => id !== user_id) || "unknown";
 
-        if (usersInRoom.length == 2) {
-            const userData = roomData[room_id]
-            
-            // 두 사용자 데이터 통합하여 응답하기
-            const usersResponse = {
-                room_id: room_id,
-                user1: {
-                    user_id: usersInRoom[0],
-                    ...userData[usersInRoom[0]],
-                },
-                user2: {
-                    user_id: usersInRoom[1],
-                    ...userData[usersInRoom[1]],
-                },
-            };
+        let user2 = roomData[room_id][user2Id] || {
+            user_id: "unknown",
+            emo_analysis_result: {
+                dominant_emotion: "알 수 없음",
+                percentage: 0
+            },
+            act_analysis: ["상대방 정보 없음"],
+        };
+
+        // 응답 데이터 설정
+        const usersResponse = {
+            room_id: room_id,
+            user1: {
+                user_id: user1.user_id,
+                ...user1,
+            },
+            user2: {
+                user_id: user2.user_id,
+                ...user2,
+            },
         };
 
         // 동작 분석 결과 없을 때
@@ -84,7 +88,9 @@ export const sendFrameInfoToFlask = async (req: Request, res: Response) => {
         }
         
         // 클라이언트에 응답 후 roomData에서 해당 방 데이터 제거
-        delete roomData[room_id];  // 두 사용자 데이터가 모두 있으면 roomData 삭제
+        if (usersInRoom.length === 2) {
+            delete roomData[room_id];  // 두 사용자 데이터가 모두 있으면 roomData 삭제
+        }
 
         res.status(200).json({ message: "분석 성공!", data: usersResponse });
     } catch (error) {
