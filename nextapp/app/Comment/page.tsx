@@ -54,6 +54,7 @@ export default function RatingPage() {
       const partnerFeedback = Object.entries(feedbacks).find(
         ([id]) => id !== user_id,
       );
+      console.log('상대방의 피드백: ', partnerFeedback);
 
       if (partnerFeedback) {
         const [, feedback] = partnerFeedback;
