@@ -30,6 +30,7 @@ export default function Feedback() {
 
   // Redux store에서 데이터 가져오기
   const feedbackData = useSelector((state: RootState) => state.feedback);
+  const room_id = useSelector((state: RootState) => state.socket.room);
   const isAIChat = useSelector((state: RootState) => state.aiFlag.isAIChat);
 
   useEffect(() => {
@@ -42,18 +43,24 @@ export default function Feedback() {
   const fetchEmotionData = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/faceinfo/${userID}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/feedback/faceinfo`,
         // `http://localhost:4000/api/feedback/faceinfo/${userID}`,
         {
-          method: 'GET',
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
+          body: JSON.stringify({
+            room_id: room_id,
+            user_id: userID,
+          }),
+          credentials: 'include',
         },
       );
 
       if (response.ok) {
         const data = await response.json();
+        console.log('가져온 표정 정보임다 :', data)
         setEmotionData(data);
       } else {
         console.log('데이터 가져오기 실패:', response.status);

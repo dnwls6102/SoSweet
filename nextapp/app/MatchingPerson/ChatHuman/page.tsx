@@ -413,6 +413,7 @@ export default function Chat() {
         // Flask -> Node -> 클라이언트로 넘어온 최종 결과
         const analyzeResult = await response.json();
         console.log('감정 및 동작 분석 결과:', analyzeResult);
+        console.log('룸 아이디를 확인하시오:', room_id)
 
       } catch (error) {
         console.error('전송 에러: ', error);
