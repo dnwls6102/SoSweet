@@ -60,7 +60,7 @@ export default function Feedback() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('가져온 표정 정보임다 :', data)
+        console.log('가져온 표정 정보임다 :', data);
         setEmotionData(data);
       } else {
         console.log('데이터 가져오기 실패:', response.status);
@@ -168,7 +168,7 @@ export default function Feedback() {
             'Content-Type': 'application/json',
           },
         },
-    );
+      );
 
       if (response.ok) {
         const summary = await response.json();
