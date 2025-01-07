@@ -236,7 +236,10 @@ export default function Feedback() {
           />
         </div>
       ) : (
-        <div>감정 데이터 받아오는 중...</div>
+        <div className={styles.loading}>
+          <p>감정 데이터를 불러오는 중입니다.</p>
+          <div className={styles.spinner}></div>
+        </div>
       )}
 
       {/* 차트 세부 정보 */}
@@ -254,15 +257,15 @@ export default function Feedback() {
         </ul>
       </div>
 
-      {/* 언어적 분석 */}
+      {/* 대화 분석 */}
       <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>언어적 분석</h2>
+        <h2 className={styles.sectionTitle}>대화 분석</h2>
         {feedbackData.summary ? (
           // <p>verbal</p>
           <>{feedbackData.summary}</>
         ) : (
           <div className={styles.loading}>
-            <p>언어적 분석 데이터를 불러오는 중입니다.</p>
+            <p>대화 분석 데이터를 불러오는 중입니다.</p>
             <div className={styles.spinner}></div>
           </div>
         )}
@@ -270,7 +273,7 @@ export default function Feedback() {
 
       {/* 비언어적 분석 */}
       <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>비언어적 분석</h2>
+        <h2 className={styles.sectionTitle}>동작 분석</h2>
         {nonverbal ? (
           <p>{nonverbal}</p>
         ) : (
@@ -286,7 +289,7 @@ export default function Feedback() {
           //   </p>
           // </>
           <div className={styles.loading}> 
-            <p>비언어적 분석 데이터를 불러오는 중입니다.</p>
+            <p>동작 분석 데이터를 불러오는 중입니다.</p>
             <div className={styles.spinner}></div>
           </div>
         )}
