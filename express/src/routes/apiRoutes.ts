@@ -4,8 +4,7 @@ import { recordDialog, endChat } from "../middlewares/talkWithPerson";
 import { chatMiddleware ,endChatWithAI } from "../middlewares/talkWithAI";
 import { chatAnalysis, getAnalysis } from "../middlewares/chatAnalysis";
 import { ttsMiddleware } from "../middlewares/tts";
-import { sendFaceInfoToFlask, sendMotionInfoFlask } from "../controllers/flaskController";
-
+import { sendFrameInfoToFlask } from "../controllers/flaskController";
 
 
 const api = Router();
@@ -21,14 +20,9 @@ api.post("/human/dialog/end", endChat, chatAnalysis);
 api.post("/human/dialog/analysis", getAnalysis);
 
 // flask 서버와 연결
-api.post("/human/faceinfo", (req, res) => {
-    // console.log("Face info 요청 들어옴:", req.body);
-    sendFaceInfoToFlask(req, res);
-});
-
-api.post("/human/actioninfo", (req, res) => {
-    console.log("Action info 요청 들어옴:", req.body);
-    sendMotionInfoFlask(req, res);
+api.post("/human/frameInfo", (req, res) => {
+    console.log("Frame info 요청 들어옴:", req.body);
+    sendFrameInfoToFlask(req, res);
 });
 
 export default api;

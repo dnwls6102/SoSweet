@@ -27,6 +27,7 @@ export default function Chat() {
   const [socket, setSocket] = useState<Socket | null>(null); // WEBRTC용
   const mediaRecorderRef = useRef<MediaRecorder | null>(null); // 다시보기 녹화용 (Blob)
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]); // 녹화 데이터 쌓는 배열
+  const [feedback, setFeedback] = useState('');
 
   const router = useRouter();
   const token = Cookies.get('access');
@@ -50,6 +51,34 @@ export default function Chat() {
   const recognition = useRef<SpeechRecognition | null>(null);
 
   const dispatch = useDispatch();
+
+  const tryNlp = async (script: string) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/nlp`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ script }),
+        },
+      );
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result.message);
+        setFeedback((prev) =>
+          prev ? prev + '\n' + result.message : result.message,
+        );
+      } else {
+        const result = await response.json();
+        console.log(result.error);
+        setFeedback((prev) => (prev ? prev + result.message : result.message));
+      }
+    } catch (error) {
+      console.log('서버 오류 발생');
+    }
+  };
 
   const trySendScript = async (script: string) => {
     try {
@@ -96,6 +125,8 @@ export default function Chat() {
         }
       }
       console.log('Transcription result: ', scriptRef.current);
+      tryNlp(scriptRef.current);
+
       trySendScript(scriptRef.current);
       //여기에다가 음성 인식 결과를 보낼 경우 : 변환 결과를 바로바로 보내주기 때문에
       //말을 끊었는지 여부도 조금 더 명확하게 판단 가능할수도 있다
@@ -327,17 +358,17 @@ export default function Chat() {
 
     // Canvas로 동영상 이미지로 캡쳐하고 서버로 전송하기
     const captureAndSendFrame = async () => {
+      if (!room_id) return;
+
       const videoEl = localVideoRef.current;
       if (!videoEl) return;
 
       // 현재 비디오 크기 가져오기
-      const vWidth = videoEl.videoWidth / 3; // 기존 해당도의 1/3 로 줄이기
-      const vHeight = videoEl.videoHeight / 3;
+      const vWidth = videoEl.videoWidth / 4; // 기존 해당도의 1/4 로 줄이기
+      const vHeight = videoEl.videoHeight / 4;
 
-      if (!vWidth || !vHeight) {
-        // 영상 아직 준비 안 되었으면 스킵하기
-        return;
-      }
+      // 영상 아직 준비 안 되었으면 스킵하기
+      if (!vWidth || !vHeight) return;
 
       // canvas 생성하기
       const canvas = document.createElement('canvas');
@@ -353,10 +384,14 @@ export default function Chat() {
       // JPEG 포맷으로 Base64 인코딩
       const dataURL = canvas.toDataURL('image/jpeg', 0.7); // 70% 품질로 압축
 
+      // 현재 시간으로 타임스탬프
+      const timestamp = Date.now();
+
       try {
         // Node 백엔드로 POST 요청
+        // 1. 감정, 동작 분석 요청
         const response = await fetch(
-          'http://localhost:4000/api/human/faceinfo',
+          'http://localhost:4000/api/human/frameInfo',
           {
             method: 'POST',
             headers: {
@@ -364,6 +399,7 @@ export default function Chat() {
             },
             body: JSON.stringify({
               frame: dataURL,
+              timestamp: timestamp,
               user_id: user_id,
               room_id: room_id,
             }),
@@ -373,13 +409,14 @@ export default function Chat() {
         );
 
         if (!response.ok) {
-          console.error('Node 서버 응답 에러:', response.status);
+          console.error('감정 및 동작 분석 응답 에러:', response.status);
           return;
         }
 
         // Flask -> Node -> 클라이언트로 넘어온 최종 결과
-        const result = await response.json();
-        console.log('분석 결과:', result);
+        const analyzeResult = await response.json();
+        console.log('감정 및 동작 분석 결과:', analyzeResult);
+        console.log('룸 아이디를 확인하시오:', room_id);
       } catch (error) {
         console.error('전송 에러: ', error);
       }
@@ -388,7 +425,17 @@ export default function Chat() {
     // 일정 간격(1초)에 한 번씩 캡쳐하기
     const intervalId = setInterval(() => {
       captureAndSendFrame();
-    }, 1000); // 1초마다
+    }, 1500); // 1.5초마다
+
+    // 상대방 연결 종료 처리
+    rtcSocket.on('peerDisconnected', () => {
+      console.log('Peer disconnected');
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = null;
+      }
+      //소켓 연결 종료시키고
+      //상대방 평가 화면으로 router.push 시켜주기
+    });
 
     // 정리 함수
     return () => {
