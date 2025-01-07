@@ -1,6 +1,8 @@
 import { Server, Socket } from "socket.io";
 import http from "http";
+import UserSchema, { State } from "./models/User";
 import dotenv from "dotenv";
+import { global_id, global_gender } from "./app";
 
 // WebRTC 관련 타입 정의
 interface RTCSessionDescription {
@@ -15,6 +17,8 @@ interface RTCIceCandidate {
 }
 
 dotenv.config();
+
+const PORT = process.env.PORT ?? 3000;
 // // DB Connection test
 // (async () => {
 //   for (let i = 0; i < 5; i++) {
@@ -38,8 +42,7 @@ const evaluations: {
 } = {}; 
 
 export const initializeSocketServer = (server: http.Server) => {
-  // main 서버 - client 소켓
-  const io_client = new Server(server, {
+  const io = new Server(server, {
     path: "/api/match",
     cors: {
       origin: process.env.CLIENT_URL || 'http://localhost:3000',
@@ -47,23 +50,22 @@ export const initializeSocketServer = (server: http.Server) => {
       methods: ["GET", "POST", "OPTIONS"],
     },
   });
-  
+
   // 대기 중인 사용자 관리를 위한 Map
   const waitingUsers = new Map();
   // 활성화된 방 관리를 위한 Map
   const activeRooms = new Map();
-  
-  /* main 서버 - client 소켓 연결결 */
-  io_client.on("connection", async (socket_client: Socket) => {
-    console.log("새로운 사용자 연결:", socket_client.id);
+
+  io.on("connection", async (socket: Socket) => {
+    console.log("새로운 사용자 연결:", socket.id);
 
     // 매칭 시작 이벤트 처리
-    socket_client.on("startMatching", async (userData: any) => {
+    socket.on("startMatching", async (userData) => {
       const { id, gender } = userData;
       console.log("매칭 시작:", id, gender);
       
       // 대기열에 사용자 추가
-      waitingUsers.set(socket_client.id, { id, gender, socket_client });
+      waitingUsers.set(socket.id, { id, gender, socket });
       
       // 매칭 시도
       tryMatch(socket, gender);
@@ -79,7 +81,7 @@ export const initializeSocketServer = (server: http.Server) => {
           // 매칭 성공
           const room = `room_${Date.now()}`;
           currentSocket.join(room);
-          waitingUser.socket_client.join(room);
+          waitingUser.socket.join(room);
           
           // 방 정보 저장
           activeRooms.set(room, {
@@ -87,43 +89,47 @@ export const initializeSocketServer = (server: http.Server) => {
           });
           
           // 양쪽 모두에게 매칭 성공 알림
-          io_client.to(room).emit("matchSuccess", { room });
+          io.to(room).emit("matchSuccess", { room });
           
           // 대기열에서 제거
           waitingUsers.delete(waitingSocketId);
           waitingUsers.delete(currentSocket.id);
-                    
+          
+          // DB 상태 업데이트
+          await updateUserState(waitingUser.id, State.dating);
+          await updateUserState(currentSocket.id, State.dating);
+          
           return;
         }
       }
     }
 
     // WebRTC 시그널링 이벤트 처리
-    socket_client.on("join", async (data: { room: string }) => {
+    socket.on("join", async (data: { room: string }) => {
       console.log("User joined room:", data.room);
-      socket_client.join(data.room);
+      socket.join(data.room);
       
       // 방에 있는 다른 사용자 수 확인
-      const clients = await io_client.in(data.room).allSockets();
+      const clients = await io.in(data.room).allSockets();
       if (clients.size === 2) {
         // 두 번째 사용자가 들어왔을 때 시그널링 시작
-        socket_client.emit("ready");
+        socket.emit("ready");
       }
     });
 
     socket.on("offer", (data: { offer: RTCSessionDescription, room: string }) => {
       console.log("Offer received:", data.room);
-      socket_client.to(data.room).emit("offer", data.offer);
+      socket.to(data.room).emit("offer", data.offer);
     });
 
     socket.on("answer", (data: { answer: RTCSessionDescription, room: string }) => {
       console.log("Answer received:", data.room);
-      socket_client.to(data.room).emit("answer", data.answer);
+      socket.to(data.room).emit("answer", data.answer);
     });
 
     socket.on("candidate", (data: { candidate: RTCIceCandidate, room: string }) => {
       console.log("ICE candidate received:", data.room);
-      socket_client.to(data.room).emit("candidate", data.candidate);
+      socket.to(data.room).emit("candidate", data.candidate);
     });
     // 상대방에게 평가 보내고, 평가 받기. 양쪽 다 평가를 완료하면 소켓을 닫고 피드백 페이지로 이동하기.
     socket.on("submitFeedback", (data: { comment: string, rating: number, like: boolean, room: string, user_id: string }) => {
