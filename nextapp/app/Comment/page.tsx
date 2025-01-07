@@ -7,9 +7,8 @@ import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-import { setPartnerFeedback } from '../../store/feedbackSlice';
+import { setPartnerFeedback, setSummary } from '../../store/feedbackSlice';
 import { setIsAIChat } from '../../store/aiFlagSlice';
-import { setGPTFeedback } from '../../store/GPTfeedbackSlice';
 
 interface UserPayload {
   user_id: string;
@@ -100,6 +99,31 @@ export default function RatingPage() {
     console.log('피드백 제출:', data);
     socket.emit('submitFeedback', data);
     setWaiting(true);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/analysis`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: user_id,
+          }),
+          credentials: 'include',
+        },
+      );
+      if (response.ok) {
+        const result = await response.json();
+        console.log('대화 분석 받음');
+        dispatch(setSummary(result.analysis)); //서버에서 어떻게 줄 건지 확인
+      } else {
+        console.error('서버에서 분석을 반환하지 않음');
+      }
+    } catch (error) {
+      console.error('분석 반환 요청 실패:', error);
+    }
   };
 
   if (waiting) {
