@@ -529,24 +529,6 @@ export default function Chat() {
             height={50}
           />
         </div>
-        <div className={styles.videoContainer}>
-          <Videobox
-            videoref={localVideoRef}
-            keys={keys}
-            value={value}
-            autoplay={true}
-            playsinline={true}
-            muted={true}
-          />
-          <Image
-            className={styles.callEndIcon}
-            onClick={handleNavigation}
-            src="/call-end.svg"
-            alt="대화 종료"
-            width={50}
-            height={50}
-          />
-        </div>
       </div>
       <div className={styles.right}>
         <Videobox
