@@ -21,7 +21,7 @@ export default function Videobox({
   return (
     <div className={styles.videobox}>
       <span className={styles.label}>
-        {keys}: {value}%
+        {String(keys)}: {value}%
       </span>
       <video
         ref={videoref}
