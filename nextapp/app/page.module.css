@@ -21,6 +21,12 @@
   font-weight: bold;
 }
 
+@font-face {
+  font-family: 'contentFont';
+  src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
+  font-weight: normal;
+}
+
 .logo {
   font-family: 'logoFont', sans-serif;
   font-size: 60px;
@@ -55,6 +61,7 @@
   padding: 12px 16px;
   border: 2px solid #e1e1e1;
   border-radius: 10px;
+  font-family: 'contentFont', sans-serif;
   font-size: 14px;
   transition: all 0.3s ease;
   background-color: #f8f9fa;
@@ -77,6 +84,7 @@
   top: -10px;
   background-color: white;
   padding: 0 6px;
+  font-family: 'contentFont', sans-serif;
   font-size: 12px;
   color: #868e96;
   pointer-events: none;
@@ -91,10 +99,10 @@
 }
 
 .button {
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(135deg, #ff6b6b, #ff8787);
+  background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
   color: white;
   font-weight: 600;
   font-family: 'logoFont', sans-serif;

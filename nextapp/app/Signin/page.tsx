@@ -24,11 +24,14 @@ export default function Signin() {
 
   useEffect(() => {
     function checkPassword() {
-      if (password !== checkpwd) {
-        setMsg('비밀번호가 일치하지 않습니다');
-        setFlag(false);
-      } else if (password === '' && checkpwd === '') {
+      if (password === '' && checkpwd === '') {
         setMsg('');
+        setFlag(false);
+      } else if (password === '' || checkpwd === '') {
+        setMsg('비밀번호를 모두 입력해주세요');
+        setFlag(false);
+      } else if (password !== checkpwd) {
+        setMsg('비밀번호가 일치하지 않습니다');
         setFlag(false);
       } else {
         setMsg('비밀번호가 일치합니다');
