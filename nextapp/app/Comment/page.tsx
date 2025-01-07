@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 import { setPartnerFeedback } from '../../store/feedbackSlice';
 import { setIsAIChat } from '../../store/aiFlagSlice';
-import { setGPTFeedback } from '../../store/GPTfeedbackSlice';
 
 interface UserPayload {
   user_id: string;
@@ -100,26 +99,6 @@ export default function RatingPage() {
     console.log('피드백 제출:', data);
     socket.emit('submitFeedback', data);
     setWaiting(true);
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/analysis`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ room_id: room }),
-          credentials: 'include',
-        },
-      );
-      if (response.ok) {
-        const data = await response.json();
-        dispatch(setGPTFeedback(data.analysis));
-        console.log('대화 분석 결과:', data);
-      }
-    } catch (error) {
-      console.error('대화 분석 요청 실패:', error);
-    }
   };
 
   if (waiting) {

@@ -381,7 +381,7 @@ export default function Chat() {
     };
   }, [room_id, recordedChunks, dispatch, router]);
 
-  const handleNavigation = async () => {
+  const handleNavigation = () => {
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
       console.log('녹화 중지됨!');
@@ -397,27 +397,6 @@ export default function Chat() {
       currentSocket.emit('endCall', { room: room_id });
     } else {
       console.log('Socket is not available');
-    }
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ room_id }),
-          credentials: 'include',
-        },
-      );
-      if (response.ok) {
-        console.log('대화 종료 요청 성공');
-      } else {
-        console.log('응답은 잘 갔으나 대화 종료 요청 실패:', response.status);
-      }
-    } catch (error) {
-      console.error('대화 종료 요청 실패:', error);
     }
 
     router.push('/Comment');

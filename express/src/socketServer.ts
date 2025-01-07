@@ -74,16 +74,12 @@ export const initializeSocketServer = (server: http.Server) => {
     // 매칭 시도 함수
     async function tryMatch(currentSocket: Socket, currentGender: string) {
       const oppositeGender = currentGender === "남성" ? "여성" : "남성";
-      console.log(`매칭 시도: ${currentSocket.id}(${currentGender}) -> ${oppositeGender} 찾는 중`);
       
       // 대기 중인 상대 찾기
       for (const [waitingSocketId, waitingUser] of waitingUsers) {
         if (waitingUser.gender === oppositeGender) {
           // 매칭 성공
           const room = `room_${Date.now()}`;
-          console.log(`매칭 성공: ${currentSocket.id}(${currentGender}) <-> ${waitingSocketId}(${oppositeGender})`);
-          console.log(`방 생성: ${room}`);
-          
           currentSocket.join(room);
           waitingUser.socket.join(room);
           
@@ -94,7 +90,6 @@ export const initializeSocketServer = (server: http.Server) => {
           
           // 양쪽 모두에게 매칭 성공 알림
           io.to(room).emit("matchSuccess", { room });
-          console.log(`매칭 성공 이벤트 전송 완료: ${room}`);
           
           // 대기열에서 제거
           waitingUsers.delete(waitingSocketId);
@@ -107,7 +102,6 @@ export const initializeSocketServer = (server: http.Server) => {
           return;
         }
       }
-      console.log(`매칭 실패: ${oppositeGender} 대기자 없음`);
     }
 
     // WebRTC 시그널링 이벤트 처리
