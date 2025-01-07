@@ -360,6 +360,44 @@ export default function Chat() {
     });
 
     // Canvas로 동영상 이미지로 캡쳐하고 서버로 전송하기
+    const captureAndSendFrame = () => {
+      if (!localVideoRef.current) return;
+      const videoEl = localVideoRef.current;
+
+      // 현재 비디오 크기 가져오기
+      const vWidth = videoEl.videoWidth;
+      const vHeight = videoEl.videoHeight;
+
+      if (!vWidth || !vHeight) {
+        // 영상 아직 준비 안 되었으면 스킵하기
+        return;
+      }
+
+      // canvas 생성하기
+      const canvas = document.createElement('canvas');
+      canvas.width = vWidth;
+      canvas.height = vHeight;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // canvas에 비디오 그리기
+      ctx.drawImage(videoEl, 0, 0, vWidth, vHeight);
+
+      // toDataURL로 이미지(Base64) 추출
+      const dataURL = canvas.toDataURL('image/png');
+
+      //소켓을 통해 서버로 전송 (감정, 동작 두 종류)
+      apiSocket.emit('emotion-chunk', { user_id: 'test', frame: dataURL });
+      apiSocket.emit('action-chunk', { user_id: 'test', frame: dataURL });
+    };
+
+    // 일정 간격(1초)에 한 번씩 캡쳐하기
+    const intervalId = setInterval(() => {
+      captureAndSendFrame();
+    }, 1000); // 1초마다
+
+    // Canvas로 동영상 이미지로 캡쳐하고 서버로 전송하기
     const captureAndSendFrame = async () => {
       if (!room_id) return;
 
@@ -516,6 +554,24 @@ export default function Chat() {
             videoref={localVideoRef}
             keys={myEmotion}
             value={myValue}
+            autoplay={true}
+            playsinline={true}
+            muted={true}
+          />
+          <Image
+            className={styles.callEndIcon}
+            onClick={handleNavigation}
+            src="/call-end.svg"
+            alt="대화 종료"
+            width={50}
+            height={50}
+          />
+        </div>
+        <div className={styles.videoContainer}>
+          <Videobox
+            videoref={localVideoRef}
+            keys={keys}
+            value={value}
             autoplay={true}
             playsinline={true}
             muted={true}

@@ -1,5 +1,11 @@
+@font-face {
+    font-family: 'contentFont';
+    src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
+    font-weight: normal;
+  }
+
 .inputGroup {
-    margin-bottom: 16px;
+    margin-bottom: 8px;
     position: relative;
     width: 500px;
     display: flex;
@@ -15,6 +21,7 @@
     width: 50%;
     display: block;
     margin-bottom: 6px;
+    font-family: 'contentFont', sans-serif;
     font-weight: bold;
     font-size: 16px;
     color: #2d3748;
@@ -25,6 +32,7 @@
     height: 40px;
     width: 355px;
     font-size: 14px;
+    font-family: 'contentFont', sans-serif;
     border: 2px solid #e2e8f0;
     border-radius: 8px;
     background-color: #fff;
@@ -46,6 +54,7 @@
 }
 
 .button {
+    font-family: 'contentFont', sans-serif;
     margin-left: 10px;
     height: 40px;
     padding: 0 14px;
