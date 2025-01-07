@@ -10,6 +10,12 @@
     font-weight: bold;
   }
 
+@font-face {
+    font-family: 'NotoSansKR';
+    src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
+    font-weight: normal;
+}
+
 .wrapper {
     display : grid;
     place-items : center;
@@ -205,6 +211,7 @@
 .infoLabel {
     min-width: 70px;
     color: #666;
+    font-family: 'NotoSansKR', sans-serif;
     font-weight: 500;
 }
 
@@ -213,6 +220,7 @@
     padding: 8px 12px;
     border: 2px solid #ffd8d8;
     border-radius: 8px;
+    font-family: 'NotoSansKR', sans-serif;
     font-size: 14px;
     transition: all 0.2s ease;
     background-color: #fff;
@@ -234,7 +242,12 @@
     padding: 8px 12px;
     background-color: #f8f9fa;
     border-radius: 8px;
+    font-family: 'NotoSansKR', sans-serif;
     font-size: 14px;
     color: #495057;
     border: 2px solid #e9ecef;
+}
+
+.rankText {
+    font-family: 'NotoSansKR', sans-serif;
 }

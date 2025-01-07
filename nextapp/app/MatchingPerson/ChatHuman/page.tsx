@@ -5,12 +5,16 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import io, { Socket } from 'socket.io-client';
 import 'webrtc-adapter';
 import styles from './page.module.css';
+import Image from 'next/image';
 import Videobox from '@/components/videobox';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
+import { useDispatch } from 'react-redux';
+import { setReduxSocket, setRoom } from '../../../store/socketSlice';
 
 interface UserPayload {
   user_id: string;
+  iat: number; 
   iat: number; 
   exp: number;
 }
@@ -47,6 +51,8 @@ export default function Chat() {
   const isRecording = useRef(false);
   const recognition = useRef<SpeechRecognition | null>(null);
 
+  const dispatch = useDispatch();
+
   const tryNlp = async (script: string) => {
     try {
       const response = await fetch(
@@ -77,14 +83,18 @@ export default function Chat() {
 
   const trySendScript = async (script: string) => {
     try {
-      const response = await fetch('http://localhost:4000/api/human/dialog', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog`,
+        {
+          // const response = await fetch('http://localhost:4000/api/human/dialog', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_id, script, room_id }),
+          mode: 'cors',
         },
-        body: JSON.stringify({ user_id, script, room_id }),
-        mode: 'cors',
-      });
+      );
 
       if (response.ok) {
         console.log('전송 성공');
@@ -188,10 +198,18 @@ export default function Chat() {
       },
     );
     setSocket(rtcSocket);
+    dispatch(setReduxSocket(rtcSocket));
+    dispatch(setRoom(room_id));
+
+    // 소켓 연결 확인 및 방 참가
+    rtcSocket.on('connect', () => {
+      console.log('Socket connected and stored in Redux:', rtcSocket.id);
+      // 연결 후 방에 참가
+      rtcSocket.emit('join', { room: room_id });
+    });
 
     // PeerConnection 초기화
     const newPeerConnection = new RTCPeerConnection(pcConfig);
-    // setPeerConnection(newPeerConnection);
 
     // 미디어 스트림 초기화
     const initializeMedia = async () => {
@@ -211,11 +229,7 @@ export default function Chat() {
           newPeerConnection.addTrack(track, stream);
         });
 
-        // 연결되면 시그널링 시작 (방에 참가)
-        rtcSocket.emit('join', { room_id });
-
-        // 여기서 MediaRecorder로 '전체 영상 Blob' 저장 로직 구현하기 => 대화 끝나고 S3 업로드 할 때 필요
-
+        // 연기서 MediaRecorder로 '전체 영상 Blob' 저장 로직 구현하기
         setupMediaRecorder(stream);
       } catch (err) {
         console.error('Error accessing media devices:', err);
@@ -262,8 +276,16 @@ export default function Chat() {
     };
 
     // WebRTC 소켓 이벤트 핸들러 설정
-    rtcSocket.on('connect', () => {
-      console.log('Socket connected:', rtcSocket.id);
+    rtcSocket.on('peerDisconnected', () => {
+      console.log('Peer disconnected - from rtcSocket');
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = null;
+      }
+      alert('상대방이 연결을 종료했습니다.');
+      if (mediaRecorderRef.current) {
+        mediaRecorderRef.current.stop();
+      }
+      router.push('/Comment');
     });
 
     // 방에 참가한 후 offer 생성
@@ -370,7 +392,7 @@ export default function Chat() {
         console.log('감정 및 동작 분석 결과:', analyzeResult);
 
       } catch (error) {
-        console.error('전송 에러: ', error)
+        console.error('전송 에러: ', error);
       }
     };
 
@@ -394,42 +416,58 @@ export default function Chat() {
       if (newPeerConnection) {
         newPeerConnection.close();
       }
-      if (rtcSocket) {
-        rtcSocket.disconnect();
+      if (mediaRecorderRef.current) {
+        mediaRecorderRef.current.stop();
       }
-
+      rtcSocket.off('peerDisconnected');
       recognition.current?.stop();
       isRecording.current = false;
-
       clearInterval(intervalId);
     };
-  }, [room_id, recordedChunks]);
+  }, [room_id, recordedChunks, dispatch, router]);
 
   const handleNavigation = () => {
     if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.stop()
+      mediaRecorderRef.current.stop();
       console.log('녹화 중지됨!');
 
       const completeBlob = new Blob(recordedChunks, { type: 'video/webm' });
       console.log('완성된 영상 Blob: ', completeBlob);
-      
-      // S3 업로드 로직
     }
-    // 페이지 이동하기 (여기에 recordedChunks를 합쳐서 S3 업로드 추가 로직 구현해야함)
+
+    // socket 상태 대신 rtcSocket 직접 사용
+    const currentSocket = socket;
+    if (currentSocket) {
+      console.log('Sending endCall event with room:', room_id);
+      currentSocket.emit('endCall', { room: room_id });
+    } else {
+      console.log('Socket is not available');
+    }
+
     router.push('/Comment');
   };
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.left}>
-        <Videobox
-          videoref={localVideoRef}
-          keys={keys}
-          value={value}
-          autoplay={true}
-          playsinline={true}
-          muted={true}
-        />
+        <div className={styles.videoContainer}>
+          <Videobox
+            videoref={localVideoRef}
+            keys={keys}
+            value={value}
+            autoplay={true}
+            playsinline={true}
+            muted={true}
+          />
+          <Image
+            className={styles.callEndIcon}
+            onClick={handleNavigation}
+            src="/call-end.svg"
+            alt="대화 종료"
+            width={50}
+            height={50}
+          />
+        </div>
       </div>
       <div className={styles.right}>
         <Videobox
@@ -440,9 +478,6 @@ export default function Chat() {
           playsinline={true}
           muted={false}
         />
-        <button className={styles.endButton} onClick={handleNavigation}>
-          대화 종료
-        </button>
       </div>
     </div>
   );

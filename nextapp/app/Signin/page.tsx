@@ -72,7 +72,8 @@ export default function Signin() {
 
   const handleCheckId = async () => {
     try {
-      const response = await fetch('http://localhost:4000/users/check', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/users/check`, {
+      // const response = await fetch('http://localhost:4000/users/check', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -111,7 +112,8 @@ export default function Signin() {
       };
 
       try {
-        const response = await fetch('http://localhost:4000/users', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/users`, {
+        // const response = await fetch('http://localhost:4000/users', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
