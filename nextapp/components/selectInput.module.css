@@ -1,3 +1,9 @@
+@font-face {
+    font-family: 'contentFont';
+    src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
+    font-weight: normal;
+  }
+
 .inputGroup {
     margin-bottom: 16px;
     position: relative;
@@ -15,6 +21,7 @@
     width: 50%;
     display: block;
     margin-bottom: 6px;
+    font-family: 'contentFont', sans-serif;
     font-weight: bold;
     font-size: 16px;
     color: #2d3748;
@@ -29,6 +36,7 @@
     padding: 0 14px;
     height: 40px;
     width: 165px;
+    font-family: 'contentFont', sans-serif;
     font-size: 14px;
     border: 2px solid #e2e8f0;
     border-radius: 8px;
@@ -59,5 +67,5 @@
   outline: none;
   border-color: #fd79a8;
   background-color: #fff5f8;
-  box-shadow: 0 0 0 3px rgba(253, 121, 168, 0.1);
+  box-shadow: 0 0 0 3px rgba(14, 11, 12, 0.1);
 }

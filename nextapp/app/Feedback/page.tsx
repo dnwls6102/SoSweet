@@ -230,7 +230,10 @@ export default function Feedback() {
           />
         </div>
       ) : (
-        <div>감정 데이터 받아오는 중...</div>
+        <div className={styles.loading}>
+          <p>감정 데이터를 불러오는 중입니다.</p>
+          <div className={styles.spinner}></div>
+        </div>
       )}
 
       {/* 차트 세부 정보 */}
@@ -248,20 +251,23 @@ export default function Feedback() {
         </ul>
       </div>
 
-      {/* 언어적 분석 */}
+      {/* 대화 분석 */}
       <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>언어적 분석</h2>
+        <h2 className={styles.sectionTitle}>대화 분석</h2>
         {feedbackData.summary ? (
           // <p>verbal</p>
           <>{feedbackData.summary}</>
         ) : (
-          <p>언어적 분석 데이터를 불러오는 중입니다.</p>
+          <div className={styles.loading}>
+            <p>대화 분석 데이터를 불러오는 중입니다.</p>
+            <div className={styles.spinner}></div>
+          </div>
         )}
       </div>
 
       {/* 비언어적 분석 */}
       <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>비언어적 분석</h2>
+        <h2 className={styles.sectionTitle}>동작 분석</h2>
         {nonverbal ? (
           <p>{nonverbal}</p>
         ) : (
@@ -276,7 +282,10 @@ export default function Feedback() {
           //     만지는 습관이 있으신 것 같아요!
           //   </p>
           // </>
-          <p>비언어적 분석 데이터를 불러오는 중입니다.</p>
+          <div className={styles.loading}>
+            <p>동작 분석 데이터를 불러오는 중입니다.</p>
+            <div className={styles.spinner}></div>
+          </div>
         )}
       </div>
 
@@ -296,7 +305,10 @@ export default function Feedback() {
               </p>
             </div>
           ) : (
-            <p>상대방의 평가 데이터를 불러오는 중입니다.</p>
+            <div className={styles.loading}>
+              <p>상대방의 평가 데이터를 불러오는 중입니다.</p>
+              <div className={styles.spinner}></div>
+            </div>
           )}
         </div>
       )}
@@ -309,22 +321,25 @@ export default function Feedback() {
             <p>{summary}</p>
             <p>
               당신은 <span className={styles.highlight}>연애고자</span> 입니다.
-              <br />
-              등급:
+              <br /> <br />
+              당신의 소개팅 등급은
             </p>
             <div className={styles.rankContainer}>
               <Image
                 src="/bronze-icon.svg"
                 alt="등급 아이콘"
-                width={60}
-                height={60}
+                width={65}
+                height={65}
                 className={styles.rankIcon}
               />
               <span className={styles.rankText}>브론즈</span>
             </div>
           </div>
         ) : (
-          <p>평가 데이터를 불러오는 중입니다.</p>
+          <div className={styles.loading}>
+            <p>평가 데이터를 불러오는 중입니다.</p>
+            <div className={styles.spinner}></div>
+          </div>
         )}
       </div>
 
@@ -344,9 +359,14 @@ export default function Feedback() {
 
       {/* 메인 페이지로 이동 */}
       <div className={styles.buttonContainer}>
-        <Link href="/MainPage" className={styles.link}>
+        <Link
+          href="/MainPage"
+          style={{ textDecoration: 'none' }}
+          className={styles.link}
+        >
           <button className={styles.mainPageButton}>
-            메인 페이지로 돌아가기
+            <span style={{ marginRight: '10px' }}>🏠</span> 메인 페이지로
+            돌아가기
           </button>
         </Link>
       </div>
