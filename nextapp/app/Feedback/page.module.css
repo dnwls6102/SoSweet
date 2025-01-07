@@ -5,7 +5,13 @@
 }
 
 @font-face {
-  font-family: 'NotoSansKR';
+  font-family: 'titleFont';
+  src: url("@/fonts/NotoSansKR-Black.ttf") format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'contentFont';
   src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
   font-weight: normal;
 }
@@ -17,62 +23,43 @@ body {
 .container {
   max-width: 800px;
   margin: 20px auto;
-  padding: 20px;
+  padding: 30px;
   background-color: #fff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
   font-family: 'NotoSans', Arial, sans-serif;
   color: #333;
+  animation: fadeIn 0.8s ease-in-out;
 }
 
 .logo {
   font-size: 1.8em;
   font-weight: bold;
   font-family: 'logoFont', sans-serif;
-  color: #ff7f50;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   text-align: center;
 }
 
 .title {
   font-size: 1.8em;
   font-weight: bold;
-  font-family: 'NotoSansKR', sans-serif;
+  font-family: 'titleFont', sans-serif;
   text-align: center;
   margin-bottom: 20px;
+  color: #ff6b6b;
 }
 
 .chartContainer {
   width: 50%;
   max-width: 350px;
   margin: 0 auto 20px auto;
-  font-family: 'NotoSansKR', sans-serif;
-}
-
-.rankContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 10px;
-}
-
-.rankIcon {
-  margin-right: 10px;
-}
-
-.rankText {
-  font-size: 1.4em;
-  font-weight: bold;
-  font-family: 'NotoSansKR', sans-serif;
-  color: #331a02;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  letter-spacing: 1px;
+  font-family: 'contentFont', sans-serif;
 }
 
 .chartDetails {
   text-align: center;
   margin-top: 20px;
-  font-family: 'NotoSansKR', sans-serif;
+  font-family: 'contentFont', sans-serif;
 }
 
 .chartDetails ul {
@@ -87,66 +74,123 @@ body {
 }
 
 .section {
-  margin-top: 30px;
-  font-family: 'NotoSansKR', sans-serif;
+  margin-top: 50px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(255, 182, 193, 0.3);
 }
 
 .sectionTitle {
+  font-family: 'titleFont', sans-serif;
   font-size: 1.4em;
   font-weight: bold;
   margin-bottom: 15px;
-  border-left: 5px solid #ff7f50;
-  padding-left: 10px;
+  border-left: 5px solid #ff6b6b;
+  padding-left: 12px;
 }
 
 .overallSection {
-  margin-top: 20px;
+  margin-top: 30px;
   text-align: center;
-  font-family: 'NotoSansKR', sans-serif;
-  background-color: #ffe4e1;
+  background: #ffe5e5;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .overallTitle {
-  font-size: 1.6em;
-  font-weight: bold;
-  font-family: 'NotoSansKR', sans-serif;
+  font-family: 'titleFont', sans-serif;
+  font-size: 1.7em;
+  color: #461713;
   margin-bottom: 10px;
-  color: #ff7f50;
+  letter-spacing: 2px;
 }
 
 .overallText {
+  font-family: 'contentFont', sans-serif;
   font-size: 1.2em;
   font-weight: bold;
-  font-family: 'NotoSansKR', sans-serif;
   color: #333;
+  line-height: 1.6;
 }
 
 .highlight {
-  color: #007bff;
+  color: #ff4757;
+  font-weight: bold;
+}
+
+.rankContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+.rankIcon {
+  margin-right: 15px;
+  filter: drop-shadow(0 0 15px rgba(255, 107, 107, 0.7));
+  animation: pulse 2s infinite ease-in-out;
+  animation: scaleEffect 1.5s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes scaleEffect {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.15); }
+}
+
+.rankText {
+  font-size: 1.3em;
+  font-weight: bold;
+  font-family: 'logoFont', sans-serif;
+  color: #ff6b6b;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 1.5px;
 }
 
 .tipsSection {
   margin-top: 40px;
-  font-family: 'NotoSansKR', sans-serif;
 }
 
 .tipsTitle {
+  font-family: 'titleFont', sans-serif;
   font-size: 1.4em;
   font-weight: bold;
-  font-family: 'NotoSansKR', sans-serif;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .tipsContent {
-  background-color: #f9f9f9;
-  padding: 15px;
-  border-radius: 5px;
+  background-color: #fcf1f1;
+  padding: 14px;
+  border-radius: 12px;
+  font-family: 'contentFont', sans-serif;
   font-size: 1em;
-
 }
+
+.tipsContent ul {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+.tipsContent li {
+  margin-bottom: 12px;
+  font-size: 1em;
+  position: relative;
+  padding-left: 25px;
+}
+
+.tipsContent li::before {
+  content: '💡'; /* 사용자 정의 아이콘 */
+  position: absolute;
+  left: 0;
+  font-size: 1em;
+}
+
 
 .footer {
   text-align: center;
@@ -158,22 +202,88 @@ body {
 /* Button Styles */
 .buttonContainer {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 35px;
+  margin-bottom: 20px;
 }
 
 .mainPageButton {
-  padding: 10px 20px;
-  background-color: #007bff;
+  background: linear-gradient(135deg, #ff6b6b, #ff8787);
   color: white;
-  font-size: 1.2em;
-  font-weight: bold;
-  font-family: 'NotoSansKR', sans-serif;
   border: none;
-  border-radius: 5px;
+  padding: 17px 41px;
+  border-radius: 30px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-family: 'logoFont', sans-serif;
+  font-size: 1.2em;
+  font-weight: 600;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+  text-decoration: none;
 }
 
 .mainPageButton:hover {
-  background-color: #0056b3;
+  background-color: #d44168;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 77, 141, 0.3);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.msg {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #ff4388;
+  text-align: left;
+  min-height: 16px;
+  padding-left: 5px;
+  opacity: 0;
+  animation: msgFadeIn 1s forwards;
+}
+
+.msg.visible {
+  opacity: 1;
+}
+
+@keyframes msgFadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.loading {
+  font-family: 'contentFont', sans-serif;
+  font-size: 1em;
+  color: #ff6b6b;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;  /* 부모 요소가 높이를 정의했을 경우에 필요 */
+}
+
+.spinner {
+  margin-top: 10px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #ff6b6b;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
