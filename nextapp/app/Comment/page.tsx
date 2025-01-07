@@ -32,6 +32,9 @@ export default function RatingPage() {
   const router = useRouter();
   const socket = useSelector((state: RootState) => state.socket.socket);
   const room = useSelector((state: RootState) => state.socket.room);
+  const gptFeedback = useSelector(
+    (state: RootState) => state.GPTfeedback.summary,
+  );
   const dispatch = useDispatch();
 
   const token = Cookies.get('access');
