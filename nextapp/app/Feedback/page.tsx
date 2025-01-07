@@ -64,7 +64,6 @@ export default function Feedback() {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/feedback/faceinfo`,
-        // `http://localhost:4000/api/feedback/faceinfo/${userID}`,
         {
           method: 'POST',
           headers: {
@@ -74,7 +73,6 @@ export default function Feedback() {
             room_id: room_id,
             user_id: userID,
           }),
-          credentials: 'include',
         },
       );
 
@@ -102,7 +100,6 @@ export default function Feedback() {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/talk/${userID}`,
-        // `http://localhost:4000/api/feedback/talk/${userID}`,
         {
           method: 'GET',
           headers: {
@@ -127,7 +124,6 @@ export default function Feedback() {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/notalk/${userID}`,
-        // `http://localhost:4000//api/feedback/notalk/${userID}`,
         {
           method: 'GET',
           headers: {
@@ -152,7 +148,6 @@ export default function Feedback() {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/timeline/${userID}`,
-        // `http://localhost:4000/api/feedback/timeline/${userID}`,
         {
           method: 'GET',
           headers: {
@@ -180,7 +175,6 @@ export default function Feedback() {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback?userID=${userID}&number=${number}`,
-        // `http://localhost:4000/api/feedback?userID=${userID}&number=${number}`,
         {
           method: 'GET',
           headers: {
