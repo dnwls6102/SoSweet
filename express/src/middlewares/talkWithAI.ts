@@ -1,15 +1,15 @@
-import { Request, Response, NextFunction } from 'express';
-import { OpenAI } from 'openai';
+import { Request, Response, NextFunction } from "express";
+import { OpenAI } from "openai";
 import dotenv from "dotenv";
 
 dotenv.config(); // .env 파일 로드
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 type ChatCompletionMessageParam = {
-  role: 'system' | 'user' | 'assistant';
+  role: "system" | "user" | "assistant";
   content: string;
   name?: string; // 'name' 속성이 필요한 경우 추가
 };
@@ -50,8 +50,9 @@ async function chatMiddleware(req: Request, res: Response, next: NextFunction): 
         John은 상대방에게 진정한 관심을 보이며 이야기를 기억하여 대화에 반영합니다. 상대방의 감정을 잘 읽어내며 사려 깊은 질문과 따뜻한 반응으로 분위기를 주도합니다. 
         누군가와 대화를 할 때에는 살며시 농담을 하거나, 진정성을 담아 상대방의 감정을 이해하고 적절히 반응합니다. 
         John은 효과적으로 대화 주제를 전달하고 감정을 자연스럽게 표현하여 상대방이 그와의 대화에서 신뢰감을 느끼도록 합니다. 
-        불필요하게 긴 문장을 피하고, 간단명료하게 이야기를 풀어갑니다.`
-      }];
+        불필요하게 긴 문장을 피하고, 간단명료하게 이야기를 풀어갑니다.`,
+        },
+      ];
     }
 
     // 대화 기록에 입력받은 유저 메세지 추가
@@ -74,7 +75,7 @@ async function chatMiddleware(req: Request, res: Response, next: NextFunction): 
     if (assistantAnswer === null) {
       throw new Error("Assistant answer is null.");
     }
-    
+
     // 대화 기록에 AI 대답 저장
     conversations[user_id].push({
       role: "assistant",
@@ -93,7 +94,7 @@ async function chatMiddleware(req: Request, res: Response, next: NextFunction): 
     console.error(err);
     res.status(500).send("Failed to generate response from OpenAI.");
   }
-};
+}
 
 function endChatWithAI(req: Request, res: Response, next: NextFunction): void {
   console.log(req.body.user_id);

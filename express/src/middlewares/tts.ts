@@ -1,12 +1,12 @@
-import { Request, Response } from 'express';
-import { OpenAI } from 'openai';
+import { Request, Response } from "express";
+import { OpenAI } from "openai";
 import dotenv from "dotenv";
 
 dotenv.config(); // .env 파일 로드
 
 // OpenAI API 초기화
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 // TTS 미들웨어
@@ -23,8 +23,8 @@ async function ttsMiddleware(req: Request, res: Response): Promise<void> {
       model: "tts-1", // 사용할 TTS 모델
       voice: "onyx", // 음성 스타일 (선택 가능)
       input: text, // 변환할 텍스트
-      response_format: 'opus',
-      speed: 1.15
+      response_format: "opus",
+      speed: 1.15,
     });
 
     // 음성 데이터를 버퍼로 변환
@@ -32,8 +32,8 @@ async function ttsMiddleware(req: Request, res: Response): Promise<void> {
 
     // 음성 데이터를 HTTP 응답으로 반환
     res.set({
-      'Content-Type': 'audio/opus',
-      'Content-Disposition': 'attachment; filename="output_speech.opus"',
+      "Content-Type": "audio/opus",
+      "Content-Disposition": 'attachment; filename="output_speech.opus"',
     });
     res.send(buffer);
   } catch (error) {

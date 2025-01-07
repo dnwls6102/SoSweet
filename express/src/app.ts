@@ -35,7 +35,7 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
     credentials: true,
     preflightContinue: false,
-    optionsSuccessStatus: 204
+    optionsSuccessStatus: 204,
   })
 );
 
@@ -56,9 +56,6 @@ mongoose
   .then(() => console.log("MongoDB 연결 성공!"))
   .catch((error: unknown) => console.error("MongoDB 연결 실패: ", error));
 
-// Socket에서 사용할 전역 변수
-export let global_id: string = "";
-export let global_gender: string = "";
 // REST API 라우트 등록
 // 임시 라우트
 app.get("/chat", (req: Request, res: Response) => {
@@ -72,8 +69,6 @@ app.use("/api", apiRoutes);
 
 
 app.post("/api/match", (req: Request, res: Response) => {
-  global_id = req.body.id;
-  global_gender = req.body.gender;
   res.send("응답");
 });
 // // 기본 경로
