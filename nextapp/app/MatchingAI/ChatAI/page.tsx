@@ -224,11 +224,13 @@ export default function Chat() {
               />
               <div className={styles.relationshipExp}>
                 <div className={styles.progressBar}>
-                  <div 
-                    className={styles.progressFill} 
+                  <div
+                    className={styles.progressFill}
                     style={{ width: `${relationshipScore}%` }}
                   >
-                    <span className={styles.progressValue}>{relationshipScore}/100</span>
+                    <span className={styles.progressValue}>
+                      {relationshipScore}/100
+                    </span>
                   </div>
                 </div>
               </div>

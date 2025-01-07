@@ -24,30 +24,13 @@ app.use(
   "/node_modules",
   express.static(path.join(__dirname, "..", "node_modules"))
 );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// 쿠키 뜯어볼 수 있게 쿠키 파서 설정
+app.use(cookieParser());
 
 // CORS 설정
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
-    // origin: 'http://localhost:3000',
+    origin: process.env.CLIENT_URL || 'http://localhost:3000',
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
     credentials: true,
