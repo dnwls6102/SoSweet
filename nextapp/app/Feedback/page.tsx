@@ -19,11 +19,30 @@ const COLORS = [
   '#FFB6C1',
 ];
 
+interface EmotionScores {
+  [key: string]: number;
+}
+
+interface Top3Emotions {
+  [key: string]: number;
+}
+
+interface CombinedEmoResult {
+  sorted_emotion_scores: EmotionScores;
+  top_3_emotions: Top3Emotions;
+}
+
+interface EmoFeedbackResponse {
+  user_id: string;
+  room_id: string;
+  emo_feedback_result: CombinedEmoResult;
+}
+
 export default function Feedback() {
   const [userID, setUserID] = useState(null);
   const [number, setNumber] = useState(null);
-  const [emotionData, setEmotionData] = useState([]);
-  const [sortedData, setSortedData] = useState([]);
+  const [emotionData, setEmotionData] = useState<EmotionScores | null>(null);
+  const [top3Data, setTop3Data] = useState<Top3Emotions | null>(null);
   const [verbal, setVerbal] = useState(null);
   const [nonverbal, setNonverbal] = useState(null);
   const [summary, setSummary] = useState('');
@@ -36,6 +55,7 @@ export default function Feedback() {
   useEffect(() => {
     if (feedbackData.summary) {
       setSummary(feedbackData.summary);
+      fetchEmotionData();
     }
   }, [feedbackData.summary]);
 
@@ -59,9 +79,16 @@ export default function Feedback() {
       );
 
       if (response.ok) {
-        const data = await response.json();
+        const data: EmoFeedbackResponse = await response.json();
         console.log('가져온 표정 정보임다 :', data);
-        setEmotionData(data);
+        //종합 감정 정보 추출하기
+        const emo_feedback_result = data.emo_feedback_result;
+        //내림차순 정렬된 감정 정보 배열
+        const sorted_scores = emo_feedback_result.sorted_emotion_scores;
+        //감정 Top3
+        const converted_top_3 = emo_feedback_result.top_3_emotions;
+        setEmotionData(sorted_scores);
+        setTop3Data(converted_top_3);
       } else {
         console.log('데이터 가져오기 실패:', response.status);
       }
@@ -69,14 +96,6 @@ export default function Feedback() {
       console.log('서버 오류:', error);
     }
   };
-
-  // 표정 정보 순위 매기기
-  useEffect(() => {
-    if (emotionData.length > 0) {
-      const rankedData = [...emotionData].sort((a, b) => b.y - a.y);
-      setSortedData(rankedData);
-    }
-  }, [emotionData]);
 
   // 언어적 분석 받아오기
   const fetchVerbalData = async () => {
@@ -196,30 +215,42 @@ export default function Feedback() {
       <h1 className={styles.title}>당신의 소개팅력은?</h1>
 
       {/* 차트 */}
-      <div className={styles.chartContainer}>
-        <VictoryPie
-          data={sortedData.slice(0, 7)}
-          colorScale={COLORS}
-          innerRadius={100}
-          style={{
-            labels: { fill: 'black', fontSize: 16, fontWeight: 'bold' },
-          }}
-          animate={{
-            duration: 1000,
-            onLoad: { duration: 500 },
-          }}
-        />
-      </div>
+      {emotionData ? (
+        <div className={styles.chartContainer}>
+          <VictoryPie
+            data={Object.entries(emotionData)
+              .slice(0, 7)
+              .map(([emotion, value]) => ({
+                x: emotion,
+                y: value,
+              }))}
+            colorScale={COLORS}
+            innerRadius={100}
+            style={{
+              labels: { fill: 'black', fontSize: 16, fontWeight: 'bold' },
+            }}
+            animate={{
+              duration: 1000,
+              onLoad: { duration: 500 },
+            }}
+          />
+        </div>
+      ) : (
+        <div>감정 데이터 받아오는 중...</div>
+      )}
 
       {/* 차트 세부 정보 */}
       <div className={styles.chartDetails}>
         <h3>Top 3 감정 순위</h3>
         <ul>
-          {sortedData.slice(0, 3).map((item, index) => (
-            <li key={index}>
-              {index + 1}위: {item.x} ({item.y}%)
-            </li>
-          ))}
+          {top3Data &&
+            Object.entries(top3Data)
+              .slice(0, 3)
+              .map(([emotion, value], index) => (
+                <li key={emotion}>
+                  {index + 1}위: {emotion} ({value}%)
+                </li>
+              ))}
         </ul>
       </div>
 
