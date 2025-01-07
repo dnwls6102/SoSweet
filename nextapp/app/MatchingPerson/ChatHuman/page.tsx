@@ -21,6 +21,10 @@ interface UserPayload {
 export default function Chat() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const [myEmotion, setMyEmotion] = useState('행복');
+  const [myValue, setMyValue] = useState(30);
+  const [remoteEmotion, setRemoteEmotion] = useState('행복');
+  const [remoteValue, setRemoteValue] = useState(30);
 
   const [peerConnection, setPeerConnection] =
     useState<RTCPeerConnection | null>(null);
@@ -416,6 +420,23 @@ export default function Chat() {
         // Flask -> Node -> 클라이언트로 넘어온 최종 결과
         const analyzeResult = await response.json();
         console.log('감정 및 동작 분석 결과:', analyzeResult);
+        //user1, user2 구분
+        const { user1, user2 } = analyzeResult.data;
+        //감정 및 비율 받아오기
+        if (user1.user_id === user_id) {
+          setMyEmotion(user1.emo_analysis_result.dominant_emotion);
+          setMyValue(user1.emo_analysis_result.percentage);
+
+          setRemoteEmotion(user2.emo_analysis_result.dominant_emotion);
+          setRemoteValue(user2.emo_analysis_result.percentage);
+        } else {
+          setMyEmotion(user2.emo_analysis_result.dominant_emotion);
+          setMyValue(user2.emo_analysis_result.percentage);
+
+          setRemoteEmotion(user1.emo_analysis_result.dominant_emotion);
+          setRemoteValue(user1.emo_analysis_result.percentage);
+        }
+
         console.log('룸 아이디를 확인하시오:', room_id);
       } catch (error) {
         console.error('전송 에러: ', error);
@@ -426,16 +447,6 @@ export default function Chat() {
     const intervalId = setInterval(() => {
       captureAndSendFrame();
     }, 1500); // 1.5초마다
-
-    // 상대방 연결 종료 처리
-    rtcSocket.on('peerDisconnected', () => {
-      console.log('Peer disconnected');
-      if (remoteVideoRef.current) {
-        remoteVideoRef.current.srcObject = null;
-      }
-      //소켓 연결 종료시키고
-      //상대방 평가 화면으로 router.push 시켜주기
-    });
 
     // 정리 함수
     return () => {
@@ -504,8 +515,8 @@ export default function Chat() {
         <div className={styles.videoContainer}>
           <Videobox
             videoref={localVideoRef}
-            keys={keys}
-            value={value}
+            keys={myEmotion}
+            value={myValue}
             autoplay={true}
             playsinline={true}
             muted={true}
@@ -523,8 +534,8 @@ export default function Chat() {
       <div className={styles.right}>
         <Videobox
           videoref={remoteVideoRef}
-          keys={keys}
-          value={value}
+          keys={remoteEmotion}
+          value={remoteValue}
           autoplay={true}
           playsinline={true}
           muted={false}
