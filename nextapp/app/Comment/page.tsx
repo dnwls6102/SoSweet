@@ -3,12 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
-import MiddleForm from '@/components/middleForm';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-import { setPartnerFeedback } from '../../store/feedbackSlice';
+import { setPartnerFeedback, setSummary } from '../../store/feedbackSlice';
 import { setIsAIChat } from '../../store/aiFlagSlice';
 
 interface UserPayload {
@@ -100,6 +99,31 @@ export default function RatingPage() {
     console.log('피드백 제출:', data);
     socket.emit('submitFeedback', data);
     setWaiting(true);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/analysis`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: user_id,
+          }),
+          credentials: 'include',
+        },
+      );
+      if (response.ok) {
+        const result = await response.json();
+        console.log('대화 분석 받음');
+        dispatch(setSummary(result.analysis)); //서버에서 어떻게 줄 건지 확인
+      } else {
+        console.error('서버에서 분석을 반환하지 않음');
+      }
+    } catch (error) {
+      console.error('분석 반환 요청 실패:', error);
+    }
   };
 
   if (waiting) {
@@ -114,7 +138,9 @@ export default function RatingPage() {
           {[...Array(5)].map((_, index) => (
             <span
               key={index}
-              className={index < rating ? styles.filledHeart : styles.emptyHeart}
+              className={
+                index < rating ? styles.filledHeart : styles.emptyHeart
+              }
               onClick={() => handleHeartClick(index)}
             >
               ♥
@@ -130,14 +156,17 @@ export default function RatingPage() {
         />
         <h2 className={styles.title}>다음에 또 만나고 싶으신가요?</h2>
         <div className={styles.actions}>
-          <button className={styles.likeButton}>
+          <button className={styles.likeButton} onClick={() => setLike(true)}>
             다시 만나고 싶어요 ♥
           </button>
-          <button className={styles.dislikeButton}>
+          <button
+            className={styles.dislikeButton}
+            onClick={() => setLike(false)}
+          >
             만나고 싶지 않아요
           </button>
         </div>
-        <button className={styles.submitButton}>
+        <button className={styles.submitButton} onClick={handleSubmit}>
           평가 완료하기
         </button>
       </div>

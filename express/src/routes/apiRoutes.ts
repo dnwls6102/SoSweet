@@ -17,7 +17,7 @@ api.post("/human/dialog", recordDialog);
 
 api.post("/human/dialog/end", endChat, chatAnalysis);
 
-api.get("/human/dialog/analysis", getAnalysis);
+api.post("/human/dialog/analysis", getAnalysis);
 
 // flask 서버와 연결
 api.post("/human/frameInfo", (req, res) => {

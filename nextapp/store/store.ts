@@ -2,11 +2,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import feedbackReducer from './feedbackSlice';
 import socketReducer from './socketSlice';
 import aiFlagReducer from './aiFlagSlice';
+import GPTfeedbackReducer from './GPTfeedbackSlice';
+
 export const store = configureStore({
   reducer: {
     feedback: feedbackReducer,
     socket: socketReducer,
     aiFlag: aiFlagReducer,
+    GPTfeedback: GPTfeedbackReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
