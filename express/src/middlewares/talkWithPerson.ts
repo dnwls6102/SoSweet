@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { createClient } from 'redis';
+import { Request, Response, NextFunction } from "express";
+import { createClient } from "redis";
 
 const redisClient = createClient();
 
@@ -24,16 +24,19 @@ async function recordDialog(req: Request, res: Response): Promise<void> {
     await redisClient.rPush(`conversations:${room_id}`, JSON.stringify({ role: "user", content: script, name:user_id}));
     const record = await redisClient.lRange(`conversations:${room_id}`, 0, -1);
     console.log(record);
-  
-    res.status(200).json({ message: "대화 저장 완료"})
-  } catch(err) {
+
+    res.status(200).json({ message: "대화 저장 완료" });
+  } catch (err) {
     console.error("대화를 기록하는데 실패했습니다.", err);
-    res.status(500).json({ message: "대화 저장 중에 문제가 발생했습니다."});
+    res.status(500).json({ message: "대화 저장 중에 문제가 발생했습니다." });
   }
 }
 
-
-async function endChat(req: Request, res: Response, next: NextFunction): Promise<void> {
+async function endChat(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const { room_id } = req.body;
 
@@ -46,9 +49,11 @@ async function endChat(req: Request, res: Response, next: NextFunction): Promise
     // Redis 키 삭제
     await redisClient.del(`conversations:${room_id}`); 
     next();
-  } catch(err) {
+  } catch (err) {
     console.error("대화를 종료에 실패했습니다.", err);
-    res.status(500).json({ message: "대화를 종료하는 중에 문제가 발생했습니다."});
+    res
+      .status(500)
+      .json({ message: "대화를 종료하는 중에 문제가 발생했습니다." });
   }
 }
 
@@ -64,7 +69,5 @@ process.on("SIGTERM", async () => {
   await redisClient.disconnect();
   process.exit(0);
 });
-
-
 
 export { recordDialog, endChat };
