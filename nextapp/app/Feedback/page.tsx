@@ -8,6 +8,9 @@ import Link from 'next/link';
 import { VictoryPie } from 'victory';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
+import router from 'next/router';
 
 const COLORS = [
   '#FF6384',
@@ -38,8 +41,13 @@ interface EmoFeedbackResponse {
   emo_feedback_result: CombinedEmoResult;
 }
 
+interface UserPayload {
+  user_id: string;
+  iat: number;
+  exp: number;
+}
+
 export default function Feedback() {
-  const [userID, setUserID] = useState(null);
   const [number, setNumber] = useState(null);
   const [emotionData, setEmotionData] = useState<EmotionScores | null>(null);
   const [top3Data, setTop3Data] = useState<Top3Emotions | null>(null);
@@ -51,6 +59,16 @@ export default function Feedback() {
   const feedbackData = useSelector((state: RootState) => state.feedback);
   const room_id = useSelector((state: RootState) => state.socket.room);
   const isAIChat = useSelector((state: RootState) => state.aiFlag.isAIChat);
+
+  const token = Cookies.get('access');
+  let ID = '';
+  if (token) {
+    const decoded = jwtDecode<UserPayload>(token);
+    ID = decoded.user_id;
+  } else {
+    alert('유효하지 않은 접근입니다.');
+    router.replace('/');
+  }
 
   useEffect(() => {
     if (feedbackData.summary) {
@@ -71,10 +89,12 @@ export default function Feedback() {
           },
           body: JSON.stringify({
             room_id: room_id,
-            user_id: userID,
+            user_id: ID,
           }),
         },
       );
+      console.log('room_id:', room_id);
+      console.log('userID:', ID);
 
       if (response.ok) {
         const data: EmoFeedbackResponse = await response.json();
