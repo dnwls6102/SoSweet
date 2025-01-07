@@ -244,7 +244,7 @@ export default function Chat() {
     };
 
     // WebRTC 소켓 이벤트 핸들러 설정
-    rtcSocket.on('peerDisconnected', () => {
+    rtcSocket.on('peerDisconnected', async () => {
       console.log('Peer disconnected - from rtcSocket');
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = null;
@@ -252,6 +252,30 @@ export default function Chat() {
       alert('상대방이 연결을 종료했습니다.');
       if (mediaRecorderRef.current) {
         mediaRecorderRef.current.stop();
+      }
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              room_id: room_id,
+              user_id: user_id,
+              script: '',
+            }),
+            credentials: 'include',
+          },
+        );
+        if (response.ok) {
+          console.log('대화 종료 요청 성공');
+        } else {
+          console.error('요청을 받았지만 200을 반환하지 않음');
+        }
+      } catch (error) {
+        console.error('대화 종료 요청 실패:', error);
       }
       router.push('/Comment');
     });
@@ -409,6 +433,8 @@ export default function Chat() {
           },
           body: JSON.stringify({
             room_id: room_id,
+            user_id: user_id,
+            script: '',
           }),
           credentials: 'include',
         },

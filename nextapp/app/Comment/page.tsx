@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 import { setPartnerFeedback } from '../../store/feedbackSlice';
 import { setIsAIChat } from '../../store/aiFlagSlice';
+import { setGPTFeedback } from '../../store/GPTfeedbackSlice';
 
 interface UserPayload {
   user_id: string;
@@ -32,9 +33,6 @@ export default function RatingPage() {
   const router = useRouter();
   const socket = useSelector((state: RootState) => state.socket.socket);
   const room = useSelector((state: RootState) => state.socket.room);
-  const gptFeedback = useSelector(
-    (state: RootState) => state.GPTfeedback.summary,
-  );
   const dispatch = useDispatch();
 
   const token = Cookies.get('access');
