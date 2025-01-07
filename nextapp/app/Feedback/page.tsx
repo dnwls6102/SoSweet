@@ -223,7 +223,10 @@ export default function Feedback() {
           // <p>verbal</p>
           <>{feedbackData.summary}</>
         ) : (
-          <p>언어적 분석 데이터를 불러오는 중입니다.</p>
+          <div className={styles.loading}>
+            <p>언어적 분석 데이터를 불러오는 중입니다.</p>
+            <div className={styles.spinner}></div>
+          </div>
         )}
       </div>
 
@@ -244,7 +247,10 @@ export default function Feedback() {
           //     만지는 습관이 있으신 것 같아요!
           //   </p>
           // </>
-          <p>비언어적 분석 데이터를 불러오는 중입니다.</p>
+          <div className={styles.loading}> 
+            <p>비언어적 분석 데이터를 불러오는 중입니다.</p>
+            <div className={styles.spinner}></div>
+          </div>
         )}
       </div>
 
@@ -264,7 +270,10 @@ export default function Feedback() {
               </p>
             </div>
           ) : (
-            <p>상대방의 평가 데이터를 불러오는 중입니다.</p>
+            <div className={styles.loading}> 
+              <p>상대방의 평가 데이터를 불러오는 중입니다.</p>
+              <div className={styles.spinner}></div>
+            </div>
           )}
         </div>
       )}
@@ -277,22 +286,25 @@ export default function Feedback() {
             <p>{summary}</p>
             <p>
               당신은 <span className={styles.highlight}>연애고자</span> 입니다.
-              <br />
-              등급:
+              <br /> <br />
+              당신의 소개팅 등급은
             </p>
             <div className={styles.rankContainer}>
               <Image
                 src="/bronze-icon.svg"
                 alt="등급 아이콘"
-                width={60}
-                height={60}
+                width={65}
+                height={65}
                 className={styles.rankIcon}
               />
               <span className={styles.rankText}>브론즈</span>
             </div>
           </div>
         ) : (
-          <p>평가 데이터를 불러오는 중입니다.</p>
+          <div className={styles.loading}>  
+            <p>평가 데이터를 불러오는 중입니다.</p>
+            <div className={styles.spinner}></div>
+          </div>
         )}
       </div>
 
@@ -312,9 +324,9 @@ export default function Feedback() {
 
       {/* 메인 페이지로 이동 */}
       <div className={styles.buttonContainer}>
-        <Link href="/MainPage" className={styles.link}>
+        <Link href="/MainPage" style={{ textDecoration: 'none' }} className={styles.link}>
           <button className={styles.mainPageButton}>
-            메인 페이지로 돌아가기
+            <span style={{ marginRight: '10px' }}>🏠</span> 메인 페이지로 돌아가기
           </button>
         </Link>
       </div>
