@@ -10,7 +10,8 @@ import cookieParser from "cookie-parser";
 dotenv.config(); // .env 파일 로드
 
 const app = express();
-
+// 쿠키 파싱 미들웨어: 최상단에 위치해야 한다고 함
+app.use(cookieParser());
 // JSON 파싱 미들웨어
 app.use(express.json());
 // URL 쿼리 파싱 미들웨어
@@ -26,17 +27,28 @@ app.use(
 // 쿠키 뜯어볼 수 있게 쿠키 파서 설정
 app.use(cookieParser());
 
+
+
+
+
+
+
 // CORS 설정
 app.use(
   cors({
     origin: process.env.CLIENT_URL || 'http://localhost:3000',
     methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
     credentials: true,
     preflightContinue: false,
     optionsSuccessStatus: 204
   })
 );
+
+app.options('*', cors()); // CORS 사전 요청 허용
+
+app.use(express.json({ limit: '50mb' }));  // JSON 요청 크기 제한 증가
+app.use(express.urlencoded({ limit: '50mb', extended: true }));  // form-urlencoded 데이터 크기 제한
 
 // 요청 로깅 미들웨어
 app.use((req, res, next) => {

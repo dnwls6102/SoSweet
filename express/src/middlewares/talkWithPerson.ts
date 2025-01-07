@@ -3,7 +3,7 @@ import { createClient } from 'redis';
 
 const redisClient = createClient();
 
-redisClient.connect().catch((err) => {
+redisClient.connect().catch((err: Error) => {
   console.error("Redis 연결에 실패했습니다.", err);
 });
 
@@ -40,7 +40,7 @@ async function endChat(req: Request, res: Response, next: NextFunction): Promise
     // Redis에서 대화 기록 가져오기
     const dialog = await redisClient.lRange(`conversations:${room_id}`, 0, -1);
     // Redis에 문자열로 저장되어 있던 json객체를 다시 json 객체로 복원해줘야 한다.
-    req.body.script = dialog.map((item) => JSON.parse(item));
+    req.body.script = dialog.map((item: string) => JSON.parse(item));
     console.log(req.body.script);
 
     // Redis 키 삭제
