@@ -135,37 +135,35 @@ export default function RatingPage() {
       <div className={styles.container}>
         <div className={styles.logo}>💖소스윗</div>
         <div className={styles.section}>
-        <h2 className={styles.title}>상대와의 대화는 어떠셨나요?</h2>
-        <div className={styles.hearts}>
-          {[...Array(5)].map((_, index) => (
-            <span
-              key={index}
-              className={
-                index < rating ? styles.filledHeart : styles.emptyHeart
-              }
-              onClick={() => handleHeartClick(index)}
-            >
-              ♥
-            </span>
-          ))}
+          <h2 className={styles.title}>상대와의 대화는 어떠셨나요?</h2>
+          <div className={styles.hearts}>
+            {[...Array(5)].map((_, index) => (
+              <span
+                key={index}
+                className={
+                  index < rating ? styles.filledHeart : styles.emptyHeart
+                }
+                onClick={() => handleHeartClick(index)}
+              >
+                ♥
+              </span>
+            ))}
+          </div>
         </div>
-        </div>
-          <h2 className={styles.title}>상대에게 한 마디 남겨주세요!</h2>
-          <div className={styles.section}>
+        <h2 className={styles.title}>상대에게 한 마디 남겨주세요!</h2>
+        <div className={styles.section}>
           <textarea
-          className={styles.textarea}
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder="상대의 느낌이나 인상적이었던 점, 하고 싶은 말을 적어주세요 ♥"
-        />
+            className={styles.textarea}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="상대의 느낌이나 인상적이었던 점, 하고 싶은 말을 적어주세요 ♥"
+          />
         </div>
         <h2 className={styles.title}>다음에 또 만나고 싶으신가요?</h2>
         <div className={styles.actions}>
-          <button className={styles.likeButton}>
-          💕 다시 만나고 싶어요
-          </button>
+          <button className={styles.likeButton}>💕 다시 만나고 싶어요</button>
           <button className={styles.dislikeButton}>
-          💔 만나고 싶지 않아요
+            💔 만나고 싶지 않아요
           </button>
         </div>
         <button className={styles.submitButton} onClick={handleSubmit}>

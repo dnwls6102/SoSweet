@@ -282,7 +282,7 @@ export default function Feedback() {
           //     만지는 습관이 있으신 것 같아요!
           //   </p>
           // </>
-          <div className={styles.loading}> 
+          <div className={styles.loading}>
             <p>동작 분석 데이터를 불러오는 중입니다.</p>
             <div className={styles.spinner}></div>
           </div>
@@ -305,7 +305,7 @@ export default function Feedback() {
               </p>
             </div>
           ) : (
-            <div className={styles.loading}> 
+            <div className={styles.loading}>
               <p>상대방의 평가 데이터를 불러오는 중입니다.</p>
               <div className={styles.spinner}></div>
             </div>
@@ -336,7 +336,7 @@ export default function Feedback() {
             </div>
           </div>
         ) : (
-          <div className={styles.loading}>  
+          <div className={styles.loading}>
             <p>평가 데이터를 불러오는 중입니다.</p>
             <div className={styles.spinner}></div>
           </div>
@@ -359,9 +359,14 @@ export default function Feedback() {
 
       {/* 메인 페이지로 이동 */}
       <div className={styles.buttonContainer}>
-        <Link href="/MainPage" style={{ textDecoration: 'none' }} className={styles.link}>
+        <Link
+          href="/MainPage"
+          style={{ textDecoration: 'none' }}
+          className={styles.link}
+        >
           <button className={styles.mainPageButton}>
-            <span style={{ marginRight: '10px' }}>🏠</span> 메인 페이지로 돌아가기
+            <span style={{ marginRight: '10px' }}>🏠</span> 메인 페이지로
+            돌아가기
           </button>
         </Link>
       </div>
