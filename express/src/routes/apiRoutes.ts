@@ -21,7 +21,6 @@ api.post("/human/dialog/analysis", getAnalysis);
 
 // flask 서버와 연결
 api.post("/human/frameInfo", (req, res) => {
-    console.log("Frame info 요청 들어옴:", req.body);
     sendFrameInfoToFlask(req, res);
 });
 
