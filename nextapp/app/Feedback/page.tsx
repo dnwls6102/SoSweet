@@ -26,19 +26,8 @@ interface EmotionScores {
   [key: string]: number;
 }
 
-interface Top3Emotions {
-  [key: string]: number;
-}
-
-interface CombinedEmoResult {
-  sorted_emotion_scores: EmotionScores;
-  top_3_emotions: Top3Emotions;
-}
-
 interface EmoFeedbackResponse {
-  user_id: string;
-  room_id: string;
-  emo_feedback_result: CombinedEmoResult;
+  emo_feedback_result: EmotionScores;
 }
 
 interface UserPayload {
@@ -50,7 +39,6 @@ interface UserPayload {
 export default function Feedback() {
   const [number, setNumber] = useState(null);
   const [emotionData, setEmotionData] = useState<EmotionScores | null>(null);
-  const [top3Data, setTop3Data] = useState<Top3Emotions | null>(null);
   const [verbal, setVerbal] = useState(null);
   const [nonverbal, setNonverbal] = useState(null);
   const [summary, setSummary] = useState('');
@@ -100,13 +88,17 @@ export default function Feedback() {
         const data: EmoFeedbackResponse = await response.json();
         console.log('가져온 표정 정보임다 :', data);
         //종합 감정 정보 추출하기
-        const emo_feedback_result = data.emo_feedback_result;
+        const sorted_scores = data.emo_feedback_result;
+
+        // 객체를 배열로 변환하여 값 기준으로 내림차순 정렬 후 다시 객체로 변환
+        const sortedEmotions = Object.fromEntries(
+          Object.entries(sorted_scores).sort(
+            ([, a], [, b]) => (b as number) - (a as number),
+          ),
+        );
+
         //내림차순 정렬된 감정 정보 배열
-        const sorted_scores = emo_feedback_result.sorted_emotion_scores;
-        //감정 Top3
-        const converted_top_3 = emo_feedback_result.top_3_emotions;
-        setEmotionData(sorted_scores);
-        setTop3Data(converted_top_3);
+        setEmotionData(sortedEmotions);
       } else {
         console.log('데이터 가져오기 실패:', response.status);
       }
@@ -260,8 +252,8 @@ export default function Feedback() {
       <div className={styles.chartDetails}>
         <h3>Top 3 감정 순위</h3>
         <ul>
-          {top3Data &&
-            Object.entries(top3Data)
+          {emotionData &&
+            Object.entries(emotionData)
               .slice(0, 3)
               .map(([emotion, value], index) => (
                 <li key={emotion}>
@@ -296,7 +288,7 @@ export default function Feedback() {
           //     전반적으로 슬픔이 많습니다. 편안하게 긴장을 풀고, 자연스러운
           //     표정을 지어볼까요?
           //   </p>
-          //   <p>눈 맞춤 빈도는 80%입니다. 아주 잘하고 계시네요!</p>
+          //   <p>눈눈 맞춤 빈도는 80%입니다. 아주 잘하고 계시네요!</p>
           //   <p>
           //     대화 중 귀를 만지는 횟수가 5회 이상이었습니다. 긴장하실 때 귀를
           //     만지는 습관이 있으신 것 같아요!

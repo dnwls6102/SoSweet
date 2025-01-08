@@ -207,6 +207,7 @@ export default function Chat() {
         // AI 응답을 Redux store에 저장
         dispatch(setSummary(data.analysis));
         dispatch(setIsAIChat(true));
+        console.log('대화 분석 내용: ', data.analysis);
 
         router.push('/Feedback');
       } else {
