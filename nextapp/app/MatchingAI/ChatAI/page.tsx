@@ -77,7 +77,6 @@ export default function Chat() {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/dialog`,
         {
-          // const response = await fetch('http://localhost:4000/api/ai/dialog', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -91,6 +90,14 @@ export default function Chat() {
         const audioBlob = await response.blob(); // 서버 응답 데이터를 Blob으로 변환
         const audioUrl = URL.createObjectURL(audioBlob); // Blob에서 재생 가능한 URL 생성
         const audio = new Audio(audioUrl); // Audio 객체 생성
+        isRecording.current = false;
+        recognition.current?.stop();
+        audio.addEventListener('ended', () => {
+          console.log('음성 재생 완료');
+
+          isRecording.current = true;
+          recognition.current?.start();
+        });
         audio.play(); // 음성 파일 재생
         console.log('전송 성공');
       } else {
@@ -122,14 +129,16 @@ export default function Chat() {
         }
       }
       console.log('Transcription result: ', scriptRef.current);
-      tryNlp(scriptRef.current);
-      trySendScript(scriptRef.current);
-      //여기에다가 음성 인식 결과를 보낼 경우 : 변환 결과를 바로바로 보내주기 때문에
-      //말을 끊었는지 여부도 조금 더 명확하게 판단 가능할수도 있다
-      //이렇게 되면 남,녀 구분은 어떻게 해야할지?
-      //서버에서 문자열을 받을 때마다 (남)표시를 하면 script가 정상적으로 생성될련지
-      //부하가 많이 걸리는지? 실제로 만족스러울 정도로 통신이 될련지는 생각해봐야 함
-      scriptRef.current = '';
+      if (scriptRef.current !== '') {
+        tryNlp(scriptRef.current);
+        trySendScript(scriptRef.current);
+        //여기에다가 음성 인식 결과를 보낼 경우 : 변환 결과를 바로바로 보내주기 때문에
+        //말을 끊었는지 여부도 조금 더 명확하게 판단 가능할수도 있다
+        //이렇게 되면 남,녀 구분은 어떻게 해야할지?
+        //서버에서 문자열을 받을 때마다 (남)표시를 하면 script가 정상적으로 생성될련지
+        //부하가 많이 걸리는지? 실제로 만족스러울 정도로 통신이 될련지는 생각해봐야 함
+        scriptRef.current = '';
+      }
     };
 
     recognition.current.onspeechend = () => {
