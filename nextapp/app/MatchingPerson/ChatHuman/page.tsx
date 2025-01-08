@@ -212,7 +212,7 @@ export default function Chat() {
       console.log('Socket connected and stored in Redux:', rtcSocket.id);
       // 연결 후 방에 참가
     });
-
+    
     // PeerConnection 초기화
     const newPeerConnection = new RTCPeerConnection(pcConfig);
     setPeerConnection(newPeerConnection);
@@ -223,7 +223,7 @@ export default function Chat() {
           video: true,
           audio: true,
         });
-
+        
         // 내 로컬 비디오에 스트림 할당하기
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
@@ -233,7 +233,7 @@ export default function Chat() {
         stream.getTracks().forEach((track) => {
           newPeerConnection.addTrack(track, stream);
         });
-
+        
         // 연기서 MediaRecorder로 '전체 영상 Blob' 저장 로직 구현하기
         setupMediaRecorder(stream);
         rtcSocket.emit('join', { room_id: room_id });

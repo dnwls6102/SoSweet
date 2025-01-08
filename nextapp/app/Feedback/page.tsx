@@ -400,8 +400,7 @@ export default function Feedback() {
           className={styles.link}
         >
           <button className={styles.mainPageButton}>
-            <span style={{ marginRight: '10px' }}>🏠</span> 메인 페이지로
-            돌아가기
+            메인 페이지로 돌아가기
           </button>
         </Link>
       </div>
