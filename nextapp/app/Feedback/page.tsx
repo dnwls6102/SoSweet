@@ -286,7 +286,18 @@ export default function Feedback() {
       <div className={styles.section}>
         <h2 className={styles.sectionTitle}>동작 분석</h2>
         {nonverbal ? (
-          <p>{nonverbal}</p>
+          // 객체를 직접 렌더링하는 대신 필요한 속성을 문자열로 표시
+          <div>
+            {typeof nonverbal === 'string' ? (
+              <p>{nonverbal}</p>
+            ) : (
+              // nonverbal이 객체인 경우 필요한 속성을 명시적으로 접근
+              <div>
+                {nonverbal.message && <p>{nonverbal.message}</p>}
+                {/* 다른 필요한 속성들도 같은 방식으로 표시 */}
+              </div>
+            )}
+          </div>
         ) : (
           // <>
           //   <p>

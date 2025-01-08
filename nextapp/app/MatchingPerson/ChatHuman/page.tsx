@@ -109,7 +109,7 @@ export default function Chat() {
   };
 
   const handleStartRecording = () => {
-    if (!recognition.current) return;
+    if (!recognition.current || recognition.current.state === 'running') return;
 
     recognition.current.onstart = () => {
       isRecording.current = true;
@@ -208,6 +208,7 @@ export default function Chat() {
 
     // PeerConnection 초기화
     const newPeerConnection = new RTCPeerConnection(pcConfig);
+    setPeerConnection(newPeerConnection);
 
     // 미디어 스트림 초기화
     const initializeMedia = async () => {
@@ -222,6 +223,18 @@ export default function Chat() {
           localVideoRef.current.srcObject = stream;
         }
 
+        // PeerConnection이 유효한 상태인지 확인
+        if (newPeerConnection.signalingState !== 'closed') {
+          stream.getTracks().forEach((track) => {
+            try {
+              newPeerConnection.addTrack(track, stream);
+            } catch (error) {
+              console.error('Error adding track:', error);
+            }
+          });
+        }
+
+        // 소켓 연결 확인
         // PeerConnection에 트랙 추가
         stream.getTracks().forEach((track) => {
           newPeerConnection.addTrack(track, stream);
@@ -418,21 +431,22 @@ export default function Chat() {
         //user1, user2 구분
         const { user1, user2 } = analyzeResult.data;
         //감정 및 비율 받아오기
+        // 타입 가드 추가
+        if (typeof user1.emo_analysis_result?.dominant_emotion === 'string' &&
+          typeof user1.emo_analysis_result?.percentage === 'number') {
         if (user1.user_id === user_id) {
           setMyEmotion(user1.emo_analysis_result.dominant_emotion);
           setMyValue(user1.emo_analysis_result.percentage);
-
           setRemoteEmotion(user2.emo_analysis_result.dominant_emotion);
           setRemoteValue(user2.emo_analysis_result.percentage);
         } else {
           setMyEmotion(user2.emo_analysis_result.dominant_emotion);
           setMyValue(user2.emo_analysis_result.percentage);
-
           setRemoteEmotion(user1.emo_analysis_result.dominant_emotion);
           setRemoteValue(user1.emo_analysis_result.percentage);
+          }
         }
 
-        console.log('룸 아이디를 확인하시오:', room_id);
       } catch (error) {
         console.error('전송 에러: ', error);
       }
@@ -445,15 +459,31 @@ export default function Chat() {
 
     // 정리 함수
     return () => {
-      if (newPeerConnection) {
-        newPeerConnection.close();
-      }
       if (mediaRecorderRef.current) {
         mediaRecorderRef.current.stop();
       }
-      rtcSocket.off('peerDisconnected');
-      recognition.current?.stop();
-      isRecording.current = false;
+
+      // 스트림 정리
+      if (localVideoRef.current?.srcObject) {
+        const tracks = (localVideoRef.current.srcObject as MediaStream).getTracks();
+        tracks.forEach(track => track.stop());
+      }
+      
+      // PeerConnection 정리
+      if (newPeerConnection.signalingState !== 'closed') {
+        newPeerConnection.close();
+      }
+      
+      // Socket 정리
+      if (socket) {
+        socket.disconnect();
+      }
+      
+      // Recognition 정리
+      if (recognition.current) {
+        recognition.current.stop();
+        isRecording.current = false;
+      }
       clearInterval(intervalId);
     };
   }, [room_id, recordedChunks, dispatch, router]);
