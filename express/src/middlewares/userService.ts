@@ -24,9 +24,11 @@ const setCookies = (token: string, res: Response, type: cookieType): void => {
 
   res.cookie(type, token, {
     httpOnly: false,
-    secure: false,
-    sameSite: 'lax', // 조정 가능
-    maxAge: 3600000 * time
+    secure: true,
+    sameSite: 'strict', // 조정 가능
+    maxAge: 3600000 * time,
+    path: "/",
+    domain: ".sosweet.site"
   });
 };
 

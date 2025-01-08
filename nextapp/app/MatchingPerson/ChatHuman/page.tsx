@@ -164,17 +164,27 @@ export default function Chat() {
 
   const pcConfig = {
     iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:stun2.l.google.com:19302' },
+      { urls: 'stun:stun3.l.google.com:19302' },
+      { urls: 'stun:stun4.l.google.com:19302' },
+      // TURN 서버도 추가하는 것을 권장
       {
-        urls: 'stun:stun.l.google.com:19302',
-      },
+        urls: 'turn:your-turn-server.com:3478',
+        username: 'username',
+        credential: 'password'
+      }
     ],
-  };
+    iceCandidatePoolSize: 10
+  };  
 
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window)) {
       alert('지원하지 않는 브라우저입니다.');
       return;
     }
+    console.log("Chat Component UseEffect Triggerd");
 
     recognition.current = new (window as any).webkitSpeechRecognition();
     recognition.current.lang = 'ko';
@@ -203,12 +213,12 @@ export default function Chat() {
     rtcSocket.on('connect', () => {
       console.log('Socket connected and stored in Redux:', rtcSocket.id);
       // 연결 후 방에 참가
-      rtcSocket.emit('join', { room: room_id });
     });
-
+    
     // PeerConnection 초기화
     const newPeerConnection = new RTCPeerConnection(pcConfig);
-
+    setPeerConnection(newPeerConnection);
+    
     // 미디어 스트림 초기화
     const initializeMedia = async () => {
       try {
@@ -216,19 +226,20 @@ export default function Chat() {
           video: true,
           audio: true,
         });
-
+        
         // 내 로컬 비디오에 스트림 할당하기
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
         }
-
+        
         // PeerConnection에 트랙 추가
         stream.getTracks().forEach((track) => {
           newPeerConnection.addTrack(track, stream);
         });
-
+        
         // 연기서 MediaRecorder로 '전체 영상 Blob' 저장 로직 구현하기
         setupMediaRecorder(stream);
+        rtcSocket.emit('join', { room_id: room_id });
       } catch (err) {
         console.error('Error accessing media devices:', err);
       }
@@ -471,7 +482,7 @@ export default function Chat() {
     const currentSocket = socket;
     if (currentSocket) {
       console.log('Sending endCall event with room:', room_id);
-      currentSocket.emit('endCall', { room: room_id });
+      currentSocket.emit('endCall', { room_id: room_id });
     } else {
       console.log('Socket is not available');
     }
