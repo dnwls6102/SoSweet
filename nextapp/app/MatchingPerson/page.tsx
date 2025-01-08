@@ -46,9 +46,9 @@ export default function MatchingPerson() {
       console.log('Socket connected:', newSocket.id);
     });
 
-    newSocket.on('matchSuccess', (data: { room: string }) => {
+    newSocket.on('matchSuccess', (data: { room_id: string }) => {
       console.log('Match success:', data);
-      router.push(`/MatchingPerson/ChatHuman?room=${data.room}`);
+      router.push(`/MatchingPerson/ChatHuman?room=${data.room_id}`);
     });
 
     return () => {
