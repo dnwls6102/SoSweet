@@ -27,7 +27,7 @@ const MainPage = () => {
 
   const handleNavigation = async () => {
     try {
-      const response = await fetch('/ai/dialog/start', {
+      const response = await fetch('https://back.sosweet.site/api/ai/dialog/start', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,13 +38,14 @@ const MainPage = () => {
         }),
       });
       if (response.ok) {
-        router.replace('/ChatAI');
+        console.log('성공')
       } else {
-        console.error('Failed to fetch chat data');
+        console.error('서버에서 200 반환안함함');
       }
     } catch (error) {
-      console.error('Error fetching chat data:', error);
+      console.error('서버 요청 전송 오류:', error);
     }
+    router.replace('/ChatAI');
   };
 
   return (

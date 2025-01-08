@@ -8,6 +8,7 @@ interface FeedbackData {
 
 interface FeedbackState {
   summary: string;
+  conclusion: string;
   userID: string;
   emotionData: any[];
   partnerFeedback: FeedbackData | null;
@@ -15,6 +16,7 @@ interface FeedbackState {
 
 const initialState: FeedbackState = {
   summary: '',
+  conclusion: '',
   userID: '',
   emotionData: [],
   partnerFeedback: null,
@@ -27,6 +29,9 @@ export const feedbackSlice = createSlice({
     setSummary: (state, action: PayloadAction<string>) => {
       state.summary = action.payload;
     },
+    setConclusion: (state, action: PayloadAction<string>) => {
+      state.conclusion = action.payload;
+    },
     setUserID: (state, action: PayloadAction<string>) => {
       state.userID = action.payload;
     },
@@ -38,6 +43,7 @@ export const feedbackSlice = createSlice({
     },
     clearFeedback: (state) => {
       state.summary = '';
+      state.conclusion = '',
       state.userID = '';
       state.emotionData = [];
       state.partnerFeedback = null;
@@ -45,6 +51,6 @@ export const feedbackSlice = createSlice({
   },
 });
 
-export const { setSummary, setUserID, setEmotionData, setPartnerFeedback, clearFeedback } = feedbackSlice.actions;
+export const { setSummary, setConclusion, setUserID, setEmotionData, setPartnerFeedback, clearFeedback } = feedbackSlice.actions;
 
 export default feedbackSlice.reducer; 
