@@ -76,12 +76,13 @@ export default function Feedback() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            room_id: room_id,
+            room_id: isAIChat ? 'ai' : room_id,
             user_id: ID,
           }),
         },
       );
-      console.log('room_id:', room_id);
+
+      console.log('room_id:', isAIChat ? 'ai' : room_id);
       console.log('userID:', ID);
 
       if (response.ok) {
