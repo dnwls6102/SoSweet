@@ -29,17 +29,20 @@ export default function Chat() {
     router.replace('/');
   }
 
+  const localVideoRef = useRef<HTMLVideoElement>(null);
   const isRecording = useRef(false);
   const [transcript, setTranscript] = useState('');
   const [feedback, setFeedback] = useState('');
   const scriptRef = useRef('');
   const recognition = useRef<SpeechRecognition | null>(null);
 
-  const videoStreamRef = useRef<MediaStream | null>(null);
+  const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]); // 녹화 데이터 쌓는 배열
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
-  const dispatch = useDispatch();
+  // 감정 분석을 위한 상태 추가
+  const [myEmotion, setMyEmotion] = useState('평온함');
 
+  const dispatch = useDispatch();
   const [relationshipScore, setRelationshipScore] = useState(48);
 
   //대화 영상 전체 / n분 간격으로 서버로 보내는 함수
@@ -180,10 +183,140 @@ export default function Chat() {
 
     handleStartRecording();
 
+    const initializeMedia = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
+
+        // 비디오 엘리먼트에 스트림 연결
+        if (localVideoRef.current) {
+          localVideoRef.current.srcObject = stream;
+          console.log('비디오 스트림 연결 성공');
+        }
+
+        // 여기서 MediaRecorder로 '전체 영상 Blob' 저장 로직 구현하기
+        setupMediaRecorder(stream);
+      } catch (err) {
+        console.error('Error accessing media devices:', err);
+      }
+    };
+
+    const setupMediaRecorder = (stream: MediaStream) => {
+      const recorder = new MediaRecorder(stream, {
+        mimeType: 'video/webm; codecs=vp8',
+      });
+      mediaRecorderRef.current = recorder;
+      console.log('MediaRecorder 설정 완료');
+
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          // Blob 조각 쌓아두기
+          setRecordedChunks((prev) => [...prev, event.data]);
+          console.log('녹화 데이터 청크 저장됨');
+        }
+      };
+
+      recorder.onstop = () => {
+        // 최종적으으로 recordedChunks 가 전체 동영상임
+        console.log('녹화 중지됨. recordedChunks:', recordedChunks);
+      };
+
+      // 녹화 시작
+      recorder.start(1000); // 1초마다 청크 생성
+      console.log('녹화 시작됨');
+    };
+
+    initializeMedia();
+
+    // Canvas로 동영상 이미지로 캡쳐하고 서버로 전송하기
+    const captureAndSendFrame = async () => {
+      const videoEl = localVideoRef.current;
+      if (!videoEl) {
+        console.log('비디오 엘리먼트를 찾을 수 없음');
+        return;
+      }
+
+      if (!videoEl.srcObject) {
+        console.log('비디오 스트림이 없음');
+        return;
+      }
+
+      // 현재 비디오 크기 가져오기
+      const vWidth = videoEl.videoWidth / 4;
+      const vHeight = videoEl.videoHeight / 4;
+
+      // 영상 아직 준비 안 되었으면 스킵하기
+      if (!vWidth || !vHeight) {
+        console.log('비디오 크기가 아직 준비되지 않음');
+        return;
+      }
+
+      // canvas 생성하기
+      const canvas = document.createElement('canvas');
+      canvas.width = vWidth;
+      canvas.height = vHeight;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // canvas에 비디오 그리기
+      ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+
+      // JPEG 포맷으로 Base64 인코딩
+      const dataURL = canvas.toDataURL('image/jpeg', 0.7);
+
+      // 현재 시간으로 타임스탬프
+      const timestamp = Date.now();
+
+      try {
+        // AI 채팅용 감정 분석 요청
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/ai/frameInfo`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              frame: dataURL,
+              timestamp: timestamp,
+              user_id: user_id,
+            }),
+            mode: 'cors',
+            credentials: 'include',
+          },
+        );
+
+        if (!response.ok) {
+          console.error('감정 분석 응답 에러:', response.status);
+          return;
+        }
+
+        // 서버에서 받은 감정 분석 결과
+        const analyzeResult = await response.json();
+        console.log('감정 분석 결과:', analyzeResult);
+
+        // 감정 상태 업데이트
+        if (analyzeResult.emo_analysis_result) {
+          setMyEmotion(analyzeResult.emo_analysis_result.dominant_emotion);
+        }
+      } catch (error) {
+        console.error('전송 에러:', error);
+      }
+    };
+
+    // 일정 간격으로 캡처 및 전송
+    const intervalId = setInterval(captureAndSendFrame, 1500);
+
+    // 컴포넌트 언마운트 시 정리
     return () => {
-      // MediaRecorder 종료 처리
+      clearInterval(intervalId);
       recognition.current?.stop();
       isRecording.current = false;
+      if (mediaRecorderRef.current?.state === 'recording') {
+        mediaRecorderRef.current.stop();
+      }
     };
   }, []);
 
@@ -222,6 +355,13 @@ export default function Chat() {
     <div className={styles.wrapper}>
       <div className={styles.content}>
         <div className={styles.left}>
+          <video
+            ref={localVideoRef}
+            autoPlay
+            playsInline
+            muted
+            style={{ display: 'none' }}
+          />
           <div className={styles.relationshipContainer}>
             <div className={styles.relationshipSet}>
               <Image
