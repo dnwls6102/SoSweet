@@ -102,7 +102,7 @@ export default function Signin() {
 
   const handleSubmit = async () => {
     if (flag === false) {
-      alert('비밀번호 체크를 다시 한 번 해보세요');
+      setToastMsg('비밀번호 체크를 다시 한 번 해보세요');
     } else {
       const userData = {
         user_id: id,
@@ -125,7 +125,7 @@ export default function Signin() {
 
         if (response.ok) {
           console.log('회원가입 성공');
-          alert('회원가입 성공!');
+          setToastMsg('회원가입 성공!');
           router.push('/');
         } else {
           console.error('회원가입 실패');

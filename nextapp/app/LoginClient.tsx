@@ -1,10 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import SmallForm from '@/components/smallForm';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 
@@ -18,6 +18,17 @@ export default function LoginClient() {
   const [user_id, setId] = useState('');
   const [user_password, setPassword] = useState('');
   const router = useRouter();
+
+  const [toastMsg, setToastMsg] = useState(''); // 토스트 메시지
+  const [showToast, setShowToast] = useState(false); // 토스트 표시 여부
+
+  // 토스트 메시지 3초 후 자동 닫기
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => setShowToast(false), 3000); // 3초 후 토스트 닫기
+      return () => clearTimeout(timer); // 컴포넌트 언마운트 시 타이머 제거
+    }
+  }, [showToast]);
 
   const tryLogin = async () => {
     try {
@@ -40,21 +51,28 @@ export default function LoginClient() {
           const decoded = jwtDecode<UserPayload>(token);
           console.log('로그인된 유저 정보:', decoded);
         }
-        alert('로그인 성공!');
-        router.replace('/MainPage');
+        setToastMsg('로그인 성공!');
+        setShowToast(true);
+
+        // 1초 후 페이지 이동
+        setTimeout(() => {
+          router.replace('/MainPage');
+        }, 1000);
       } else {
         const errorData = await response
           .json()
           .catch(() => ({ message: '로그인 실패' }));
         console.error('로그인 실패:', errorData.message);
-        alert(
+        setToastMsg(
           errorData.message ||
             '로그인 실패: 아이디 또는 비밀번호를 확인해주세요.',
         );
+        setShowToast(true);
       }
     } catch (error) {
       console.error('서버 오류:', error);
-      alert('로그인 중 알 수 없는 오류가 발생했습니다.');
+      setToastMsg('로그인 중 알 수 없는 오류가 발생했습니다.');
+      setShowToast(true);
     }
   };
 
@@ -92,6 +110,11 @@ export default function LoginClient() {
           </button>
         </div>
       </SmallForm>
+      {showToast && (
+        <div className={styles.toast}>
+          {toastMsg}
+        </div>
+      )}
     </div>
   );
 }
