@@ -118,7 +118,7 @@ export default function MyPage() {
             </div>
           </div>
         </div>
-        <div className={styles.userRank}>
+        {/* <div className={styles.userRank}>
           <h2 className={styles.sectionTitle}>나의 소개팅 등급</h2>
           <Image
             src="/bronze-icon.svg"
@@ -131,7 +131,7 @@ export default function MyPage() {
             당신의 소개팅 등급은 <strong>{userInfo.rank}</strong> 입니다
           </p>
           <p className={styles.rankText}>총 소개팅 전적: {userInfo.score}</p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

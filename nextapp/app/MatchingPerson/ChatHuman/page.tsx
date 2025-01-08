@@ -228,8 +228,7 @@ export default function Chat() {
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
         }
-
-        // 소켓 연결 확인
+        
         // PeerConnection에 트랙 추가
         stream.getTracks().forEach((track) => {
           newPeerConnection.addTrack(track, stream);

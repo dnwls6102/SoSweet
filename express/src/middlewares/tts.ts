@@ -10,19 +10,40 @@ const openai = new OpenAI({
 });
 
 // TTS 미들웨어
-async function ttsMiddleware(req: Request, res: Response): Promise<void> {
+async function initTTS(req: Request, res: Response): Promise<void> {
   try {
-    const text: string | undefined = req.body.script; // 클라이언트에서 텍스트를 전달받음
-    if (!text) {
-      res.status(500).send("AI 응답 데이터가 없습니다.");
-      return;
-    }
-
     // TTS API 호출
     const opus = await openai.audio.speech.create({
       model: "tts-1", // 사용할 TTS 모델
       voice: "onyx", // 음성 스타일 (선택 가능)
-      input: text, // 변환할 텍스트
+      input: "Hello World", // 변환할 텍스트
+      response_format: "opus",
+      speed: 1.15,
+    });
+
+    res.send("tts를 초기화했습니다.");
+  } catch (error) {
+    console.error("TTS 생성 중 오류 발생:", (error as Error).message);
+    res.status(500).json({ error: "TTS 생성 중 오류가 발생했습니다." });
+  }
+}
+
+// TTS 미들웨어
+async function ttsMiddleware(req: Request, res: Response): Promise<void> {
+  try {
+    const { script, user_gender} = req.body; // 클라이언트에서 텍스트를 전달받음
+    if (!script) {
+      res.status(500).send("AI 응답 데이터가 없습니다.");
+      return;
+    }
+
+    const vcModel = user_gender === "남성" ? "onyx" : "nova";
+
+    // TTS API 호출
+    const opus = await openai.audio.speech.create({
+      model: "tts-1", // 사용할 TTS 모델
+      voice: vcModel, // 음성 스타일 (선택 가능)
+      input: script, // 변환할 텍스트
       response_format: "opus",
       speed: 1.15,
     });
@@ -42,4 +63,4 @@ async function ttsMiddleware(req: Request, res: Response): Promise<void> {
   }
 }
 
-export { ttsMiddleware };
+export { initTTS, ttsMiddleware };

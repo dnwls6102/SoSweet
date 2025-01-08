@@ -127,7 +127,12 @@ export default function RatingPage() {
   };
 
   if (waiting) {
-    return <div>상대방 응답 대기중...</div>;
+    return (
+      <div className={styles.loading}>
+        <p>상대방의 응답을 기다리고 있어요</p>
+        <div className={styles.spinner}></div>
+      </div>
+    );
   }
 
   return (
