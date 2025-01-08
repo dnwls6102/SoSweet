@@ -93,7 +93,7 @@ export default function RatingPage() {
       rating,
       comment,
       like,
-      room,
+      room_id: room,
     };
 
     console.log('피드백 제출:', data);
