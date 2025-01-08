@@ -50,9 +50,14 @@ app.use((req, res, next) => {
   next();
 });
 
+const mongoUri = process.env.MONGO_URI || "";
+if (!mongoUri) {
+  throw new Error("MONGO_URI 환경 변수가 설정되지 않았습니다.");
+}
+
 // MongoDB 연결
 mongoose
-  .connect(process.env.MONGO_URI, {})
+  .connect(mongoUri, {})
   .then(() => console.log("MongoDB 연결 성공!"))
   .catch((error: unknown) => console.error("MongoDB 연결 실패: ", error));
 
