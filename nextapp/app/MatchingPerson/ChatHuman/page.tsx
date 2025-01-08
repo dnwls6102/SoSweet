@@ -46,8 +46,6 @@ export default function Chat() {
 
   const searchParams = useSearchParams();
   const room_id = searchParams.get('room');
-  const keys = '행복';
-  const value = 30;
   const user_id = ID;
 
   const scriptRef = useRef('');
@@ -173,18 +171,18 @@ export default function Chat() {
       {
         urls: 'turn:your-turn-server.com:3478',
         username: 'username',
-        credential: 'password'
-      }
+        credential: 'password',
+      },
     ],
-    iceCandidatePoolSize: 10
-  };  
+    iceCandidatePoolSize: 10,
+  };
 
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window)) {
       alert('지원하지 않는 브라우저입니다.');
       return;
     }
-    console.log("Chat Component UseEffect Triggerd");
+    console.log('Chat Component UseEffect Triggerd');
 
     recognition.current = new (window as any).webkitSpeechRecognition();
     recognition.current.lang = 'ko';
@@ -214,11 +212,10 @@ export default function Chat() {
       console.log('Socket connected and stored in Redux:', rtcSocket.id);
       // 연결 후 방에 참가
     });
-    
+
     // PeerConnection 초기화
     const newPeerConnection = new RTCPeerConnection(pcConfig);
     setPeerConnection(newPeerConnection);
-    
     // 미디어 스트림 초기화
     const initializeMedia = async () => {
       try {
@@ -226,17 +223,17 @@ export default function Chat() {
           video: true,
           audio: true,
         });
-        
+
         // 내 로컬 비디오에 스트림 할당하기
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
         }
-        
+
         // PeerConnection에 트랙 추가
         stream.getTracks().forEach((track) => {
           newPeerConnection.addTrack(track, stream);
         });
-        
+
         // 연기서 MediaRecorder로 '전체 영상 Blob' 저장 로직 구현하기
         setupMediaRecorder(stream);
         rtcSocket.emit('join', { room_id: room_id });
