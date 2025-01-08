@@ -135,17 +135,22 @@ export default function Feedback() {
   const fetchNonverbalData = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/notalk/${userID}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/feedback/actioninfo`,
         {
-          method: 'GET',
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
+          body: JSON.stringify({
+            room_id: room_id,
+            user_id: ID,
+          }),
         },
       );
 
       if (response.ok) {
         const data = await response.json();
+        console.log('동작 분석 데이터 받아온 것 확인!!!!!!!!!!!!!!! : ', data);
         setNonverbal(data); // nonverbal 데이터 상태에 저장
       } else {
         console.log('비언어적 데이터 가져오기 실패:', response.status);
