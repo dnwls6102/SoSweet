@@ -9,6 +9,8 @@ import cookieParser from "cookie-parser";
 
 dotenv.config(); // .env 파일 로드
 
+const mongoUri = process.env.MONGO_URI || "";
+
 const app = express();
 // 쿠키 파싱 미들웨어: 최상단에 위치해야 한다고 함
 app.use(cookieParser());
@@ -52,7 +54,7 @@ app.use((req, res, next) => {
 
 // MongoDB 연결
 mongoose
-  .connect(process.env.MONGO_URI, {})
+  .connect(mongoUri, {})
   .then(() => console.log("MongoDB 연결 성공!"))
   .catch((error: unknown) => console.error("MongoDB 연결 실패: ", error));
 

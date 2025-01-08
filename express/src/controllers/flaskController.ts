@@ -21,7 +21,7 @@ const roomData: {
 //     "act_analysis": action_messages
 // }
 
-// Flask 서버로 분석 데이터 전달
+// Flask 서버로 분석 데이터 전달 -> 감정/동작 분석 결과 받아오기
 export const sendFrameInfoToFlask = async (req: Request, res: Response) => {
     try {
         const { frame, timestamp, user_id, room_id } = req.body;
@@ -51,15 +51,19 @@ export const sendFrameInfoToFlask = async (req: Request, res: Response) => {
         }
         roomData[room_id][user_id] = flaskResult;
 
+        // 현재 방에 존재하는 user_id 목록
         const usersInRoom = Object.keys(roomData[room_id]);
 
-        // 상대방 정보가 없을 때 기본값 설정
+        // user1은 이번에 들어온 user_id
         let user1 = roomData[room_id][user_id];
+
+        // 상대방 user_id 찾기
         const user2Id = usersInRoom.find(id => id !== user_id) || "unknown";
 
-        let user2 = roomData[room_id][user2Id] || {
-            user_id: "unknown",
-            emo_analysis_result: {
+        let user2 =
+            roomData[room_id][user2Id] || {
+                user_id: "unknown",
+                emo_analysis_result: {
                 dominant_emotion: "알 수 없음",
                 percentage: 0
             },
@@ -87,14 +91,19 @@ export const sendFrameInfoToFlask = async (req: Request, res: Response) => {
             usersResponse.user2.act_analysis = ["동작 분석 결과가 없습니다."];
         }
         
-        // 클라이언트에 응답 후 roomData에서 해당 방 데이터 제거
+        // 여깃서 "2명이 모두 들어온 경우"에만 roomData 삭제
         if (usersInRoom.length === 2) {
             delete roomData[room_id];  // 두 사용자 데이터가 모두 있으면 roomData 삭제
         }
 
-        res.status(200).json({ message: "분석 성공!", data: usersResponse });
+        res.status(200).json({ 
+            message: "분석 성공!", 
+            data: usersResponse
+        });
     } catch (error) {
         console.error("Flask 분석 요청 오류: ", error);
-        res.status(500).json({ message: "Flask 서버 요청 실패", error });
+        return res
+            .status(500)
+            .json({ message: "Flask 서버 요청 실패", error });
     }
 };
