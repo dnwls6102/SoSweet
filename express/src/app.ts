@@ -9,6 +9,8 @@ import cookieParser from "cookie-parser";
 
 dotenv.config(); // .env 파일 로드
 
+const mongoUri = process.env.MONGO_URI || "";
+
 const app = express();
 // 쿠키 파싱 미들웨어: 최상단에 위치해야 한다고 함
 app.use(cookieParser());
@@ -50,11 +52,16 @@ app.use((req, res, next) => {
   next();
 });
 
-// MongoDB 연결
+const MONGO_URI = process.env.MONGO_URI;
+
+if (!MONGO_URI) {
+  throw new Error("환경 변수 MONGO_URI가 설정되지 않았습니다.");
+}
+
 mongoose
-  .connect(process.env.MONGO_URI, {})
+  .connect(MONGO_URI, {})
   .then(() => console.log("MongoDB 연결 성공!"))
-  .catch((error: unknown) => console.error("MongoDB 연결 실패: ", error));
+  .catch((error) => console.error("MongoDB 연결 실패: ", error));
 
 // REST API 라우트 등록
 // 임시 라우트
