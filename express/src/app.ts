@@ -30,7 +30,7 @@ app.use(cookieParser());
 // CORS 설정
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: process.env.CLIENT_URL || "http://localhost:3000",
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
     credentials: true,
@@ -72,8 +72,8 @@ app.post("/api/match", (req: Request, res: Response) => {
   res.send("응답");
 });
 // // 기본 경로
-// app.get("/", (req: Request, res: Response) => {
-//   res.send("SoSweet 서버가 실행 중입니다");
-// });
+app.get("/", (req: Request, res: Response) => {
+  res.status(200).end();
+});
 
 export default app;

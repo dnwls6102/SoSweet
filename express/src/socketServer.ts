@@ -2,7 +2,6 @@ import { Server, Socket } from "socket.io";
 import http from "http";
 import UserSchema, { State } from "./models/User";
 import dotenv from "dotenv";
-import { global_id, global_gender } from "./app";
 
 // WebRTC 관련 타입 정의
 interface RTCSessionDescription {

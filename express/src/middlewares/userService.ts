@@ -17,6 +17,7 @@ declare global {
   }
 }
 
+<<<<<<< HEAD
 type cookieType = 'access' | 'refresh';
 
 const setCookies = ( token: string, res:Response, type: cookieType ): void => {
@@ -25,6 +26,16 @@ const setCookies = ( token: string, res:Response, type: cookieType ): void => {
   res.cookie( type, token, {
     httpOnly: false,
     secure: process.env.NODE_ENV === 'production',
+=======
+type cookieType = "access" | "refresh";
+
+const setCookies = (token: string, res: Response, type: cookieType): void => {
+  const time = type === "access" ? 3 : 24;
+
+  res.cookie(type, token, {
+    httpOnly: false,
+    secure: false,
+>>>>>>> dev
     sameSite: 'lax', // 조정 가능
     maxAge: 3600000 * time
   });
