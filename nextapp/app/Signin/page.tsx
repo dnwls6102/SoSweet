@@ -17,24 +17,23 @@ export default function Signin() {
   const [job, setJob] = useState('');
   const [name, setName] = useState('');
   const [gender, setGender] = useState('');
-  const [msg, setMsg] = useState('');
   const [flag, setFlag] = useState(false);
+
+  const [toastMsg, setToastMsg] = useState(''); // 토스트 메시지
+  const [showToast, setShowToast] = useState(false); // 토스트 표시 여부
 
   const router = useRouter();
 
   useEffect(() => {
     function checkPassword() {
-      if (password === '' && checkpwd === '') {
-        setMsg('');
+      if (password === '' || checkpwd === '') {
         setFlag(false);
-      } else if (password === '' || checkpwd === '') {
-        setMsg('비밀번호를 모두 입력해주세요');
-        setFlag(false);
+        setToastMsg('');  // 비밀번호 입력이 하나라도 비었을 때 메시지 초기화
       } else if (password !== checkpwd) {
-        setMsg('비밀번호가 일치하지 않습니다');
+        setToastMsg('비밀번호가 일치하지 않습니다');
         setFlag(false);
       } else {
-        setMsg('비밀번호가 일치합니다');
+        setToastMsg('');  // 비밀번호가 일치하면 메시지 꺼짐
         setFlag(true);
       }
     }
@@ -88,10 +87,10 @@ export default function Signin() {
         const result = await response.json();
         if (result.isExists) {
           console.log('이미 사용 중인 아이디입니다.');
-          alert('이미 사용 중인 아이디입니다.');
+          setToastMsg('이미 사용 중인 아이디입니다.');
         } else {
           console.log('사용 가능한 아이디입니다.');
-          alert('사용 가능한 아이디입니다!');
+          setToastMsg('사용 가능한 아이디입니다!');
         }
       } else {
         console.log('아이디 중복 확인에 실패했습니다.');
@@ -159,7 +158,7 @@ export default function Signin() {
           onChange={handleCheckpwdChange}
           type="password"
         />
-        <p className={`${styles.msg} ${msg ? styles.visible : ''}`}>{msg}</p>
+        <p className={`${styles.toast} ${toastMsg ? styles.visible : ''}`}>{toastMsg}</p>
         <BirthdateInput onChange={handleBirthdateChange} />
         <TitleInput
           title="닉네임"

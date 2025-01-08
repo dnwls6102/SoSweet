@@ -80,38 +80,30 @@
   width: 62%;
 }
 
-.msg {
-  margin-top: 5px;
-  font-size: 14px;
-  color: #e84393;
-  text-align: left;
-  min-height: 20px; /* 공간 확보 */
-  padding: 8px 12px; /* 패딩 추가 */
-  border-radius: 8px; /* 모서리를 둥글게 */
-  background-color: rgba(255, 235, 241, 0.9); /* 부드러운 핑크 배경 */
-  box-shadow: 0 4px 6px rgba(255, 107, 141, 0.2); /* 섀도우 효과 */
-  transition: all 0.3s ease; /* 애니메이션 효과 */
-  opacity: 0; /* 초기 상태: 숨김 */
-  transform: translateY(-5px); /* 초기 상태: 약간 위로 이동 */
-  display: none; /* 초기 상태: 보이지 않음 */
+.toast {
+  position: fixed; /* 화면에 고정 */
+  top: 10%; /* 화면 위에서 조금 아래 */
+  left: 50%; /* 가로 중앙 */
+  transform: translateX(-50%); /* 가운데 정렬 */
+  background-color: rgba(255, 235, 241, 0.95); /* 부드러운 핑크색 배경 */
+  color: #e84393; /* 텍스트 색상 */
+  font-family: 'titleFont', sans-serif;
+  font-size: 15px;
+  padding: 11px 22px;
+  border-radius: 12px; /* 둥근 모서리 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  opacity: 0; /* 초기 상태 숨김 */
+  z-index: 1000; /* 다른 요소 위 */
+  transition: opacity 0.4s ease, transform 0.4s ease; /* 부드러운 전환 */
+  pointer-events: none; /* 클릭 방지 */
 }
 
-.msg.visible {
-  opacity: 1; /* 메시지 표시 */
-  transform: translateY(0); /* 자연스러운 위치로 이동 */
-  display: block; /* 보이게 설정 */
+.toast.visible {
+  opacity: 0.9; /* 보이기 */
+  transform: translate(-50%, 0); /* 원래 위치로 */
 }
 
-/* 에러 메시지일 경우 */
-.msg.error {
-  color: #ff6b6b;
-  background-color: rgba(255, 220, 230, 0.9);
-  border-left: 4px solid #ff4d8d;
-}
-
-/* 성공 메시지일 경우 */
-.msg.success {
-  color: #27ae60;
-  background-color: rgba(235, 255, 241, 0.9);
-  border-left: 4px solid #2ecc71;
+.toast.hidden {
+  opacity: 0; /* 숨기기 */
+  transform: translate(-50%, -20px); /* 위로 사라짐 */
 }
