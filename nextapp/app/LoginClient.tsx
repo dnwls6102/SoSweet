@@ -54,7 +54,7 @@ export default function LoginClient() {
       }
     } catch (error) {
       console.error('서버 오류:', error);
-      alert('서버 오류가 발생했습니다.');
+      alert('로그인 중 알 수 없는 오류가 발생했습니다.');
     }
   };
 
