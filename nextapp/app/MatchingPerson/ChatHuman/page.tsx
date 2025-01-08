@@ -128,14 +128,10 @@ export default function Chat() {
         }
       }
       console.log('Transcription result: ', scriptRef.current);
-      tryNlp(scriptRef.current);
-
-      trySendScript(scriptRef.current);
-      //여기에다가 음성 인식 결과를 보낼 경우 : 변환 결과를 바로바로 보내주기 때문에
-      //말을 끊었는지 여부도 조금 더 명확하게 판단 가능할수도 있다
-      //이렇게 되면 남,녀 구분은 어떻게 해야할지?
-      //서버에서 문자열을 받을 때마다 (남)표시를 하면 script가 정상적으로 생성될련지
-      //부하가 많이 걸리는지? 실제로 만족스러울 정도로 통신이 될련지는 생각해봐야 함
+      if (scriptRef.current !== '') {
+        tryNlp(scriptRef.current);
+        trySendScript(scriptRef.current);
+      }
       scriptRef.current = '';
     };
 
