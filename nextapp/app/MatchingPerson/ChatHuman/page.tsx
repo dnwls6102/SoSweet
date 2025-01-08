@@ -228,19 +228,7 @@ export default function Chat() {
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
         }
-
-        // PeerConnection이 유효한 상태인지 확인
-        if (newPeerConnection.signalingState !== 'closed') {
-          stream.getTracks().forEach((track) => {
-            try {
-              newPeerConnection.addTrack(track, stream);
-            } catch (error) {
-              console.error('Error adding track:', error);
-            }
-          });
-        }
-
-        // 소켓 연결 확인
+        
         // PeerConnection에 트랙 추가
         stream.getTracks().forEach((track) => {
           newPeerConnection.addTrack(track, stream);
