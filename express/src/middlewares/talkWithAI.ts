@@ -138,7 +138,7 @@ John은 30세 남성이며, 영동세브란스병원에서 일하는 의사입�
 
 async function initChat(req: Request, res: Response, next: NextFunction): Promise<void> {
   const { user_id, user_gender } = req.body;
-
+  console.log("LLM 초기화 시작")
   let persona: string = user_gender === "남성" ? persona_emma: persona_john;
   try {
     // 사용자 ID에 해당하는 대화 기록이 없으면 초기화
@@ -210,7 +210,7 @@ async function initChat(req: Request, res: Response, next: NextFunction): Promis
       temperature: 1.0, // 톤 조절(창의성 정도)
       // max_tokens, top_p, frequency_penalty 등 추가 옵션 설정 가능
     });
-
+    console.log("LLM 초기화 완료")
     // 다음 미들웨어로 넘어가기
     next();
   } catch (err) {
@@ -350,10 +350,11 @@ async function chatMiddleware(req: Request, res: Response, next: NextFunction): 
 }
 
 function endChatWithAI(req: Request, res: Response, next: NextFunction): void {
-  console.log(req.body.user_id);
-  req.body.script = conversations[req.body.user_id];
+  const { user_id } = req.body;
+  console.log(user_id);
+  req.body.script = conversations[user_id];
   console.log(req.body.script);
-  conversations[req.body.user_id] = [];
+  delete conversations[user_id];
   next();
 }
 
