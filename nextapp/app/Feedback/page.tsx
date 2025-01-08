@@ -111,7 +111,7 @@ export default function Feedback() {
   const fetchVerbalData = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/talk/${userID}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/talk/${ID}`,
         {
           method: 'GET',
           headers: {
@@ -164,7 +164,7 @@ export default function Feedback() {
   const fetchNonverbalTimeline = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/timeline/${userID}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/timeline/${ID}`,
         {
           method: 'GET',
           headers: {
@@ -191,7 +191,7 @@ export default function Feedback() {
   const fetchSummary = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback?userID=${userID}&number=${number}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback?userID=${ID}&number=${number}`,
         {
           method: 'GET',
           headers: {

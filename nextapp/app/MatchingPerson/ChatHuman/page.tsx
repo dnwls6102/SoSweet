@@ -189,7 +189,7 @@ export default function Chat() {
 
     // 소켓 연결 초기화 - WebRTC 연결용 Socket
     const rtcSocket = io(
-      process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:4000',
+      `${process.env.NEXT_PUBLIC_SERVER_URL}`,
       {
         path: '/api/match',
         transports: ['websocket'],
@@ -403,7 +403,7 @@ export default function Chat() {
         // Node 백엔드로 POST 요청
         // 1. 감정, 동작 분석 요청
         const response = await fetch(
-          'http://localhost:4000/api/human/frameInfo',
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/frameInfo`,
           {
             method: 'POST',
             headers: {
