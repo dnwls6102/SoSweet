@@ -13,7 +13,7 @@ const server = http.createServer(app);
 
 // HTTP 서버 실행
 server.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on https://sosweet.site:${PORT}`);
 
   // 소켓 서버 초기화
   initializeSocketServer(server);

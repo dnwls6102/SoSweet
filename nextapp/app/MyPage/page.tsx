@@ -2,28 +2,7 @@
 
 import styles from './page.module.css';
 import Image from 'next/image';
-import MiddleForm from '@/components/middleForm';
 import { useState } from 'react';
-
-// type UserInfo = {
-//   name: string;
-//   birthDate: string;
-//   job: string;
-//   rank: string;
-//   score: string;
-//   gender: string;
-// };
-
-// async function fetchUserInfo(): Promise<UserInfo> {
-//   // 서버에서 유저 정보를 가져오는 함수
-//   return {
-//     name: '최유진',
-//     birthDate: '1998-12-18',
-//     job: '스타트업 사장',
-//     rank: '브론즈',
-//     score: '36전 5애프터',
-//   };
-// }
 
 export default function MyPage() {
   const [userInfo, setUserInfo] = useState({
@@ -107,7 +86,9 @@ export default function MyPage() {
               )}
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>생년월일</span>
-                <span className={styles.readOnlyField}>{userInfo.birthDate}</span>
+                <span className={styles.readOnlyField}>
+                  {userInfo.birthDate}
+                </span>
               </div>
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>직업</span>
