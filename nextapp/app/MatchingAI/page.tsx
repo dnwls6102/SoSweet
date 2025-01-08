@@ -15,7 +15,7 @@ const MatchingAI = () => {
   return (
     <div className={styles.container}>
       {/* <Header /> */}
-      <Link href="/MatchingAI/ChatAI" className={styles.link}>
+      <Link href="/ChatAI" className={styles.link}>
         <div className={styles.cardsContainer}>
           {cardData.map((card, index) => (
             <Card key={index} name={card.name} age={card.age} job={card.job} />
