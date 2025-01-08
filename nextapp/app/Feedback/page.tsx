@@ -286,25 +286,28 @@ export default function Feedback() {
       {/* 비언어적 분석 */}
       <div className={styles.section}>
         <h2 className={styles.sectionTitle}>동작 분석</h2>
-
+        <div className={styles.actionsWrapper}>
         {nonverbal ? (
           // nonverbal가 문자열이 아니라면(즉 객체라면) counters에 접근
           typeof nonverbal === 'object' && nonverbal.counters ? (
             <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
               {/* Action 1) 산만한 손 동작 */}
-              <div>
+              <div className={styles.actionItem}>
+                <h2>👋</h2>
                 <h4>산만한 손 동작</h4>
                 <p>{nonverbal.counters.hand_message_count} 회</p>
               </div>
 
               {/* Action 2) 산만한 팔 동작 */}
-              <div>
+              <div className={styles.actionItem}>
+                <h2>🙆‍♀️</h2>
                 <h4>산만한 팔 동작</h4>
                 <p>{nonverbal.counters.folded_arm_message_count} 회</p>
               </div>
 
               {/* Action 3) 좌우 움직임 */}
-              <div>
+              <div className={styles.actionItem}>
+                <h2>🕺</h2>
                 <h4>좌우 움직임</h4>
                 <p>{nonverbal.counters.side_move_message_count} 회</p>
               </div>
@@ -322,6 +325,7 @@ export default function Feedback() {
             <div className={styles.spinner}></div>
           </div>
         )}
+        </div>
       </div>
 
       {/* 상대방의 피드백 */}
@@ -330,13 +334,13 @@ export default function Feedback() {
           <h2 className={styles.sectionTitle}>상대방의 평가</h2>
           {feedbackData.partnerFeedback ? (
             <div className={styles.partnerFeedback}>
-              <p>별점: {'★'.repeat(feedbackData.partnerFeedback.rating)}</p>
+              <p>평점: {'♥'.repeat(feedbackData.partnerFeedback.rating)}</p>
               <p>코멘트: {feedbackData.partnerFeedback.comment}</p>
               <p>
                 재매칭 의사:{' '}
                 {feedbackData.partnerFeedback.like
-                  ? '만나고 싶어요'
-                  : '다음에요'}
+                  ? '💕 다시 만나고 싶어요'
+                  : '💔 만나고 싶지 않아요'}
               </p>
             </div>
           ) : (

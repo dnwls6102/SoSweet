@@ -242,25 +242,49 @@ body {
   }
 }
 
-.msg {
-  margin-top: 5px;
-  font-size: 14px;
-  color: #ff4388;
-  text-align: left;
-  min-height: 16px;
-  padding-left: 5px;
-  opacity: 0;
-  animation: msgFadeIn 1s forwards;
+/* 동작 분석 */
+.actionsWrapper {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 30px;
+  flex-wrap: wrap;  /* 화면 크기에 맞춰 항목들이 자동으로 정렬되도록 */
+  padding: 10px 0;
 }
 
-.msg.visible {
-  opacity: 1;
+.actionItem {
+  background: #fff;  /* 연한 핑크 배경 */
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px #0000001a;
+  text-align: center;
+  flex:  0 0 200px;  /* 각 항목이 3등분되도록 */
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
 
-@keyframes msgFadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+.actionItem h4 {
+  font-family: 'titleFont', sans-serif;
+  font-size: 1.1em;
+  color: #0c0c0c;
+  margin-bottom: 10px;
 }
+
+.actionItem p {
+  font-family: 'contentFont', sans-serif;
+  font-size: 1em;
+  color: #333;
+  font-weight: bold;
+}
+
+.actionItem:hover {
+  background: #fffbf9; /* 살짝 밝은 핑크로 변경 */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: scale(1.05);  /* 마우스 오버 시 살짝 커짐 */
+}
+
+
+
 
 .loading {
   font-family: 'contentFont', sans-serif;
