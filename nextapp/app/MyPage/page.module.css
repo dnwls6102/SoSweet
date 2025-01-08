@@ -29,7 +29,7 @@
     display: flex;
     gap: 30px;
     background-color: rgba(255, 240, 245, 0.9);
-    width: 70%;
+    /* width: 70%; 나중에 등급 생기면 주석 해제하기*/
     height: fit-content;
     margin: 0 auto;
     border-radius: 25px;
@@ -74,7 +74,7 @@
     height: 130px;
     border-radius: 50%;
     cursor: pointer;
-    border: 3px solid #ffc0c0;
+    border: 3px solid #ffcedf;
     transition: all 0.3s ease;
     background-color: white;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
@@ -89,7 +89,7 @@
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
-    background: linear-gradient(135deg, #ff6b6b, #ff8787);
+    background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
     color: white;
     font-weight: 600;
     font-family: 'logoFont', sans-serif;
@@ -217,7 +217,7 @@
 .inputField {
     flex: 1;
     padding: 8px 12px;
-    border: 2px solid #ffd8d8;
+    border: 2px solid #ffcedf;
     border-radius: 8px;
     font-family: 'NotoSansKR', sans-serif;
     font-size: 14px;
@@ -228,12 +228,12 @@
 
 .inputField:focus {
     outline: none;
-    border-color: #ff8787;
+    border-color: #fd79a8;;
     box-shadow: 0 0 0 3px rgba(255, 135, 135, 0.1);
 }
 
 .inputField:hover {
-    border-color: #ff8787;
+    border-color: #fd79a8;;
 }
 
 .readOnlyField {

@@ -339,10 +339,10 @@ export default function Feedback() {
             <p>{summary}</p>
             <p>
               당신은 <span className={styles.highlight}>연애고자</span> 입니다.
-              <br /> <br />
-              당신의 소개팅 등급은
+              {/* <br /> <br />
+              당신의 소개팅 등급은 */}
             </p>
-            <div className={styles.rankContainer}>
+            {/* <div className={styles.rankContainer}>
               <Image
                 src="/bronze-icon.svg"
                 alt="등급 아이콘"
@@ -351,7 +351,7 @@ export default function Feedback() {
                 className={styles.rankIcon}
               />
               <span className={styles.rankText}>브론즈</span>
-            </div>
+            </div> */}
           </div>
         ) : (
           <div className={styles.loading}>
