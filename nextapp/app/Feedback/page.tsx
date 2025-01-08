@@ -112,7 +112,7 @@ export default function Feedback() {
   const fetchVerbalData = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/talk/${userID}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/talk/${ID}`,
         {
           method: 'GET',
           headers: {
@@ -165,7 +165,7 @@ export default function Feedback() {
   const fetchNonverbalTimeline = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/timeline/${userID}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/timeline/${ID}`,
         {
           method: 'GET',
           headers: {
@@ -192,7 +192,7 @@ export default function Feedback() {
   const fetchSummary = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback?userID=${userID}&number=${number}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback?userID=${ID}&number=${number}`,
         {
           method: 'GET',
           headers: {
@@ -287,7 +287,18 @@ export default function Feedback() {
       <div className={styles.section}>
         <h2 className={styles.sectionTitle}>동작 분석</h2>
         {nonverbal ? (
-          <p>{nonverbal}</p>
+          // 객체를 직접 렌더링하는 대신 필요한 속성을 문자열로 표시
+          <div>
+            {typeof nonverbal === 'string' ? (
+              <p>{nonverbal}</p>
+            ) : (
+              // nonverbal이 객체인 경우 필요한 속성을 명시적으로 접근
+              <div>
+                {nonverbal.message && <p>{nonverbal.message}</p>}
+                {/* 다른 필요한 속성들도 같은 방식으로 표시 */}
+              </div>
+            )}
+          </div>
         ) : (
           // <>
           //   <p>

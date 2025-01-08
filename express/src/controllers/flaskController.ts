@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 const fetch = require("node-fetch"); // CommonJS 방식
 
-const FLASK_SERVER_URL = process.env.FLASK_SERVER_URL || "http://localhost:5000";
+const FLASK_SERVER_URL = process.env.FLASK_SERVER_URL;
 
 const roomData: {
     [room_id: string]: {
