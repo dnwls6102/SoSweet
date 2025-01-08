@@ -17,7 +17,7 @@ export default function TitleInput({
     <div className={styles.inputGroup}>
       <label className={styles.label}>{title}</label>
       <input 
-        type="text"
+        type={type}
         className={styles.input}
         placeholder={title}
         value={value}

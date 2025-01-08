@@ -449,10 +449,17 @@ export default function Chat() {
           </div>
         </div>
         <div className={styles.right}>
+          <h2 className={styles.title}>당신의 언어적 습관</h2>
           <textarea
-            className={styles.textarea}
+            className={styles.textareaVerbal}
             readOnly
             value={feedback}
+          ></textarea>
+          <h2 className={styles.title}>당신의 현재 감정</h2>
+          <textarea
+            className={styles.textareaEmotion}
+            readOnly
+            value={myEmotion}
           ></textarea>
         </div>
       </div>
