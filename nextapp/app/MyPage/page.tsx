@@ -2,28 +2,7 @@
 
 import styles from './page.module.css';
 import Image from 'next/image';
-import MiddleForm from '@/components/middleForm';
 import { useState } from 'react';
-
-// type UserInfo = {
-//   name: string;
-//   birthDate: string;
-//   job: string;
-//   rank: string;
-//   score: string;
-//   gender: string;
-// };
-
-// async function fetchUserInfo(): Promise<UserInfo> {
-//   // 서버에서 유저 정보를 가져오는 함수
-//   return {
-//     name: '최유진',
-//     birthDate: '1998-12-18',
-//     job: '스타트업 사장',
-//     rank: '브론즈',
-//     score: '36전 5애프터',
-//   };
-// }
 
 export default function MyPage() {
   const [userInfo, setUserInfo] = useState({
@@ -107,7 +86,9 @@ export default function MyPage() {
               )}
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>생년월일</span>
-                <span className={styles.readOnlyField}>{userInfo.birthDate}</span>
+                <span className={styles.readOnlyField}>
+                  {userInfo.birthDate}
+                </span>
               </div>
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>직업</span>
@@ -137,7 +118,7 @@ export default function MyPage() {
             </div>
           </div>
         </div>
-        <div className={styles.userRank}>
+        {/* <div className={styles.userRank}>
           <h2 className={styles.sectionTitle}>나의 소개팅 등급</h2>
           <Image
             src="/bronze-icon.svg"
@@ -150,7 +131,7 @@ export default function MyPage() {
             당신의 소개팅 등급은 <strong>{userInfo.rank}</strong> 입니다
           </p>
           <p className={styles.rankText}>총 소개팅 전적: {userInfo.score}</p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

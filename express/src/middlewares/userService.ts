@@ -21,13 +21,23 @@ type cookieType = "access" | "refresh";
 
 const setCookies = (token: string, res: Response, type: cookieType): void => {
   const time = type === "access" ? 3 : 24;
-
-  res.cookie(type, token, {
-    httpOnly: false,
-    secure: false,
-    sameSite: 'lax', // 조정 가능
-    maxAge: 3600000 * time
-  });
+  if (process.env.IS_LOCAL === 'true') {
+    res.cookie(type, token, {
+      httpOnly: false,
+      secure: false,
+      sameSite: 'lax', // 조정 가능
+      maxAge: 3600000 * time
+    });
+  } else {
+    res.cookie(type, token, {
+      httpOnly: false,
+      secure: true,
+      sameSite: 'strict', // 조정 가능
+      maxAge: 3600000 * time,
+      path: "/",
+      domain: ".sosweet.site"
+    });
+  }
 };
 
 async function logIn(req: Request, res: Response, next: NextFunction): Promise<void> {

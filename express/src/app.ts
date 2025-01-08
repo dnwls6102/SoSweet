@@ -30,7 +30,7 @@ app.use(cookieParser());
 // CORS 설정
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: process.env.CLIENT_URL,
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
     credentials: true,
@@ -52,7 +52,7 @@ app.use((req, res, next) => {
 
 // MongoDB 연결
 mongoose
-  .connect(process.env.MONGO_URI || "mongodb://localhost:27017/sosweet", {})
+  .connect(process.env.MONGO_URI, {})
   .then(() => console.log("MongoDB 연결 성공!"))
   .catch((error: unknown) => console.error("MongoDB 연결 실패: ", error));
 

@@ -70,7 +70,10 @@ export default function MatchingPerson() {
     return (
       <div className={styles.container}>
         <div className={styles.content}>
-          <div className={styles.loadingText}>매칭 중...</div>
+          <div className={styles.loading}>
+            <p>매칭을 찾고 있어요</p>
+            <div className={styles.spinner}></div>
+          </div>
         </div>
       </div>
     );
@@ -90,7 +93,8 @@ export default function MatchingPerson() {
         </div>
         <div className={styles.rightSection}>
           <div className={styles.rankContainer}>
-            <span className={styles.rankText}>나의 등급</span>
+            <span className={styles.rankText}>지금 클릭하세요 당신의 운명이 로딩 중입니다!</span>
+            {/* <span className={styles.rankText}>나의 등급</span>
             <Image
               src="/bronze-icon.svg"
               alt="Rank Icon"
@@ -98,7 +102,7 @@ export default function MatchingPerson() {
               height={60}
               className={styles.rankIcon}
             />
-            <span className={styles.rankLevel}>브론즈</span>
+            <span className={styles.rankLevel}>브론즈</span> */}
           </div>
           <button className={styles.matchButton} onClick={handleMatching}>
             매칭 시작
