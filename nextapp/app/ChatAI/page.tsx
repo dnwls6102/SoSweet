@@ -12,6 +12,7 @@ import { setIsAIChat } from '@/store/aiFlagSlice';
 
 interface UserPayload {
   user_id: string;
+  user_gender: string;
   iat: number;
   exp: number;
 }
@@ -21,9 +22,11 @@ export default function Chat() {
   const router = useRouter();
   const token = Cookies.get('access');
   let user_id = '';
+  let user_gender = '';
   if (token) {
     const decoded = jwtDecode<UserPayload>(token);
     user_id = decoded.user_id;
+    user_gender = decoded.user_gender;
   } else {
     alert('유효하지 않은 접근입니다.');
     router.replace('/');
@@ -87,7 +90,7 @@ export default function Chat() {
             'Content-Type': 'application/json',
           },
           credentials: 'include',
-          body: JSON.stringify({ script, user_id }),
+          body: JSON.stringify({ script, user_id, user_gender}),
         },
       );
 

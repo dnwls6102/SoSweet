@@ -36,8 +36,9 @@ async function ttsMiddleware(req: Request, res: Response): Promise<void> {
       res.status(500).send("AI 응답 데이터가 없습니다.");
       return;
     }
+    console.log(user_gender);
 
-    const vcModel = user_gender === "남성" ? "onyx" : "nova";
+    const vcModel = user_gender === "남성" ? "nova" : "onyx";
 
     // TTS API 호출
     const opus = await openai.audio.speech.create({
