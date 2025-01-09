@@ -300,9 +300,9 @@ export default function Chat() {
         console.log('감정 분석 결과:', analyzeResult);
 
         // 감정 상태 업데이트
-        if (analyzeResult.emo_analysis_result) {
-          setMyEmotion(analyzeResult.emo_analysis_result.dominant_emotion);
-          setMyValue(analyzeResult.emo_analysis_result.percentage);
+        if (analyzeResult.dominant_emotion) {
+          setMyEmotion(analyzeResult.dominant_emotion);
+          setMyValue(analyzeResult.value);
         }
       } catch (error) {
         console.error('전송 에러:', error);
