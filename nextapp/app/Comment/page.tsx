@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-import { setPartnerFeedback, setSummary } from '../../store/feedbackSlice';
+import { setPartnerFeedback, setSummary, setConclusion } from '../../store/feedbackSlice';
 import { setIsAIChat } from '../../store/aiFlagSlice';
 
 interface UserPayload {
@@ -117,7 +117,11 @@ export default function RatingPage() {
       if (response.ok) {
         const result = await response.json();
         console.log('대화 분석 받음');
-        dispatch(setSummary(result.analysis)); //서버에서 어떻게 줄 건지 확인
+        const data = JSON.parse(result.analysis)
+        console.log(data.analysis)
+        console.log(data.conclusion)
+        dispatch(setSummary(data.analysis)); //서버에서 어떻게 줄 건지 확인
+        dispatch(setSummary(data.conclusion))
       } else {
         console.error('서버에서 분석을 반환하지 않음');
       }

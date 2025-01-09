@@ -42,6 +42,7 @@ export default function Feedback() {
   const [verbal, setVerbal] = useState(null);
   const [nonverbal, setNonverbal] = useState(null);
   const [summary, setSummary] = useState('');
+  const [conclusion, setConclusion] = useState('');
 
   // Redux store에서 데이터 가져오기
   const feedbackData = useSelector((state: RootState) => state.feedback);
@@ -59,8 +60,13 @@ export default function Feedback() {
   }
 
   useEffect(() => {
+    console.log("Feedback UseEfect")
+    console.log(feedbackData.summary);
+    console.log(feedbackData.conclusion);
     if (feedbackData.summary) {
+      console.log("Redux에 저장되어 있음")
       setSummary(feedbackData.summary);
+      setConclusion(feedbackData.conclusion);
       fetchEmotionData();
     }
   }, [feedbackData.summary]);
@@ -272,9 +278,9 @@ export default function Feedback() {
       {/* 대화 분석 */}
       <div className={styles.section}>
         <h2 className={styles.sectionTitle}>대화 분석</h2>
-        {feedbackData.summary ? (
+        {summary ? (
           // <p>verbal</p>
-          <>{feedbackData.summary}</>
+          <>{summary}</>
         ) : (
           <div className={styles.loading}>
             <p>대화 분석 데이터를 불러오는 중입니다.</p>
@@ -351,9 +357,9 @@ export default function Feedback() {
       {/* 종합 평가 */}
       <div className={styles.overallSection}>
         <div className={styles.overallTitle}>종합 평가</div>
-        {summary ? (
+        {conclusion ? (
           <div className={styles.overallText}>
-            <p>{summary}</p>
+            <p>{conclusion}</p>
             <p>
               당신은 <span className={styles.highlight}>연애고자</span> 입니다.
               {/* <br /> <br />

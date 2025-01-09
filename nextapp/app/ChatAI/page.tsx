@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import Videobox from '@/components/videobox';
 import { useDispatch } from 'react-redux';
-import { setSummary } from '@/store/feedbackSlice';
+import { setSummary, setConclusion } from '@/store/feedbackSlice';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { setIsAIChat } from '@/store/aiFlagSlice';
@@ -389,13 +389,19 @@ export default function Chat() {
       );
 
       if (response.ok) {
-        const data = await response.json();
+        const json_data = await response.json();
+        console.log(typeof json_data.analysis);
+        console.log(json_data.analysis)
+        const data = JSON.parse(json_data.analysis)
+        console.log(data.analysis.analysis);
+        console.log(data.analysis.conclusion);
         dispatch(setSummary(data.analysis));
+        dispatch(setConclusion(data.conclusion))
         dispatch(setIsAIChat(true));
 
         // router.push 대신 window.location.href 사용
-        // router.push('/Feedback');
-        window.location.href = '/Feedback';
+        router.push('/Feedback');
+        // window.location.href = '/Feedback';
       } else {
         console.log('대화 종료 요청 실패');
       }

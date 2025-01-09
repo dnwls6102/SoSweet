@@ -32,7 +32,7 @@ app.use(cookieParser());
 // CORS 설정
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: [`${process.env.CLIENT_URL}`, `${process.env.FLASK_SERVER_URL}`],
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
     credentials: true,

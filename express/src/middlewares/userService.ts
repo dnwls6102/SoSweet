@@ -21,14 +21,14 @@ type cookieType = "access" | "refresh";
 
 const setCookies = (token: string, res: Response, type: cookieType): void => {
   const time = type === "access" ? 3 : 24;
-  if (process.env.IS_LOCAL === 'true') {
-    res.cookie(type, token, {
-      httpOnly: false,
-      secure: false,
-      sameSite: 'lax', // 조정 가능
-      maxAge: 3600000 * time
-    });
-  } else {
+  // if (process.env.IS_LOCAL === 'true') {
+  //   res.cookie(type, token, {
+  //     httpOnly: false,
+  //     secure: false,
+  //     sameSite: 'lax', // 조정 가능
+  //     maxAge: 3600000 * time
+  //   });
+  // } else {
     res.cookie(type, token, {
       httpOnly: false,
       secure: true,
@@ -37,7 +37,7 @@ const setCookies = (token: string, res: Response, type: cookieType): void => {
       path: "/",
       domain: ".sosweet.site"
     });
-  }
+  // }
 };
 
 async function logIn(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -93,12 +93,22 @@ const logOut = (req: Request, res: Response, next: NextFunction): void => {
     return;
   }
 
-  res.clearCookie('access');
+  res.clearCookie('access', {
+    secure: true,
+    sameSite: 'strict', // 조정 가능
+    path: "/",
+    domain: ".sosweet.site"
+  });
   console.log('access 토큰 삭제');
 
   try {
     // jwt.verify(refreshToken, secretKey);
-    res.clearCookie('refresh');
+    res.clearCookie('refresh', {
+      secure: true,
+      sameSite: 'strict', // 조정 가능
+      path: "/",
+      domain: ".sosweet.site"
+    });
     next();
   } catch(error) {
     res.status(401).json({ message: "유효하지 않은 refresh 토큰입니다." })
