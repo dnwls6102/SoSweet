@@ -423,13 +423,6 @@ export default function Chat() {
     <div className={styles.wrapper}>
       <div className={styles.content}>
         <div className={styles.left}>
-          <video
-            ref={localVideoRef}
-            autoPlay
-            playsInline
-            muted
-            // style={{ display: 'none' }}
-          />
           <div className={styles.relationshipContainer}>
             <div className={styles.relationshipSet}>
               <Image
@@ -470,6 +463,14 @@ export default function Chat() {
             readOnly
             value={feedback}
           ></textarea>
+               <video
+            ref={localVideoRef}
+            autoPlay
+            playsInline
+            muted
+            style = {{ width : 1, height : 1}}
+            // style={{ display: 'none' }}
+          />
           <h2 className={styles.title}>당신의 현재 감정</h2>
           <textarea
             className={styles.textareaEmotion}
