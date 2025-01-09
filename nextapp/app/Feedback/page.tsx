@@ -62,6 +62,7 @@ export default function Feedback() {
   useEffect(() => {
     console.log("Feedback UseEfect")
     console.log(feedbackData.summary);
+    console.log(feedbackData.conclusion);
     if (feedbackData.summary) {
       console.log("Redux에 저장되어 있음")
       setSummary(feedbackData.summary);

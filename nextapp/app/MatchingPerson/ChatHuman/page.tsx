@@ -18,6 +18,9 @@ interface UserPayload {
   exp: number;
 }
 
+// 프레임 카운터 추가
+let frameCounter = 0;
+
 export default function Chat() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
@@ -391,8 +394,10 @@ export default function Chat() {
       // JPEG 포맷으로 Base64 인코딩
       const dataURL = canvas.toDataURL('image/jpeg', 0.7); // 70% 품질로 압축
 
+      frameCounter += 1; 
+
       // 현재 시간으로 타임스탬프
-      const timestamp = Date.now();
+      const timestamp = frameCounter
 
       try {
         // Node 백엔드로 POST 요청
