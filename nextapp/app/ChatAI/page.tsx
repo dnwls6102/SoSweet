@@ -16,6 +16,10 @@ interface UserPayload {
   iat: number;
   exp: number;
 }
+
+// 프레임 카운터 추가
+let frameCounter = 0;
+
 import Image from 'next/image';
 
 export default function Chat() {
@@ -272,8 +276,10 @@ export default function Chat() {
       // JPEG 포맷으로 Base64 인코딩
       const dataURL = canvas.toDataURL('image/jpeg', 0.7);
 
+      frameCounter += 1; 
+
       // 현재 시간으로 타임스탬프
-      const timestamp = Date.now();
+      const timestamp = frameCounter
 
       try {
         // AI 채팅용 감정 분석 요청
@@ -422,7 +428,7 @@ export default function Chat() {
             autoPlay
             playsInline
             muted
-            style={{ display: 'none' }}
+            // style={{ display: 'none' }}
           />
           <div className={styles.relationshipContainer}>
             <div className={styles.relationshipSet}>
