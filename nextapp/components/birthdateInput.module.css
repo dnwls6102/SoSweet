@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'contentFont';
-    src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
+    src: url("../fonts/NotoSansKR-Regular.ttf") format('truetype');
     font-weight: normal;
   }
 

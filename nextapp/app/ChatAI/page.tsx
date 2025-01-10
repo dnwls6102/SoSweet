@@ -3,7 +3,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
-import Videobox from '@/components/videobox';
 import { useDispatch } from 'react-redux';
 import { setSummary, setConclusion } from '@/store/feedbackSlice';
 import Cookies from 'js-cookie';
@@ -44,7 +43,6 @@ export default function Chat() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const isRecording = useRef<boolean>(false);
-  const [transcript, setTranscript] = useState('');
   const [feedback, setFeedback] = useState('');
   const scriptRef = useRef('');
   const recognition = useRef<SpeechRecognition | null>(null);
@@ -54,10 +52,10 @@ export default function Chat() {
 
   // 감정 분석을 위한 상태 추가
   const [myEmotion, setMyEmotion] = useState('😶 평온함');
-  const [myValue, setMyValue] = useState(0);
+  // const [myValue, setMyValue] = useState(0);
 
   const dispatch = useDispatch();
-  const [relationshipScore, setRelationshipScore] = useState(48);
+  // const [relationshipScore, setRelationshipScore] = useState(48);
 
   //대화 영상 전체 / n분 간격으로 서버로 보내는 함수
 
@@ -85,7 +83,7 @@ export default function Chat() {
         setFeedback((prev) => (prev ? prev + result.message : result.message));
       }
     } catch (error) {
-      console.log('서버 오류 발생');
+      console.log('서버 오류 발생 : ', error);
     }
   };
 
@@ -121,7 +119,7 @@ export default function Chat() {
         console.log('오류 발생');
       }
     } catch (error) {
-      console.log('서버 오류 발생');
+      console.log('서버 오류 발생 : ', error);
     }
   };
 
@@ -141,7 +139,6 @@ export default function Chat() {
     recognition.current.onresult = (event: SpeechRecognitionEvent) => {
       for (let i = event.resultIndex; i < event.results.length; i++) {
         if (event.results[i].isFinal) {
-          setTranscript((prev) => prev + event.results[i][0].transcript);
           scriptRef.current += event.results[i][0].transcript;
         }
       }
@@ -177,7 +174,7 @@ export default function Chat() {
       }
     };
 
-    recognition.current.onerror = (event) => {
+    recognition.current.onerror = (event: { error: string; }) => {
       if (event.error !== 'no-speech')
         console.error('Speech recognition error:', event.error);
     };
@@ -316,7 +313,7 @@ export default function Chat() {
         // 감정 상태 업데이트
         if (analyzeResult.dominant_emotion) {
           setMyEmotion(analyzeResult.dominant_emotion);
-          setMyValue(analyzeResult.value);
+          // setMyValue(analyzeResult.value);
         }
       } catch (error) {
         console.error('전송 에러:', error);
@@ -441,10 +438,10 @@ export default function Chat() {
                 <div className={styles.progressBar}>
                   <div
                     className={styles.progressFill}
-                    style={{ width: `${relationshipScore}%` }}
+                    style={{ width: `${48}%` }}
                   >
                     <span className={styles.progressValue}>
-                      {relationshipScore}/100
+                      {48}/100
                     </span>
                   </div>
                 </div>

@@ -1,18 +1,18 @@
 @font-face {
   font-family: 'logoFont';
-  src: url("@/fonts/Cafe24Ssurround-v2.0.ttf") format('truetype');
+  src: url("../../fonts/Cafe24Ssurround-v2.0.ttf") format('truetype');
   font-weight: bold;
 }
 
 @font-face {
     font-family: 'contentFont';
-    src: url("@/fonts/NotoSansKR-Black.ttf") format('truetype');
+    src: url("../../fonts/NotoSansKR-Black.ttf") format('truetype');
     font-weight: bold;
   }
 
 @font-face {
     font-family: 'NotoSansKR';
-    src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
+    src: url("../../fonts/NotoSansKR-Regular.ttf") format('truetype');
     font-weight: normal;
 }
 
