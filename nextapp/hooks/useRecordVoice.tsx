@@ -2,13 +2,15 @@ import { useEffect, useState, useRef } from 'react';
 
 export const useRecordVoice = () => {
   // State to hold the media recorder instance
-  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
+    null,
+  );
 
   // State to track whether recording is currently in progress
   const [recording, setRecording] = useState(false);
 
   // Ref to store audio chunks during recording
-  const chunks = useRef([]);
+  const chunks = useRef<Blob[]>([]);
 
   // Function to start the recording
   const startRecording = () => {
@@ -27,21 +29,21 @@ export const useRecordVoice = () => {
   };
 
   // Function to initialize the media recorder with the provided stream
-  const initialMediaRecorder = (stream) => {
-    const mediaRecorder = new MediaRecorder(stream);
+  const initialMediaRecorder = (stream: MediaStream) => {
+    const recorder = new MediaRecorder(stream);
 
     // Event handler when recording starts
-    mediaRecorder.onstart = () => {
+    recorder.onstart = () => {
       chunks.current = []; // Resetting chunks array
     };
 
     // Event handler when data becomes available during recording
-    mediaRecorder.ondataavailable = (ev) => {
+    recorder.ondataavailable = (ev: BlobEvent) => {
       chunks.current.push(ev.data); // Storing data chunks
     };
 
     // Event handler when recording stops
-    mediaRecorder.onstop = () => {
+    recorder.onstop = () => {
       // Creating a blob from accumulated audio chunks with WAV format
       const audioBlob = new Blob(chunks.current, { type: 'audio/wav' });
       console.log(audioBlob, 'audioBlob');
@@ -49,7 +51,7 @@ export const useRecordVoice = () => {
       // You can do something with the audioBlob, like sending it to a server or processing it further
     };
 
-    setMediaRecorder(mediaRecorder);
+    setMediaRecorder(recorder);
   };
 
   useEffect(() => {

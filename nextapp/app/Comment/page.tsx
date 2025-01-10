@@ -33,23 +33,23 @@ export default function RatingPage() {
   const [comment, setComment] = useState(''); // 텍스트 입력 값
   const [like, setLike] = useState(false);
   const [waiting, setWaiting] = useState(false);
+  const [user_id, setUserID] = useState('');
   const router = useRouter();
   const socket = useSelector((state: RootState) => state.socket.socket);
   const room = useSelector((state: RootState) => state.socket.room);
   const dispatch = useDispatch();
 
-  const token = Cookies.get('access');
-  let user_id = '';
-  if (token) {
-    const decoded = jwtDecode<UserPayload>(token);
-    user_id = decoded.user_id;
-  } else {
-    alert('유효하지 않은 접근입니다.');
-    router.replace('/');
-  }
-
   useEffect(() => {
     if (!socket) return;
+
+    const token = Cookies.get('access');
+    if (token) {
+      const decoded = jwtDecode<UserPayload>(token);
+      setUserID(decoded.user_id);
+    } else {
+      alert('유효하지 않은 접근입니다.');
+      router.replace('/');
+    }
 
     socket.on('receiveFeedback', (feedbacks: Comments) => {
       console.log('전체 피드백 데이터 수신:', feedbacks);

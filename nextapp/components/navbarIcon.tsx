@@ -26,7 +26,7 @@ export default function NavbarIcon() {
         console.log('로그아웃 실패 : ', data.message);
       }
     } catch (error) {
-      console.error('서버 오류로 인해 로그아웃 불가');
+      console.error('서버 오류로 인해 로그아웃 불가 : ', error);
     }
   };
   return (

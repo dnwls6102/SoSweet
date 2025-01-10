@@ -5,6 +5,29 @@ import React, { useEffect, useRef } from 'react';
 import '@mediapipe/face_detection'; // Mediapipe 라이브러리 포함
 import '@mediapipe/camera_utils'; // Mediapipe 카메라 유틸 포함
 
+interface FaceDetection {
+  setOptions(options: { model: string; minDetectionConfidence: number }): void;
+  onResults(
+    callback: (results: {
+      detections: Array<{
+        boundingBox: {
+          xCenter: number;
+          yCenter: number;
+          width: number;
+          height: number;
+        };
+      }>;
+    }) => void,
+  ): void;
+  send(data: { image: HTMLVideoElement }): Promise<void>;
+}
+
+interface Window {
+  FaceDetection: new (config: {
+    locateFile: (file: string) => string;
+  }) => FaceDetection;
+}
+
 export default function FaceFilter() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -17,7 +40,7 @@ export default function FaceFilter() {
       }
 
       // Mediapipe Face Detection 설정
-      const faceDetection = new (window as any).FaceDetection({
+      const faceDetection = new (window as unknown as Window).FaceDetection({
         locateFile: (file: string) =>
           `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`,
       });
@@ -40,26 +63,40 @@ export default function FaceFilter() {
       sticker.src = '/sticker.png';
       await new Promise<void>((resolve, reject) => {
         sticker.onload = () => resolve();
-        sticker.onerror = () => reject(new Error('Failed to load sticker image.'));
+        sticker.onerror = () =>
+          reject(new Error('Failed to load sticker image.'));
       });
 
       // 얼굴 감지 결과 처리
-      faceDetection.onResults((results: any) => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(videoRef.current!, 0, 0, canvas.width, canvas.height);
+      faceDetection.onResults(
+        (results: {
+          detections: Array<{
+            boundingBox: {
+              xCenter: number;
+              yCenter: number;
+              width: number;
+              height: number;
+            };
+          }>;
+        }) => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(videoRef.current!, 0, 0, canvas.width, canvas.height);
 
-        if (results.detections) {
-          results.detections.forEach((detection: any) => {
-            const boundingBox = detection.boundingBox;
-            const x = (boundingBox.xCenter - boundingBox.width / 2) * canvas.width;
-            const y = (boundingBox.yCenter - boundingBox.height / 2) * canvas.height;
-            const width = boundingBox.width * canvas.width;
-            const height = boundingBox.height * canvas.height;
+          if (results.detections) {
+            results.detections.forEach((detection) => {
+              const boundingBox = detection.boundingBox;
+              const x =
+                (boundingBox.xCenter - boundingBox.width / 2) * canvas.width;
+              const y =
+                (boundingBox.yCenter - boundingBox.height / 2) * canvas.height;
+              const width = boundingBox.width * canvas.width;
+              const height = boundingBox.height * canvas.height;
 
-            ctx.drawImage(sticker, x, y, width, height);
-          });
-        }
-      });
+              ctx.drawImage(sticker, x, y, width, height);
+            });
+          }
+        },
+      );
 
       // 카메라 설정
       const setupCamera = async () => {

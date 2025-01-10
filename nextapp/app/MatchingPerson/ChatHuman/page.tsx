@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import io, { Socket } from 'socket.io-client';
+import io from 'socket.io-client';
 import 'webrtc-adapter';
 import styles from './page.module.css';
 import Image from 'next/image';
@@ -18,10 +18,43 @@ interface UserPayload {
   exp: number;
 }
 
+interface SpeechRecognitionEvent {
+  resultIndex: number;
+  results: {
+    [key: number]: {
+      [key: number]: {
+        transcript: string;
+        isFinal?: boolean;
+      };
+      isFinal?: boolean;
+      length: number;
+    };
+    length: number;
+  };
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  onstart: () => void;
+  onend: () => void;
+  onerror: (event: { error: string }) => void;
+  onresult: (event: SpeechRecognitionEvent) => void;
+  onspeechstart: () => void;
+  onspeechend: () => void;
+  state?: string;
+}
+
+interface Window {
+  webkitSpeechRecognition: new () => SpeechRecognition;
+}
+
 // 프레임 카운터 추가
 let frameCounter = 0;
 
-export default function Chat() {
+function ChatContent() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const [myEmotion, setMyEmotion] = useState('행복');
@@ -29,33 +62,32 @@ export default function Chat() {
   const [remoteEmotion, setRemoteEmotion] = useState('행복');
   const [remoteValue, setRemoteValue] = useState(30);
 
-  const [peerConnection, setPeerConnection] =
-    useState<RTCPeerConnection | null>(null);
-  const [socket, setSocket] = useState<Socket | null>(null); // WEBRTC용
+  const [socket, setSocket] = useState<ReturnType<typeof io> | null>(null); // WEBRTC용
   const mediaRecorderRef = useRef<MediaRecorder | null>(null); // 다시보기 녹화용 (Blob)
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]); // 녹화 데이터 쌓는 배열
-  const [feedback, setFeedback] = useState('');
+  const feedbackRef = useRef('');
 
   const router = useRouter();
-  const token = Cookies.get('access');
-  let ID = '';
-  if (token) {
-    const decoded = jwtDecode<UserPayload>(token);
-    ID = decoded.user_id;
-  } else {
-    alert('유효하지 않은 접근입니다.');
-    router.replace('/');
-  }
-
   const searchParams = useSearchParams();
   const room_id = searchParams.get('room');
-  const user_id = ID;
+  const [ID, setID] = useState('');
 
   const scriptRef = useRef('');
   const isRecording = useRef(false);
   const recognition = useRef<SpeechRecognition | null>(null);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const token = Cookies.get('access');
+    if (token) {
+      const decoded = jwtDecode<UserPayload>(token);
+      setID(decoded.user_id);
+    } else {
+      alert('유효하지 않은 접근입니다.');
+      router.replace('/');
+    }
+  }, [router]);
 
   const tryNlp = async (script: string) => {
     try {
@@ -72,16 +104,13 @@ export default function Chat() {
       if (response.ok) {
         const result = await response.json();
         console.log(result.message);
-        setFeedback((prev) =>
-          prev ? prev + '\n' + result.message : result.message,
-        );
+        feedbackRef.current = result.meesage;
       } else {
         const result = await response.json();
         console.log(result.error);
-        setFeedback((prev) => (prev ? prev + result.message : result.message));
       }
     } catch (error) {
-      console.log('서버 오류 발생');
+      console.log('서버 오류 발생: ', error);
     }
   };
 
@@ -94,7 +123,7 @@ export default function Chat() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ user_id, script, room_id }),
+          body: JSON.stringify({ user_id: ID, script, room_id }),
           mode: 'cors',
         },
       );
@@ -105,7 +134,7 @@ export default function Chat() {
         console.log('오류 발생');
       }
     } catch (error) {
-      console.log('서버 오류 발생');
+      console.log('서버 오류 발생: ', error);
     }
   };
 
@@ -187,7 +216,9 @@ export default function Chat() {
     }
     console.log('Chat Component UseEffect Triggerd');
 
-    recognition.current = new (window as any).webkitSpeechRecognition();
+    recognition.current = new (
+      window as unknown as Window
+    ).webkitSpeechRecognition();
     recognition.current.lang = 'ko';
     recognition.current.continuous = true;
 
@@ -199,13 +230,10 @@ export default function Chat() {
     }
 
     // 소켓 연결 초기화 - WebRTC 연결용 Socket
-    const rtcSocket = io(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}`,
-      {
-        path: '/api/match',
-        transports: ['websocket'],
-      },
-    );
+    const rtcSocket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`, {
+      path: '/api/match',
+      transports: ['websocket'],
+    });
     setSocket(rtcSocket);
     dispatch(setReduxSocket(rtcSocket));
     dispatch(setRoom(room_id));
@@ -218,7 +246,7 @@ export default function Chat() {
 
     // PeerConnection 초기화
     const newPeerConnection = new RTCPeerConnection(pcConfig);
-    setPeerConnection(newPeerConnection);
+
     // 미디어 스트림 초기화
     const initializeMedia = async () => {
       try {
@@ -231,7 +259,7 @@ export default function Chat() {
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
         }
-        
+
         // PeerConnection에 트랙 추가
         stream.getTracks().forEach((track) => {
           newPeerConnection.addTrack(track, stream);
@@ -304,7 +332,7 @@ export default function Chat() {
             },
             body: JSON.stringify({
               room_id: room_id,
-              user_id: user_id,
+              user_id: ID,
               script: '',
             }),
             credentials: 'include',
@@ -394,10 +422,10 @@ export default function Chat() {
       // JPEG 포맷으로 Base64 인코딩
       const dataURL = canvas.toDataURL('image/jpeg', 0.7); // 70% 품질로 압축
 
-      frameCounter += 1; 
+      frameCounter += 1;
 
       // 현재 시간으로 타임스탬프
-      const timestamp = frameCounter
+      const timestamp = frameCounter;
 
       try {
         // Node 백엔드로 POST 요청
@@ -412,7 +440,7 @@ export default function Chat() {
             body: JSON.stringify({
               frame: dataURL,
               timestamp: timestamp,
-              user_id: user_id,
+              user_id: ID,
               room_id: room_id,
             }),
             mode: 'cors',
@@ -432,21 +460,22 @@ export default function Chat() {
         const { user1, user2 } = analyzeResult.data;
         //감정 및 비율 받아오기
         // 타입 가드 추가
-        if (typeof user1.emo_analysis_result?.dominant_emotion === 'string' &&
-          typeof user1.emo_analysis_result?.percentage === 'number') {
-        if (user1.user_id === user_id) {
-          setMyEmotion(user1.emo_analysis_result.dominant_emotion);
-          setMyValue(user1.emo_analysis_result.percentage);
-          setRemoteEmotion(user2.emo_analysis_result.dominant_emotion);
-          setRemoteValue(user2.emo_analysis_result.percentage);
-        } else {
-          setMyEmotion(user2.emo_analysis_result.dominant_emotion);
-          setMyValue(user2.emo_analysis_result.percentage);
-          setRemoteEmotion(user1.emo_analysis_result.dominant_emotion);
-          setRemoteValue(user1.emo_analysis_result.percentage);
+        if (
+          typeof user1.emo_analysis_result?.dominant_emotion === 'string' &&
+          typeof user1.emo_analysis_result?.percentage === 'number'
+        ) {
+          if (user1.user_id === ID) {
+            setMyEmotion(user1.emo_analysis_result.dominant_emotion);
+            setMyValue(user1.emo_analysis_result.percentage);
+            setRemoteEmotion(user2.emo_analysis_result.dominant_emotion);
+            setRemoteValue(user2.emo_analysis_result.percentage);
+          } else {
+            setMyEmotion(user2.emo_analysis_result.dominant_emotion);
+            setMyValue(user2.emo_analysis_result.percentage);
+            setRemoteEmotion(user1.emo_analysis_result.dominant_emotion);
+            setRemoteValue(user1.emo_analysis_result.percentage);
           }
         }
-
       } catch (error) {
         console.error('전송 에러: ', error);
       }
@@ -465,20 +494,22 @@ export default function Chat() {
 
       // 스트림 정리
       if (localVideoRef.current?.srcObject) {
-        const tracks = (localVideoRef.current.srcObject as MediaStream).getTracks();
-        tracks.forEach(track => track.stop());
+        const tracks = (
+          localVideoRef.current.srcObject as MediaStream
+        ).getTracks();
+        tracks.forEach((track) => track.stop());
       }
-      
+
       // PeerConnection 정리
       if (newPeerConnection.signalingState !== 'closed') {
         newPeerConnection.close();
       }
-      
+
       // Socket 정리
       if (socket) {
         socket.disconnect();
       }
-      
+
       // Recognition 정리
       if (recognition.current) {
         recognition.current.stop();
@@ -486,7 +517,7 @@ export default function Chat() {
       }
       clearInterval(intervalId);
     };
-  }, [room_id, recordedChunks, dispatch, router]);
+  }, [room_id, recordedChunks, dispatch, router, ID]);
 
   const handleNavigation = async () => {
     if (mediaRecorderRef.current) {
@@ -516,7 +547,7 @@ export default function Chat() {
           },
           body: JSON.stringify({
             room_id: room_id,
-            user_id: user_id,
+            user_id: ID,
             script: '',
           }),
           credentials: 'include',
@@ -567,5 +598,13 @@ export default function Chat() {
         />
       </div>
     </div>
+  );
+}
+
+export default function Chat() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ChatContent />
+    </Suspense>
   );
 }

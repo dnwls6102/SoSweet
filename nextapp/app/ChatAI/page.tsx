@@ -55,21 +55,22 @@ interface Window {
 
 export default function Chat() {
   const router = useRouter();
-  const token = Cookies.get('access');
-  let user_id = '';
-  let user_gender = '';
-  if (token) {
-    const decoded = jwtDecode<UserPayload>(token);
-    user_id = decoded.user_id;
-    user_gender = decoded.user_gender;
-  } else {
-    alert('유효하지 않은 접근입니다.');
-    router.replace('/');
-  }
+  const [user_id, setUserId] = useState('');
+  const [user_gender, setUserGender] = useState('');
 
-  let image_src = '';
-  if (user_gender == '남성') image_src = '/emma.webp';
-  else image_src = '/john.webp';
+  useEffect(() => {
+    const token = Cookies.get('access');
+    if (token) {
+      const decoded = jwtDecode<UserPayload>(token);
+      setUserId(decoded.user_id);
+      setUserGender(decoded.user_gender);
+    } else {
+      alert('유효하지 않은 접근입니다.');
+      router.replace('/');
+    }
+  }, [router]);
+
+  const image_src = user_gender === '남성' ? '/emma.webp' : '/john.webp';
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
@@ -83,7 +84,7 @@ export default function Chat() {
 
   // 감정 분석을 위한 상태 추가
   const [myEmotion, setMyEmotion] = useState('😶 평온함');
-  // const [myValue, setMyValue] = useState(0);
+  const [myValue, setMyValue] = useState(0);
 
   const dispatch = useDispatch();
   // const [relationshipScore, setRelationshipScore] = useState(48);
@@ -119,6 +120,7 @@ export default function Chat() {
   };
 
   const trySendScript = async (script: string) => {
+    const emotion = { emotion: myEmotion, value: myValue };
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/dialog`,
@@ -128,7 +130,7 @@ export default function Chat() {
             'Content-Type': 'application/json',
           },
           credentials: 'include',
-          body: JSON.stringify({ script, user_id, user_gender }),
+          body: JSON.stringify({ script, user_id, user_gender, emotion }),
         },
       );
 
@@ -346,7 +348,7 @@ export default function Chat() {
         // 감정 상태 업데이트
         if (analyzeResult.dominant_emotion) {
           setMyEmotion(analyzeResult.dominant_emotion);
-          // setMyValue(analyzeResult.value);
+          setMyValue(analyzeResult.value);
         }
       } catch (error) {
         console.error('전송 에러:', error);

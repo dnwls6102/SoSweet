@@ -18,21 +18,20 @@ interface UserPayload {
 export default function MatchingPerson() {
   const router = useRouter();
   const [isMatching, setIsMatching] = useState(false);
-  const [socket, setSocket] = useState<any>(null);
-  const token = Cookies.get('access');
-  let ID = '';
-  let gender = '';
-
-  if (token) {
-    const decoded = jwtDecode<UserPayload>(token);
-    ID = decoded.user_id;
-    gender = decoded.user_gender;
-  } else {
-    alert('유효하지 않은 접근입니다.');
-    router.replace('/');
-  }
+  const [socket, setSocket] = useState<ReturnType<typeof io> | null>(null);
+  const [user_id, setUserID] = useState('');
+  const [user_gender, setUserGender] = useState('');
 
   useEffect(() => {
+    const token = Cookies.get('access');
+    if (token) {
+      const decoded = jwtDecode<UserPayload>(token);
+      setUserID(decoded.user_id);
+      setUserGender(decoded.user_gender);
+    } else {
+      alert('유효하지 않은 접근입니다.');
+      router.replace('/');
+    }
     // 소켓 연결 초기화
     const newSocket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`, {
       // const newSocket = io('http://localhost:4000', {
@@ -60,8 +59,8 @@ export default function MatchingPerson() {
     setIsMatching(true);
     if (socket) {
       socket.emit('startMatching', {
-        id: ID,
-        gender: gender,
+        user_id: user_id,
+        gender: user_gender,
       });
     }
   };
@@ -93,7 +92,9 @@ export default function MatchingPerson() {
         </div>
         <div className={styles.rightSection}>
           <div className={styles.rankContainer}>
-            <span className={styles.rankText}>지금 클릭하세요 당신의 운명이 로딩 중입니다!</span>
+            <span className={styles.rankText}>
+              지금 클릭하세요 당신의 운명이 로딩 중입니다!
+            </span>
             {/* <span className={styles.rankText}>나의 등급</span>
             <Image
               src="/bronze-icon.svg"

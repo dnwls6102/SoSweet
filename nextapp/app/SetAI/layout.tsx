@@ -6,7 +6,7 @@ export default function RootLayout({
   return (
     <>
       <NavbarIcon />
-      {children}
+      <div>{children}</div>
     </>
   );
 }
