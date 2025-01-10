@@ -290,45 +290,6 @@ export default function Feedback() {
       </div>
 
       {/* 비언어적 분석 */}
-      <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>동작 분석</h2>
-
-        {nonverbal ? (
-          // nonverbal가 문자열이 아니라면(즉 객체라면) counters에 접근
-          typeof nonverbal === 'object' && nonverbal.counters ? (
-            <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
-              {/* Action 1) 산만한 손 동작 */}
-              <div>
-                <h4>산만한 손 동작</h4>
-                <p>{nonverbal.counters.hand_message_count} 회</p>
-              </div>
-
-              {/* Action 2) 산만한 팔 동작 */}
-              <div>
-                <h4>산만한 팔 동작</h4>
-                <p>{nonverbal.counters.folded_arm_message_count} 회</p>
-              </div>
-
-              {/* Action 3) 좌우 움직임 */}
-              <div>
-                <h4>좌우 움직임</h4>
-                <p>{nonverbal.counters.side_move_message_count} 회</p>
-              </div>
-            </div>
-          ) : typeof nonverbal === 'string' ? (
-            // 혹은 만약 API가 문자열만 넘겨줄 때 처리
-            <p>{nonverbal}</p>
-          ) : (
-            // nonverbal 형식이 예기치 않은 경우
-            <p>동작 분석 데이터를 해석할 수 없습니다.</p>
-          )
-        ) : (
-          <div className={styles.loading}>
-            <p>동작 분석 데이터를 불러오는 중입니다.</p>
-            <div className={styles.spinner}></div>
-          </div>
-        )}
-      </div>
 
       {/* 상대방의 피드백 */}
       {!isAIChat && (

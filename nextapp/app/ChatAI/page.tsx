@@ -9,6 +9,7 @@ import { setSummary, setConclusion } from '@/store/feedbackSlice';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { setIsAIChat } from '@/store/aiFlagSlice';
+import Image from 'next/image';
 
 interface UserPayload {
   user_id: string;
@@ -19,8 +20,6 @@ interface UserPayload {
 
 // 프레임 카운터 추가
 let frameCounter = 0;
-
-import Image from 'next/image';
 
 export default function Chat() {
   const router = useRouter();
@@ -36,9 +35,15 @@ export default function Chat() {
     router.replace('/');
   }
 
+  let image_src = '';
+  if (user_gender == '남성')
+    image_src = '/emma.webp'
+  else
+    image_src = '/john.webp'
+
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
-  const isRecording = useRef(false);
+  const isRecording = useRef<boolean>(false);
   const [transcript, setTranscript] = useState('');
   const [feedback, setFeedback] = useState('');
   const scriptRef = useRef('');
@@ -224,7 +229,7 @@ export default function Chat() {
         if (event.data && event.data.size > 0) {
           // Blob 조각 쌓아두기
           setRecordedChunks((prev) => [...prev, event.data]);
-          console.log('녹화 데이터 청크 저장됨');
+          // console.log('녹화 데이터 청크 저장됨');
         }
       };
 
@@ -445,7 +450,7 @@ export default function Chat() {
                 </div>
               </div>
             </div>
-            <Videobox videoref={null} keys={'호감도'} value={10} />
+            <Image src = {image_src} alt = "AI 이미지" width={800} height={500} className = {!isRecording ? styles.imageBorderActive : ''}/>
             <Image
               className={styles.callEndIcon}
               onClick={handleNavigation}
