@@ -83,7 +83,7 @@ export default function Chat() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   // 감정 분석을 위한 상태 추가
-  const [myEmotion, setMyEmotion] = useState('😶 평온함');
+  const [myEmotion, setMyEmotion] = useState('평온함');
   const [myValue, setMyValue] = useState(0);
 
   const dispatch = useDispatch();
@@ -121,6 +121,17 @@ export default function Chat() {
 
   const trySendScript = async (script: string) => {
     const emotion = { emotion: myEmotion, value: myValue };
+
+    // user_id가 없으면 함수 실행하지 않음
+    if (!user_id) {
+      console.log('user_id가 아직 설정되지 않았습니다.');
+      return;
+    }
+
+    console.log('전송하는 user_id:', user_id);
+    console.log('전송하는 user_gender:', user_gender);
+    console.log('전송하는 emotion:', emotion);
+
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/dialog`,
@@ -402,7 +413,7 @@ export default function Chat() {
       // 녹화 데이터 초기화
       setRecordedChunks([]);
     };
-  }, []);
+  }, [user_id, myEmotion, myValue]);
 
   const handleNavigation = async () => {
     try {
