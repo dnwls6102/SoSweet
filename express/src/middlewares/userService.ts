@@ -102,7 +102,7 @@ const logOut = (req: Request, res: Response, next: NextFunction): void => {
   console.log('access 토큰 삭제');
 
   try {
-    // jwt.verify(refreshToken, secretKey);
+    jwt.verify(refreshToken, secretKey);
     res.clearCookie('refresh', {
       secure: true,
       sameSite: 'strict', // 조정 가능

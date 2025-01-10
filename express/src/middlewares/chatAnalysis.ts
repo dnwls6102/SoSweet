@@ -128,6 +128,10 @@ async function createAnalysis( record: ChatCompletionMessageParam[], partner: st
 
 async function chatAnalysis(req: Request, res: Response): Promise<void> {
   const { script, user_id } = req.body;
+  if(!script) {
+    res.status(404).json({ message: "대화 기록이 없습니다."});
+  }
+  
   const AiPrompt = createAiPrompt(user_id);
   completedChat[user_id] = [];
   completedChat[user_id].push(AiPrompt);
