@@ -7,7 +7,11 @@ import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-import { setPartnerFeedback, setSummary, setConclusion } from '../../store/feedbackSlice';
+import {
+  setPartnerFeedback,
+  setSummary,
+  setConclusion,
+} from '../../store/feedbackSlice';
 import { setIsAIChat } from '../../store/aiFlagSlice';
 
 interface UserPayload {
@@ -117,11 +121,11 @@ export default function RatingPage() {
       if (response.ok) {
         const result = await response.json();
         console.log('대화 분석 받음');
-        const data = JSON.parse(result.analysis)
-        console.log(data.analysis)
-        console.log(data.conclusion)
+        const data = JSON.parse(result.analysis);
+        console.log(data.analysis);
+        console.log(data.conclusion);
         dispatch(setSummary(data.analysis)); //서버에서 어떻게 줄 건지 확인
-        dispatch(setSummary(data.conclusion))
+        dispatch(setConclusion(data.conclusion));
       } else {
         console.error('서버에서 분석을 반환하지 않음');
       }
@@ -170,8 +174,13 @@ export default function RatingPage() {
         </div>
         <h2 className={styles.title}>다음에 또 만나고 싶으신가요?</h2>
         <div className={styles.actions}>
-          <button className={styles.likeButton} onChange={(e) => setLike(true)}>💕 다시 만나고 싶어요</button>
-          <button className={styles.dislikeButton} onChange={(e) => setLike(false)}>
+          <button className={styles.likeButton} onClick={() => setLike(true)}>
+            💕 다시 만나고 싶어요
+          </button>
+          <button
+            className={styles.dislikeButton}
+            onClick={() => setLike(false)}
+          >
             💔 만나고 싶지 않아요
           </button>
         </div>

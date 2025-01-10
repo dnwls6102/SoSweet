@@ -20,6 +20,39 @@ interface UserPayload {
 // 프레임 카운터 추가
 let frameCounter = 0;
 
+interface SpeechRecognitionEvent {
+  resultIndex: number;
+  results: {
+    [key: number]: {
+      [key: number]: {
+        transcript: string;
+        isFinal?: boolean;
+      };
+      isFinal?: boolean;
+      length: number;
+    };
+    length: number;
+  };
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  onstart: () => void;
+  onend: () => void;
+  onerror: (event: { error: string }) => void;
+  onresult: (event: SpeechRecognitionEvent) => void;
+  onspeechstart: () => void;
+  onspeechend: () => void;
+  state?: string;
+}
+
+interface Window {
+  webkitSpeechRecognition: new () => SpeechRecognition;
+}
+
 export default function Chat() {
   const router = useRouter();
   const token = Cookies.get('access');
@@ -35,10 +68,8 @@ export default function Chat() {
   }
 
   let image_src = '';
-  if (user_gender == '남성')
-    image_src = '/emma.webp'
-  else
-    image_src = '/john.webp'
+  if (user_gender == '남성') image_src = '/emma.webp';
+  else image_src = '/john.webp';
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
@@ -97,7 +128,7 @@ export default function Chat() {
             'Content-Type': 'application/json',
           },
           credentials: 'include',
-          body: JSON.stringify({ script, user_id, user_gender}),
+          body: JSON.stringify({ script, user_id, user_gender }),
         },
       );
 
@@ -174,7 +205,7 @@ export default function Chat() {
       }
     };
 
-    recognition.current.onerror = (event: { error: string; }) => {
+    recognition.current.onerror = (event: { error: string }) => {
       if (event.error !== 'no-speech')
         console.error('Speech recognition error:', event.error);
     };
@@ -188,7 +219,9 @@ export default function Chat() {
       return;
     }
 
-    recognition.current = new (window as any).webkitSpeechRecognition();
+    recognition.current = new (
+      window as unknown as Window
+    ).webkitSpeechRecognition();
     recognition.current.lang = 'ko';
     recognition.current.continuous = true;
 
@@ -278,10 +311,10 @@ export default function Chat() {
       // JPEG 포맷으로 Base64 인코딩
       const dataURL = canvas.toDataURL('image/jpeg', 0.7);
 
-      frameCounter += 1; 
+      frameCounter += 1;
 
       // 현재 시간으로 타임스탬프
-      const timestamp = frameCounter
+      const timestamp = frameCounter;
 
       try {
         // AI 채팅용 감정 분석 요청
@@ -402,12 +435,12 @@ export default function Chat() {
       if (response.ok) {
         const json_data = await response.json();
         console.log(typeof json_data.analysis);
-        console.log(json_data.analysis)
-        const data = JSON.parse(json_data.analysis)
+        console.log(json_data.analysis);
+        const data = JSON.parse(json_data.analysis);
         console.log(data.analysis.analysis);
         console.log(data.analysis.conclusion);
         dispatch(setSummary(data.analysis));
-        dispatch(setConclusion(data.conclusion))
+        dispatch(setConclusion(data.conclusion));
         dispatch(setIsAIChat(true));
 
         // router.push 대신 window.location.href 사용
@@ -440,14 +473,18 @@ export default function Chat() {
                     className={styles.progressFill}
                     style={{ width: `${48}%` }}
                   >
-                    <span className={styles.progressValue}>
-                      {48}/100
-                    </span>
+                    <span className={styles.progressValue}>{48}/100</span>
                   </div>
                 </div>
               </div>
             </div>
-            <Image src = {image_src} alt = "AI 이미지" width={800} height={500} className = {!isRecording ? styles.imageBorderActive : ''}/>
+            <Image
+              src={image_src}
+              alt="AI 이미지"
+              width={800}
+              height={500}
+              className={!isRecording ? styles.imageBorderActive : ''}
+            />
             <Image
               className={styles.callEndIcon}
               onClick={handleNavigation}
@@ -465,12 +502,12 @@ export default function Chat() {
             readOnly
             value={feedback}
           ></textarea>
-               <video
+          <video
             ref={localVideoRef}
             autoPlay
             playsInline
             muted
-            style = {{ width : 1, height : 1}}
+            style={{ width: 1, height: 1 }}
             // style={{ display: 'none' }}
           />
           <h2 className={styles.title}>당신의 현재 감정</h2>
