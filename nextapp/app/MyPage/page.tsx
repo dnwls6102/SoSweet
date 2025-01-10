@@ -46,7 +46,7 @@ export default function MyPage() {
             <div>
               <label htmlFor="profileUpload">
                 <Image
-                  src="/MyPageLogo.svg"
+                  src={profileImage}
                   alt="프로필 이미지"
                   width={80}
                   height={80}

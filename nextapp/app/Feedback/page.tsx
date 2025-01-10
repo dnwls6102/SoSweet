@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import React from 'react';
 import styles from './page.module.css';
-import Image from 'next/image';
+// import Image from 'next/image';
 import Link from 'next/link';
 import { VictoryPie } from 'victory';
 import { useSelector } from 'react-redux';
@@ -36,11 +36,19 @@ interface UserPayload {
   exp: number;
 }
 
+interface NonverbalData {
+  user_id: string;
+  room_id: string;
+  counters: {
+    hand_message_count: number;
+    folded_arm_message_count: number;
+    side_move_message_count: number;
+  };
+}
+
 export default function Feedback() {
-  const [number, setNumber] = useState(null);
   const [emotionData, setEmotionData] = useState<EmotionScores | null>(null);
-  const [verbal, setVerbal] = useState(null);
-  const [nonverbal, setNonverbal] = useState(null);
+  const [nonverbal, setNonverbal] = useState<NonverbalData | null>(null);
   const [summary, setSummary] = useState('');
   const [conclusion, setConclusion] = useState('');
 
@@ -60,16 +68,17 @@ export default function Feedback() {
   }
 
   useEffect(() => {
-    console.log("Feedback UseEfect")
+    console.log('Feedback UseEfect');
     console.log(feedbackData.summary);
     console.log(feedbackData.conclusion);
     if (feedbackData.summary) {
-      console.log("Redux에 저장되어 있음")
+      console.log('Redux에 저장되어 있음');
       setSummary(feedbackData.summary);
       setConclusion(feedbackData.conclusion);
       fetchEmotionData();
+      fetchNonverbalData();
     }
-  }, [feedbackData.summary]);
+  }, [feedbackData.summary, feedbackData.conclusion]);
 
   // 표정 정보 받아오기
   const fetchEmotionData = async () => {
@@ -114,30 +123,6 @@ export default function Feedback() {
     }
   };
 
-  // 언어적 분석 받아오기
-  const fetchVerbalData = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/talk/${ID}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setVerbal(data); // verbal 데이터 상태에 저장
-      } else {
-        console.log('언어적 데이터 가져오기 실패:', response.status);
-      }
-    } catch (error) {
-      console.log('서버 오류:', error);
-    }
-  };
-
   // 비언어적 분석 받아오기
   const fetchNonverbalData = async () => {
     try {
@@ -156,7 +141,7 @@ export default function Feedback() {
       );
 
       if (response.ok) {
-        const data = await response.json();
+        const data: NonverbalData = await response.json();
         console.log('동작 분석 데이터 받아온 것 확인!!!!!!!!!!!!!!! : ', data);
         setNonverbal(data); // nonverbal 데이터 상태에 저장
       } else {
@@ -166,66 +151,6 @@ export default function Feedback() {
       console.log('서버 오류:', error);
     }
   };
-
-  // 비언어적 습관 몇 분 몇 초에 했는지 받아오기
-  const fetchNonverbalTimeline = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/timeline/${ID}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
-      if (response.ok) {
-        const timelineData = await response.json();
-        console.log('비언어적 습관 시간 데이터:', timelineData); // 테스트용, 나중에 삭제 가능
-      } else {
-        console.log(
-          '비언어적 습관 시간 데이터 가져오기 실패:',
-          response.status,
-        );
-      }
-    } catch (error) {
-      console.log('서버 오류:', error);
-    }
-  };
-
-  // 사용자 대화 한 줄 평가 받아오기
-  const fetchSummary = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback?userID=${ID}&number=${number}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
-      if (response.ok) {
-        const summary = await response.json();
-        setSummary(summary.comment);
-      } else {
-        console.log('한 줄 평가 데이터 가져오기 실패:', response.status);
-      }
-    } catch (error) {
-      console.log('서버 오류:', error);
-    }
-  };
-
-  // 데이터 요청
-  useEffect(() => {
-    fetchEmotionData();
-    fetchVerbalData();
-    fetchNonverbalData();
-    fetchNonverbalTimeline();
-    fetchSummary();
-  }, []);
 
   return (
     <div className={styles.container}>
@@ -296,7 +221,9 @@ export default function Feedback() {
         {nonverbal ? (
           // nonverbal가 문자열이 아니라면(즉 객체라면) counters에 접근
           typeof nonverbal === 'object' && nonverbal.counters ? (
-            <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
+            <div
+              style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}
+            >
               {/* Action 1) 산만한 손 동작 */}
               <div>
                 <h4>산만한 손 동작</h4>

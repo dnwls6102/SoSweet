@@ -18,7 +18,7 @@ interface UserPayload {
 export default function MatchingPerson() {
   const router = useRouter();
   const [isMatching, setIsMatching] = useState(false);
-  const [socket, setSocket] = useState<any>(null);
+  const [socket, setSocket] = useState<ReturnType<typeof io> | null>(null);
   const token = Cookies.get('access');
   let ID = '';
   let gender = '';
@@ -93,7 +93,9 @@ export default function MatchingPerson() {
         </div>
         <div className={styles.rightSection}>
           <div className={styles.rankContainer}>
-            <span className={styles.rankText}>지금 클릭하세요 당신의 운명이 로딩 중입니다!</span>
+            <span className={styles.rankText}>
+              지금 클릭하세요 당신의 운명이 로딩 중입니다!
+            </span>
             {/* <span className={styles.rankText}>나의 등급</span>
             <Image
               src="/bronze-icon.svg"

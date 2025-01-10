@@ -56,20 +56,21 @@ interface Window {
 export default function Chat() {
   const router = useRouter();
   const token = Cookies.get('access');
-  let user_id = '';
-  let user_gender = '';
-  if (token) {
-    const decoded = jwtDecode<UserPayload>(token);
-    user_id = decoded.user_id;
-    user_gender = decoded.user_gender;
-  } else {
-    alert('유효하지 않은 접근입니다.');
-    router.replace('/');
-  }
+  const [user_id, setUserId] = useState('');
+  const [user_gender, setUserGender] = useState('');
 
-  let image_src = '';
-  if (user_gender == '남성') image_src = '/emma.webp';
-  else image_src = '/john.webp';
+  useEffect(() => {
+    if (token) {
+      const decoded = jwtDecode<UserPayload>(token);
+      setUserId(decoded.user_id);
+      setUserGender(decoded.user_gender);
+    } else {
+      alert('유효하지 않은 접근입니다.');
+      router.replace('/');
+    }
+  }, [token, router]);
+
+  const image_src = user_gender === '남성' ? '/emma.webp' : '/john.webp';
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);

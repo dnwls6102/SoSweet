@@ -20,7 +20,7 @@ export default function Signin() {
   const [flag, setFlag] = useState(false);
 
   const [toastMsg, setToastMsg] = useState(''); // 토스트 메시지
-  const [showToast, setShowToast] = useState(false); // 토스트 표시 여부
+  // const [showToast, setShowToast] = useState(false); // 토스트 표시 여부
 
   const router = useRouter();
 
@@ -28,12 +28,12 @@ export default function Signin() {
     function checkPassword() {
       if (password === '' || checkpwd === '') {
         setFlag(false);
-        setToastMsg('');  // 비밀번호 입력이 하나라도 비었을 때 메시지 초기화
+        setToastMsg(''); // 비밀번호 입력이 하나라도 비었을 때 메시지 초기화
       } else if (password !== checkpwd) {
         setToastMsg('비밀번호가 일치하지 않습니다');
         setFlag(false);
       } else {
-        setToastMsg('');  // 비밀번호가 일치하면 메시지 꺼짐
+        setToastMsg(''); // 비밀번호가 일치하면 메시지 꺼짐
         setFlag(true);
       }
     }
@@ -74,14 +74,17 @@ export default function Signin() {
 
   const handleCheckId = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/users/check`, {
-      // const response = await fetch('http://localhost:4000/users/check', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/users/check`,
+        {
+          // const response = await fetch('http://localhost:4000/users/check', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ id }),
         },
-        body: JSON.stringify({ id }),
-      });
+      );
 
       if (response.ok) {
         const result = await response.json();
@@ -96,7 +99,7 @@ export default function Signin() {
         console.log('아이디 중복 확인에 실패했습니다.');
       }
     } catch (error) {
-      console.log('서버 오류가 발생했습니다.');
+      console.log('서버 오류가 발생했습니다: ', error);
     }
   };
 
@@ -114,14 +117,17 @@ export default function Signin() {
       };
 
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/users`, {
-        // const response = await fetch('http://localhost:4000/users', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/users`,
+          {
+            // const response = await fetch('http://localhost:4000/users', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData),
           },
-          body: JSON.stringify(userData),
-        });
+        );
 
         if (response.ok) {
           console.log('회원가입 성공');
@@ -158,7 +164,9 @@ export default function Signin() {
           onChange={handleCheckpwdChange}
           type="password"
         />
-        <p className={`${styles.toast} ${toastMsg ? styles.visible : ''}`}>{toastMsg}</p>
+        <p className={`${styles.toast} ${toastMsg ? styles.visible : ''}`}>
+          {toastMsg}
+        </p>
         <BirthdateInput onChange={handleBirthdateChange} />
         <TitleInput
           title="닉네임"
