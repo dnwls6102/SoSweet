@@ -150,6 +150,7 @@ async function initChat(
     // ai_job,
     // ai_hobby,
   } = req.body;
+  console.log("LLM 초기화 시 아이디", user_id);
   console.log("LLM 초기화 시작", user_gender);
   const persona: string = user_gender === "남성" ? persona_emma : persona_john;
   try {
@@ -184,7 +185,7 @@ async function initChat(
         [3. 감정 데이터 처리 ( <emotion> 태그 )]
 
         - 사용자는 감정 정보를 <emotion>{...}</emotion> 형태로 메시지에 포함할 수 있습니다.
-        예: "안녕하세요. 오늘은 기분이 좀 우울해요. <emotion>{"sadness":0.8,"neutral":0.1,"joy":0.1}</emotion>"
+        예: "안녕하세요. 오늘은 기분이 좀 우울해요. <emotion>{ "sadness":0.8 }</emotion>"
         - 해당 태그 안의 감정 수치를 확인하여, 공감과 위로 또는 밝은 톤 등 상황에 맞는 반응을 해 주세요.
         - 단, 매번 감정을 언급하기보다는, **이전 감정 상태 대비 큰 변화**가 있을 때만 표정이나 감정을 구체적으로 언급합니다.
             - 예) "낯빛이 한결 밝아지신 것 같아요! 혹시 좋은 일이 있으셨어요?"
@@ -221,7 +222,7 @@ async function initChat(
       messages: conversations[user_id],
       temperature: 1.0, // 톤 조절(창의성 정도)
     });
-    console.log("LLM 초기화 완료", response);
+    console.log("LLM 초기화 완료", conversations[user_id]);
     next();
   } catch (err) {
     console.error(err);
@@ -236,22 +237,28 @@ async function chatMiddleware(
   next: NextFunction
 ): Promise<void> {
   const { script, user_id, emotion } = req.body;
-  const new_script: string = `${script} <emotion>${emotion}</emotion>`;
+  console.log("대화 시작 시 아이디", user_id);
+  const isEmotion = emotion.emotion;
+  const isValue = emotion.value;
+  const new_script: string = `${script} <emotion>{ ${isEmotion}: ${isValue} }</emotion>`;
+  console.log(new_script); // 디버그용
   // text가 입력되지 않았을 경우에 오류 처리
   if (!script) {
+    console.log("사용자의 발화가 넘어오지 않았습니다.");
     res.status(400).send("No text provided.");
     return;
   }
 
   try {
     if (!conversations[user_id]) {
+      console.log("LLM이 초기화 되어있지 않습니다.");
       res.status(500).json({ message: "LLM이 초기화 되어있지 않습니다." });
       return;
     }
     // 대화 기록에 입력받은 유저 메세지 추가
     conversations[user_id].push({
       role: "user",
-      content: script,
+      content: new_script,
       name: user_id,
     });
 

@@ -83,7 +83,7 @@ export default function Chat() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   // 감정 분석을 위한 상태 추가
-  const [myEmotion, setMyEmotion] = useState('😶 평온함');
+  const [myEmotion, setMyEmotion] = useState('평온함');
   const [myValue, setMyValue] = useState(0);
 
   const dispatch = useDispatch();
