@@ -84,7 +84,7 @@ export default function Chat() {
 
   // 감정 분석을 위한 상태 추가
   const [myEmotion, setMyEmotion] = useState('😶 평온함');
-  // const [myValue, setMyValue] = useState(0);
+  const [myValue, setMyValue] = useState(0);
 
   const dispatch = useDispatch();
   // const [relationshipScore, setRelationshipScore] = useState(48);
@@ -120,6 +120,7 @@ export default function Chat() {
   };
 
   const trySendScript = async (script: string) => {
+    const emotion = { emotion: myEmotion, value: myValue };
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/dialog`,
@@ -129,7 +130,7 @@ export default function Chat() {
             'Content-Type': 'application/json',
           },
           credentials: 'include',
-          body: JSON.stringify({ script, user_id, user_gender }),
+          body: JSON.stringify({ script, user_id, user_gender, emotion }),
         },
       );
 
@@ -347,7 +348,7 @@ export default function Chat() {
         // 감정 상태 업데이트
         if (analyzeResult.dominant_emotion) {
           setMyEmotion(analyzeResult.dominant_emotion);
-          // setMyValue(analyzeResult.value);
+          setMyValue(analyzeResult.value);
         }
       } catch (error) {
         console.error('전송 에러:', error);
