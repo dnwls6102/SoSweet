@@ -129,7 +129,7 @@ async function createAnalysis( record: ChatCompletionMessageParam[], partner: st
 }
 
 async function chatAnalysis(req: Request, res: Response): Promise<void> {
-  const { script, user_id, room_id } = req.body;
+  const { script, user_id } = req.body;
   const AiPrompt = createAiPrompt(user_id);
   completedChat[user_id] = [];
   completedChat[user_id].push(AiPrompt);
@@ -164,7 +164,7 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
     }
   } else {
     // LLM의 응답을 담을 객체 초기화
-    chatAnalysisMap.set(room_id, "");
+    chatAnalysisMap.set(user_id, "");
     // 사람 간의 대화 내용에 대한 분석일 경우, 대화 분석을 위한 LLM에 대한 요청을 비동기로 처리
     (async () => {
       completedChat[user_id].push(...newMessages);
@@ -173,27 +173,28 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
       try {
         const assistantAnswer = await createAnalysis(completedChat[user_id], "사람 간");
         // AI가 분석한 내용 저장
-        chatAnalysisMap.set(room_id, assistantAnswer);
+        chatAnalysisMap.set(user_id, assistantAnswer);
         console.log('사람 간의 대화 분석 기록 저장완료');
       } catch (err) {
         console.error("LLM 대화 분석 실패", err);
-        chatAnalysisMap.set(room_id, "대화 분석 내용을 생성하는데 실패했습니다.")
+        chatAnalysisMap.set(user_id, "대화 분석 내용을 생성하는데 실패했습니다.")
       }   
     })();
   
-    res.status(200).json({ message: "LLM에게 성공적으로 대화 분석을 맡겼습니다.", room_id: room_id });
+    res.status(200).json({ message: "LLM에게 성공적으로 대화 분석을 맡겼습니다.", user_id: user_id });
   }
 }
 
 async function getAnalysis( req: Request, res: Response): Promise<void> {
-  const { room_id } = req.body;
+  const { user_id } = req.body;
+  console.log(user_id);
 
-  if(!chatAnalysisMap.has(room_id)) {
+  if(!chatAnalysisMap.has(user_id)) {
     res.status(404).json({ message: "요청을 찾을 수 없습니다."});
     return;
   }
 
-  const analysis = chatAnalysisMap.get(room_id);
+  const analysis = chatAnalysisMap.get(user_id);
   if(!analysis) {
     res.status(202).json({ message: "분석 중입니다. 잠시 후 다시 시도해주세요."});
     return;

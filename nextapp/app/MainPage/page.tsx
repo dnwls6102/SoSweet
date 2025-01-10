@@ -27,7 +27,7 @@ const MainPage = () => {
 
   const handleNavigation = async () => {
     try {
-      const response = await fetch('/ai/dialog/start', {
+      const response = await fetch('http://localhost:4000/ai/dialog/start', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
