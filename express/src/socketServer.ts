@@ -60,11 +60,11 @@ export const initializeSocketServer = (server: http.Server) => {
 
     // 매칭 시작 이벤트 처리
     socket.on("startMatching", async (userData) => {
-      const { id, gender } = userData;
-      console.log("매칭 시작:", id, gender);
+      const { user_id, gender } = userData;
+      console.log("매칭 시작:", user_id, gender);
       
       // 대기열에 사용자 추가
-      waitingUsers.set(socket.id, { id, gender, socket });
+      waitingUsers.set(socket.id, { user_id, gender, socket });
       
       // 매칭 시도
       tryMatch(socket, gender);

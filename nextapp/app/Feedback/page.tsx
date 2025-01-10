@@ -51,23 +51,22 @@ export default function Feedback() {
   const [nonverbal, setNonverbal] = useState<NonverbalData | null>(null);
   const [summary, setSummary] = useState('');
   const [conclusion, setConclusion] = useState('');
+  const [user_id, setUserID] = useState('');
 
   // Redux store에서 데이터 가져오기
   const feedbackData = useSelector((state: RootState) => state.feedback);
   const room_id = useSelector((state: RootState) => state.socket.room);
   const isAIChat = useSelector((state: RootState) => state.aiFlag.isAIChat);
 
-  const token = Cookies.get('access');
-  let ID = '';
-  if (token) {
-    const decoded = jwtDecode<UserPayload>(token);
-    ID = decoded.user_id;
-  } else {
-    alert('유효하지 않은 접근입니다.');
-    router.replace('/');
-  }
-
   useEffect(() => {
+    const token = Cookies.get('access');
+    if (token) {
+      const decoded = jwtDecode<UserPayload>(token);
+      setUserID(decoded.user_id);
+    } else {
+      alert('유효하지 않은 접근입니다.');
+      router.replace('/');
+    }
     console.log('Feedback UseEfect');
     console.log(feedbackData.summary);
     console.log(feedbackData.conclusion);
@@ -92,13 +91,13 @@ export default function Feedback() {
           },
           body: JSON.stringify({
             room_id: isAIChat ? 'ai' : room_id,
-            user_id: ID,
+            user_id: user_id,
           }),
         },
       );
 
       console.log('room_id:', isAIChat ? 'ai' : room_id);
-      console.log('userID:', ID);
+      console.log('userID:', user_id);
 
       if (response.ok) {
         const data: EmoFeedbackResponse = await response.json();
@@ -135,7 +134,7 @@ export default function Feedback() {
           },
           body: JSON.stringify({
             room_id: room_id,
-            user_id: ID,
+            user_id: user_id,
           }),
         },
       );

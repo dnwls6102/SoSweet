@@ -55,11 +55,11 @@ interface Window {
 
 export default function Chat() {
   const router = useRouter();
-  const token = Cookies.get('access');
   const [user_id, setUserId] = useState('');
   const [user_gender, setUserGender] = useState('');
 
   useEffect(() => {
+    const token = Cookies.get('access');
     if (token) {
       const decoded = jwtDecode<UserPayload>(token);
       setUserId(decoded.user_id);
@@ -68,7 +68,7 @@ export default function Chat() {
       alert('유효하지 않은 접근입니다.');
       router.replace('/');
     }
-  }, [token, router]);
+  }, [router]);
 
   const image_src = user_gender === '남성' ? '/emma.webp' : '/john.webp';
 
