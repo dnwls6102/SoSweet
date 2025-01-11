@@ -53,9 +53,7 @@ export default function MatchingPerson() {
       router.push(`/MatchingPerson/ChatHuman?room=${data.room_id}`);
     });
 
-    return () => {
-      // newSocket.disconnect();
-    };
+    return;
   }, [router, dispatch]);
 
   const handleMatching = () => {

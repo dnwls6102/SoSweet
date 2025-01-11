@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import io from 'socket.io-client';
+import { useRouter } from 'next/navigation';
 import 'webrtc-adapter';
 import styles from './page.module.css';
 import Image from 'next/image';
@@ -10,7 +9,6 @@ import Videobox from '@/components/videobox';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
-import { setReduxSocket, setRoom } from '../../../store/socketSlice';
 import { RootState } from '../../../store/store';
 
 interface UserPayload {
@@ -63,14 +61,11 @@ function ChatContent() {
   const [remoteEmotion, setRemoteEmotion] = useState('행복');
   const [remoteValue, setRemoteValue] = useState(30);
 
-  const [socket, setSocket] = useState<ReturnType<typeof io> | null>(null); // WEBRTC용
   const mediaRecorderRef = useRef<MediaRecorder | null>(null); // 다시보기 녹화용 (Blob)
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]); // 녹화 데이터 쌓는 배열
   const feedbackRef = useRef('');
 
   const router = useRouter();
-  // const searchParams = useSearchParams();
-  // const room_id = searchParams.get('room');
   const room_id = useSelector((state: RootState) => state.socket.room);
   const [ID, setID] = useState('');
 
@@ -233,21 +228,6 @@ function ChatContent() {
       return;
     }
 
-    // // 소켓 연결 초기화 - WebRTC 연결용 Socket
-    // const rtcSocket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`, {
-    //   path: '/api/match',
-    //   transports: ['websocket'],
-    // });
-    // setSocket(rtcSocket);
-    // dispatch(setReduxSocket(rtcSocket));
-    // dispatch(setRoom(room_id));
-
-    // // 소켓 연결 확인 및 방 참가
-    // rtcSocket.on('connect', () => {
-    //   console.log('Socket connected and stored in Redux:', rtcSocket.id);
-    //   // 연결 후 방에 참가
-    // });
-
     // PeerConnection 초기화
     const newPeerConnection = new RTCPeerConnection(pcConfig);
 
@@ -316,7 +296,6 @@ function ChatContent() {
       }
     };
 
-    // rtcSocket.off('peerDisconnected');
     // WebRTC 소켓 이벤트 핸들러 설정
     rtcSocket.on('peerDisconnected', async () => {
       console.log('Peer disconnected - from rtcSocket');
@@ -511,10 +490,6 @@ function ChatContent() {
       }
 
       rtcSocket.off('peerDisconnected');
-      // // Socket 정리
-      // if (socket) {
-      //   socket.disconnect();
-      // }
 
       // Recognition 정리
       if (recognition.current) {
