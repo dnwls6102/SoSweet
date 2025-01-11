@@ -34,17 +34,22 @@ app.use(
   cors({
     origin: [`${process.env.CLIENT_URL}`, `${process.env.FLASK_SERVER_URL}`],
     methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "Accept",
+    ],
     credentials: true,
     preflightContinue: false,
     optionsSuccessStatus: 204,
   })
 );
 
-app.options('*', cors()); // CORS 사전 요청 허용
+app.options("*", cors()); // CORS 사전 요청 허용
 
-app.use(express.json({ limit: '50mb' }));  // JSON 요청 크기 제한 증가
-app.use(express.urlencoded({ limit: '50mb', extended: true }));  // form-urlencoded 데이터 크기 제한
+app.use(express.json({ limit: "50mb" })); // JSON 요청 크기 제한 증가
+app.use(express.urlencoded({ limit: "50mb", extended: true })); // form-urlencoded 데이터 크기 제한
 
 // 요청 로깅 미들웨어
 app.use((req, res, next) => {
@@ -68,7 +73,6 @@ app.use("/users", userRoutes);
 
 // api , flask 서버 라우트
 app.use("/api", apiRoutes);
-
 
 app.post("/api/match", (req: Request, res: Response) => {
   res.send("응답");
