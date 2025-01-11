@@ -4,10 +4,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import { useDispatch } from 'react-redux';
-import { setSummary, setConclusion } from '@/store/feedbackSlice';
+import { setGPTFeedback } from '@/store/GPTfeedbackSlice';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
-import { setIsAIChat } from '@/store/aiFlagSlice';
 import Image from 'next/image';
 
 interface UserPayload {
@@ -430,18 +429,13 @@ export default function Chat() {
 
       if (response.ok) {
         const json_data = await response.json();
-        console.log(typeof json_data.analysis);
-        console.log(json_data.analysis);
+        console.log('받은 데이터:', json_data.analysis);
         const data = JSON.parse(json_data.analysis);
-        console.log(data.analysis.analysis);
-        console.log(data.analysis.conclusion);
-        dispatch(setSummary(data.analysis));
-        dispatch(setConclusion(data.conclusion));
-        dispatch(setIsAIChat(true));
-
-        // router.push 대신 window.location.href 사용
-        router.push('/Feedback');
-        // window.location.href = '/Feedback';
+        console.log('파싱된 데이터:', data);
+        console.log('분석:', data.analysis);
+        console.log('결론:', data.conclusion);
+        dispatch(setGPTFeedback(data.conclusion));
+        router.push('/FeedbackAI');
       } else {
         console.log('대화 종료 요청 실패');
       }
