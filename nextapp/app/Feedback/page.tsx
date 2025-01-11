@@ -51,6 +51,7 @@ export default function Feedback() {
   const [nonverbal, setNonverbal] = useState<NonverbalData | null>(null);
   const [summary, setSummary] = useState('');
   const [conclusion, setConclusion] = useState('');
+  const [selectedTab, setSelectedTab] = useState('emotion');
   const [user_id, setUserID] = useState('');
 
   // Redux store에서 데이터 가져오기
@@ -152,146 +153,191 @@ export default function Feedback() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.logo}>💖소스윗</div>
-      <h1 className={styles.title}>당신의 소개팅력은?</h1>
+    <div className={styles.wrapper}>
+      <header className={styles.header}>
+        <h1 className={styles.title}>당신의 소개팅력은?</h1>
+      </header>
 
-      {/* 차트 */}
-      {emotionData ? (
-        <div className={styles.chartContainer}>
-          <VictoryPie
-            data={Object.entries(emotionData)
-              .slice(0, 7)
-              .map(([emotion, value]) => ({
-                x: emotion,
-                y: value,
-              }))}
-            colorScale={COLORS}
-            innerRadius={100}
-            style={{
-              labels: { fill: 'black', fontSize: 16, fontWeight: 'bold' },
-            }}
-            animate={{
-              duration: 1000,
-              onLoad: { duration: 500 },
-            }}
-          />
-        </div>
-      ) : (
-        <div className={styles.loading}>
-          <p>감정 데이터를 불러오는 중입니다.</p>
-          <div className={styles.spinner}></div>
-        </div>
-      )}
-
-      {/* 차트 세부 정보 */}
-      <div className={styles.chartDetails}>
-        <h3>Top 3 감정 순위</h3>
-        <ul>
-          {emotionData &&
-            Object.entries(emotionData)
-              .slice(0, 3)
-              .map(([emotion, value], index) => (
-                <li key={emotion}>
-                  {index + 1}위: {emotion} ({value}%)
-                </li>
-              ))}
-        </ul>
+      {/* 탭 메뉴 */}
+      <div className={styles.tabMenu}>
+        {['emotion', 'verbal', 'nonverbal', 'overall'].map((tab) => (
+          <button
+            key={tab}
+            className={selectedTab === tab ? styles.focusedTab : ''}
+            onClick={() => setSelectedTab(tab)}
+          >
+            {tab === 'emotion' ? '감정 분석' : ''}
+            {tab === 'verbal' ? '대화 분석' : ''}
+            {tab === 'nonverbal' ? '동작 분석' : ''}
+            {tab === 'overall' ? '종합 평가' : ''}
+          </button>
+        ))}
       </div>
 
-      {/* 대화 분석 */}
-      <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>대화 분석</h2>
-        {summary ? (
-          // <p>verbal</p>
-          <>{summary}</>
-        ) : (
-          <div className={styles.loading}>
-            <p>대화 분석 데이터를 불러오는 중입니다.</p>
-            <div className={styles.spinner}></div>
+      {/* 컨테이너 */}
+      <div className={styles.container}>
+        {/* 감정 분석 */}
+        {selectedTab === 'emotion' && (
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>감정 분석</h2>
+
+            {/* 차트와 차트 외부에 데이터 정렬 */}
+            <div className={styles.chartWithLegend}>
+              <div className={styles.chartContainer}>
+                {emotionData ? (
+                  <>
+                    {/* VictoryPie 차트 */}
+                    <VictoryPie
+                      colorScale={COLORS}
+                      innerRadius={0}
+                      labels={() => null}
+                      animate={{
+                        duration: 1000,
+                        onLoad: { duration: 500 },
+                      }}
+                      data={Object.entries(emotionData)
+                        .slice(0, 7) // 상위 7개 데이터만 선택
+                        .map(([emotion, value]) => ({
+                          x: emotion,
+                          y: value,
+                        }))}
+                    />
+
+                    {/* 차트 외부 데이터 정렬 */}
+                    <div className={styles.legendContainer}>
+                      {Object.entries(emotionData)
+                        .slice(0, 7) // 상위 7개 데이터만 선택
+                        .map(([emotion, value]) => ({
+                          x: emotion,
+                          y: value,
+                        }))
+                        .sort((a, b) => b.y - a.y) // y 값이 큰 순서대로 정렬
+                        .map((item, index) => (
+                          <div key={index} className={styles.legendItem}>
+                            <div
+                              className={styles.colorBox}
+                              style={{ backgroundColor: COLORS[index] }}
+                            ></div>
+                            <span className={styles.legendText}>
+                              {item.x} {item.y}%
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  </>
+                ) : (
+                  <div className={styles.loading}>
+                    <p>감정 데이터를 불러오는 중입니다.</p>
+                    <div className={styles.spinner}></div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
-      </div>
 
-      {/* 비언어적 분석 */}
-      <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>동작 분석</h2>
-
-        {nonverbal ? (
-          // nonverbal가 문자열이 아니라면(즉 객체라면) counters에 접근
-          typeof nonverbal === 'object' && nonverbal.counters ? (
-            <div
-              style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}
-            >
-              {/* Action 1) 산만한 손 동작 */}
-              <div>
-                <h4>산만한 손 동작</h4>
-                <p>{nonverbal.counters.hand_message_count} 회</p>
+        {/* 대화 분석 */}
+        {selectedTab === 'verbal' && (
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>대화 분석</h2>
+            {summary ? (
+              <div className={styles.summaryText}>{summary}</div>
+            ) : (
+              <div className={styles.loading}>
+                <p>대화 분석 데이터를 불러오는 중입니다.</p>
+                <div className={styles.spinner}></div>
               </div>
-
-              {/* Action 2) 산만한 팔 동작 */}
-              <div>
-                <h4>산만한 팔 동작</h4>
-                <p>{nonverbal.counters.folded_arm_message_count} 회</p>
-              </div>
-
-              {/* Action 3) 좌우 움직임 */}
-              <div>
-                <h4>좌우 움직임</h4>
-                <p>{nonverbal.counters.side_move_message_count} 회</p>
-              </div>
-            </div>
-          ) : typeof nonverbal === 'string' ? (
-            // 혹은 만약 API가 문자열만 넘겨줄 때 처리
-            <p>{nonverbal}</p>
-          ) : (
-            // nonverbal 형식이 예기치 않은 경우
-            <p>동작 분석 데이터를 해석할 수 없습니다.</p>
-          )
-        ) : (
-          <div className={styles.loading}>
-            <p>동작 분석 데이터를 불러오는 중입니다.</p>
-            <div className={styles.spinner}></div>
+            )}
           </div>
         )}
-      </div>
 
-      {/* 상대방의 피드백 */}
-      {!isAIChat && (
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>상대방의 평가</h2>
-          {feedbackData.partnerFeedback ? (
-            <div className={styles.partnerFeedback}>
-              <p>별점: {'★'.repeat(feedbackData.partnerFeedback.rating)}</p>
-              <p>코멘트: {feedbackData.partnerFeedback.comment}</p>
-              <p>
-                재매칭 의사:{' '}
-                {feedbackData.partnerFeedback.like
-                  ? '만나고 싶어요'
-                  : '다음에요'}
-              </p>
-            </div>
-          ) : (
-            <div className={styles.loading}>
-              <p>상대방의 평가 데이터를 불러오는 중입니다.</p>
-              <div className={styles.spinner}></div>
-            </div>
-          )}
-        </div>
-      )}
+        {/* 동작 분석 */}
+        {selectedTab === 'nonverbal' && (
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>동작 분석</h2>
+            <div className={styles.actionsWrapper}>
+              {nonverbal ? (
+                // nonverbal가 문자열이 아니라면(즉 객체라면) counters에 접근
+                typeof nonverbal === 'object' && nonverbal.counters ? (
+                  <div className={styles.actionsWrapper}>
+                    {/* Action 1) 산만한 손 동작 */}
+                    <div className={styles.actionItem}>
+                      <h2>👋</h2>
+                      <h4>산만한 손 동작</h4>
+                      <p>{nonverbal.counters.hand_message_count} 회</p>
+                    </div>
 
-      {/* 종합 평가 */}
-      <div className={styles.overallSection}>
-        <div className={styles.overallTitle}>종합 평가</div>
-        {conclusion ? (
-          <div className={styles.overallText}>
-            <p>{conclusion}</p>
-            <p>
-              당신은 <span className={styles.highlight}>연애고자</span> 입니다.
-              {/* <br /> <br />
+                    {/* Action 2) 산만한 팔 동작 */}
+                    <div className={styles.actionItem}>
+                      <h2>🙆‍♀️</h2>
+                      <h4>산만한 팔 동작</h4>
+                      <p>{nonverbal.counters.folded_arm_message_count} 회</p>
+                    </div>
+
+                    {/* Action 3) 좌우 움직임 */}
+                    <div className={styles.actionItem}>
+                      <h2>🕺</h2>
+                      <h4>좌우 움직임</h4>
+                      <p>{nonverbal.counters.side_move_message_count} 회</p>
+                    </div>
+                  </div>
+                ) : typeof nonverbal === 'string' ? (
+                  // 혹은 만약 API가 문자열만 넘겨줄 때 처리
+                  <p>{nonverbal}</p>
+                ) : (
+                  // nonverbal 형식이 예기치 않은 경우
+                  <p>동작 분석 데이터를 해석할 수 없습니다.</p>
+                )
+              ) : (
+                <div className={styles.loading}>
+                  <p>동작 분석 데이터를 불러오는 중입니다.</p>
+                  <div className={styles.spinner}></div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* 종합 평가 */}
+        {selectedTab === 'overall' && (
+          <div className={styles.section}>
+            {/* 상대방의 피드백 */}
+            {!isAIChat && (
+              <div className={styles.section}>
+                <h2 className={styles.sectionTitle}>상대방의 평가</h2>
+                {feedbackData.partnerFeedback ? (
+                  <div className={styles.partnerFeedback}>
+                    <p>
+                      평점: {'♥'.repeat(feedbackData.partnerFeedback.rating)}
+                    </p>
+                    <p>코멘트: {feedbackData.partnerFeedback.comment}</p>
+                    <p>
+                      재매칭 의사:{' '}
+                      {feedbackData.partnerFeedback.like
+                        ? '💕 다시 만나고 싶어요'
+                        : '💔 만나고 싶지 않아요'}
+                    </p>
+                  </div>
+                ) : (
+                  <div className={styles.loading}>
+                    <p>상대방의 평가 데이터를 불러오는 중입니다.</p>
+                    <div className={styles.spinner}></div>
+                  </div>
+                )}
+              </div>
+            )}
+            <div className={styles.overallSection}>
+              <div className={styles.overallTitle}>종합 평가</div>
+              {conclusion ? (
+                <div className={styles.overallText}>
+                  <p>{conclusion}</p>
+                  <p>
+                    당신은 <span className={styles.highlight}>연애고자</span>{' '}
+                    입니다.
+                    {/* <br /> <br />
               당신의 소개팅 등급은 */}
-            </p>
-            {/* <div className={styles.rankContainer}>
+                  </p>
+                  {/* <div className={styles.rankContainer}>
               <Image
                 src="/bronze-icon.svg"
                 alt="등급 아이콘"
@@ -301,44 +347,46 @@ export default function Feedback() {
               />
               <span className={styles.rankText}>브론즈</span>
             </div> */}
-          </div>
-        ) : (
-          <div className={styles.loading}>
-            <p>평가 데이터를 불러오는 중입니다.</p>
-            <div className={styles.spinner}></div>
+                </div>
+              ) : (
+                <div className={styles.loading}>
+                  <p>평가 데이터를 불러오는 중입니다.</p>
+                  <div className={styles.spinner}></div>
+                </div>
+              )}
+            </div>
+
+            {/* 실전 대비 개선 */}
+            <div className={styles.tipsSection}>
+              <h2 className={styles.tipsTitle}>실전 대비 개선 Tips</h2>
+              <div className={styles.tipsContent}>
+                <p>실전 소개팅에서는 다음 팁을 시도해 보세요:</p>
+                <ul>
+                  <li>자연스러운 대화 흐름 유지하기</li>
+                  <li>적절한 눈맞춤과 미소로 긍정적인 인상을 주기</li>
+                  <li>감정을 너무 숨기지 말고 적절히 표현하기</li>
+                  <li>상대방의 반응에 귀 기울이며 대화 이어나가기</li>
+                </ul>
+              </div>
+            </div>
           </div>
         )}
-      </div>
 
-      {/* 실전 대비 개선 */}
-      <div className={styles.tipsSection}>
-        <h2 className={styles.tipsTitle}>실전 대비 개선 Tips</h2>
-        <div className={styles.tipsContent}>
-          <p>실전 소개팅에서는 다음 팁을 시도해 보세요:</p>
-          <ul>
-            <li>자연스러운 대화 흐름 유지하기</li>
-            <li>적절한 눈맞춤과 미소로 긍정적인 인상을 주기</li>
-            <li>감정을 너무 숨기지 말고 적절히 표현하기</li>
-            <li>상대방의 반응에 귀 기울이며 대화 이어나가기</li>
-          </ul>
-        </div>
-      </div>
-
-      {/* 메인 페이지로 이동 */}
-      <div className={styles.buttonContainer}>
+        {/* 메인 페이지로 이동 */}
+        {/* <div className={styles.buttonContainer}>
         <Link
           href="/MainPage"
           style={{ textDecoration: 'none' }}
           className={styles.link}
         >
           <button className={styles.mainPageButton}>
-            <span style={{ marginRight: '10px' }}>🏠</span> 메인 페이지로
-            돌아가기
+            메인 페이지로 돌아가기
           </button>
         </Link>
-      </div>
+      </div> */}
 
-      <div className={styles.footer}>© 2024 SoSweet Analysis Report</div>
+        <div className={styles.footer}>© 2024 SoSweet Analysis Report</div>
+      </div>
     </div>
   );
 }
