@@ -12,7 +12,6 @@ import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { setReduxSocket, setRoom } from '../../../store/socketSlice';
 import { RootState } from '../../../store/store';
-import { Socket } from 'socket.io-client';
 
 interface UserPayload {
   user_id: string;
@@ -70,8 +69,9 @@ function ChatContent() {
   const feedbackRef = useRef('');
 
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const room_id = searchParams.get('room');
+  // const searchParams = useSearchParams();
+  // const room_id = searchParams.get('room');
+  const room_id = useSelector((state: RootState) => state.socket.room);
   const [ID, setID] = useState('');
 
   const scriptRef = useRef('');
@@ -79,10 +79,8 @@ function ChatContent() {
   const recognition = useRef<SpeechRecognition | null>(null);
 
   const dispatch = useDispatch();
-  const rtcSocket = useSelector(
-    (state: RootState) => state.socket.socket,
-  ) as ReturnType<typeof io>;
-
+  const rtcSocket = useSelector((state: RootState) => state.socket.socket);
+  if (!rtcSocket) return;
   useEffect(() => {
     const token = Cookies.get('access');
     if (token) {
@@ -215,6 +213,9 @@ function ChatContent() {
   };
 
   useEffect(() => {
+    console.log('rtcSocket', rtcSocket.id);
+    console.log('room_id', room_id);
+
     if (!('webkitSpeechRecognition' in window)) {
       alert('지원하지 않는 브라우저입니다.');
       return;
@@ -522,7 +523,7 @@ function ChatContent() {
       }
       clearInterval(intervalId);
     };
-  }, [room_id, recordedChunks, dispatch, router, ID]);
+  }, [room_id, recordedChunks, dispatch, router, ID, rtcSocket]);
 
   const handleNavigation = async () => {
     if (mediaRecorderRef.current) {

@@ -54,7 +54,7 @@ export default function MatchingPerson() {
     });
 
     return () => {
-      newSocket.disconnect();
+      // newSocket.disconnect();
     };
   }, [router, dispatch]);
 

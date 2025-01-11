@@ -99,7 +99,7 @@ export const initializeSocketServer = (server: http.Server) => {
     // WebRTC 시그널링 이벤트 처리
     socket.on("join", async (data: { room_id: string }) => {
       console.log("User joined room:", data.room_id);
-      socket.join(data.room_id);
+      // socket.join(data.room_id);
 
       // 방에 있는 다른 사용자 수 확인
       const clients = await io.in(data.room_id).allSockets();
