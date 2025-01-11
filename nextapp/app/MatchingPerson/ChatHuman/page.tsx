@@ -9,8 +9,10 @@ import Image from 'next/image';
 import Videobox from '@/components/videobox';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setReduxSocket, setRoom } from '../../../store/socketSlice';
+import { RootState } from '../../../store/store';
+import { Socket } from 'socket.io-client';
 
 interface UserPayload {
   user_id: string;
@@ -77,6 +79,9 @@ function ChatContent() {
   const recognition = useRef<SpeechRecognition | null>(null);
 
   const dispatch = useDispatch();
+  const rtcSocket = useSelector(
+    (state: RootState) => state.socket.socket,
+  ) as ReturnType<typeof io>;
 
   useEffect(() => {
     const token = Cookies.get('access');
@@ -229,20 +234,20 @@ function ChatContent() {
       return;
     }
 
-    // 소켓 연결 초기화 - WebRTC 연결용 Socket
-    const rtcSocket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`, {
-      path: '/api/match',
-      transports: ['websocket'],
-    });
-    setSocket(rtcSocket);
-    dispatch(setReduxSocket(rtcSocket));
-    dispatch(setRoom(room_id));
+    // // 소켓 연결 초기화 - WebRTC 연결용 Socket
+    // const rtcSocket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`, {
+    //   path: '/api/match',
+    //   transports: ['websocket'],
+    // });
+    // setSocket(rtcSocket);
+    // dispatch(setReduxSocket(rtcSocket));
+    // dispatch(setRoom(room_id));
 
-    // 소켓 연결 확인 및 방 참가
-    rtcSocket.on('connect', () => {
-      console.log('Socket connected and stored in Redux:', rtcSocket.id);
-      // 연결 후 방에 참가
-    });
+    // // 소켓 연결 확인 및 방 참가
+    // rtcSocket.on('connect', () => {
+    //   console.log('Socket connected and stored in Redux:', rtcSocket.id);
+    //   // 연결 후 방에 참가
+    // });
 
     // PeerConnection 초기화
     const newPeerConnection = new RTCPeerConnection(pcConfig);

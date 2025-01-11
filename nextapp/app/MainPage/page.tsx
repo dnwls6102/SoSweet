@@ -27,18 +27,21 @@ const MainPage = () => {
 
   const handleNavigation = async () => {
     try {
-      const response = await fetch('https://back.sosweet.site/api/ai/dialog/start', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/dialog/start`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: ID,
+            user_gender: gender,
+          }),
         },
-        body: JSON.stringify({
-          user_id: ID,
-          user_gender: gender,
-        }),
-      });
+      );
       if (response.ok) {
-        console.log('성공')
+        console.log('성공');
       } else {
         console.error('서버에서 200 반환안함함');
       }

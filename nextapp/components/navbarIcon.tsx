@@ -13,7 +13,6 @@ export default function NavbarIcon() {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/users/logout`,
         {
-          // const response = await fetch('http://localhost:4000/users/logout', {
           method: 'POST',
           credentials: 'include',
         },
