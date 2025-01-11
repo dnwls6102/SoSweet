@@ -115,7 +115,7 @@ function ChatContent() {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog`,
-        {
+        { 
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -308,7 +308,8 @@ function ChatContent() {
       }
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
+          // `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
+          `http://localhost:4000/api/human/dialog/end`,
           {
             method: 'POST',
             headers: {
@@ -520,7 +521,8 @@ function ChatContent() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
+        // `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
+        `http://localhost:4000/api/human/dialog/end`,
         {
           method: 'POST',
           headers: {
