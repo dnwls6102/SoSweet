@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { OpenAI } from 'openai';
+import { Request, Response } from "express";
+import { OpenAI } from "openai";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -14,13 +14,12 @@ type ChatCompletionMessageParam = {
   name?: string;
 };
 
-const completedChat: { [user: string]: ChatCompletionMessageParam[]} = {};
+const completedChat: { [user: string]: ChatCompletionMessageParam[] } = {};
 
 function createAiPrompt(user_id: string): ChatCompletionMessageParam {
   return {
     role: "system",
-    content: 
-    `나는 소개팅 대화 평가 AI 입니다. 
+    content: `나는 소개팅 대화 평가 AI 입니다. 
     다음은 두 사람이 소개팅 어플리케이션을 통해 나눈 대화입니다. 
 
     대화를 한국어로 분석하되, **최종 피드백은 오직 name이 ${user_id}인 사람**에 대해서만 작성해주세요. 
@@ -98,20 +97,23 @@ function createAiPrompt(user_id: string): ChatCompletionMessageParam {
     {"role":"user","content":"미소야 안녕","name":"minsoo"}
 
     대화를 분석한 뒤, 지정된 포맷으로 답변을 작성하세요.
-    분석을 시작하세요.`
+    분석을 시작하세요.`,
   };
 }
 
 // 사람 간의 대화에서 LLM에 대한 요청과 응답을 분리하기 위한 map객체 생성
-const chatAnalysisMap = new Map <string, string>();
+const chatAnalysisMap = new Map<string, string>();
 
-async function createAnalysis( record: ChatCompletionMessageParam[], partner: string ): Promise<string> {
+async function createAnalysis(
+  record: ChatCompletionMessageParam[],
+  partner: string
+): Promise<string> {
   const response = await openai.chat.completions.create({
     model: "gpt-4o",
     messages: record,
     temperature: 0.7,
   });
-  
+
   const assistantAnswer = response.choices[0].message.content;
   if (!assistantAnswer) {
     if (partner === "AI와") {
@@ -120,7 +122,7 @@ async function createAnalysis( record: ChatCompletionMessageParam[], partner: st
       return "대화 분석 내용을 생성하는데 실패했습니다.";
     }
   }
-  // 분석할 기록 초기화  
+  // 분석할 기록 초기화
   record.length = 0;
 
   return assistantAnswer;
@@ -128,8 +130,14 @@ async function createAnalysis( record: ChatCompletionMessageParam[], partner: st
 
 async function chatAnalysis(req: Request, res: Response): Promise<void> {
   const { script, user_id } = req.body;
-  if(!script) {
-    res.status(404).json({ message: "대화 기록이 없습니다."});
+  if (!script) {
+    res.status(404).json({
+      analysis: {
+        analysis: "발화량이 부족하여 대화를 분석하지 못했습니다.",
+        conclusion: "발화량이 부족하여 대화를 분석하지 못했습니다.",
+      },
+    });
+    return;
   }
 
   const AiPrompt = createAiPrompt(user_id);
@@ -138,7 +146,10 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
 
   const newMessages: ChatCompletionMessageParam[] = script;
 
-  if (!Array.isArray(newMessages) || !newMessages.every(msg => msg.role && msg.content)) {
+  if (
+    !Array.isArray(newMessages) ||
+    !newMessages.every((msg) => msg.role && msg.content)
+  ) {
     res.status(400).send("Invalid data format.");
     return;
   }
@@ -151,13 +162,16 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
     completedChat[user_id].push(...newMessages);
     console.log("분석용 AI와의 대화 기록 완성");
     console.log(completedChat[user_id]);
-  
+
     try {
-      const assistantAnswer = await createAnalysis(completedChat[user_id], "AI와");
-      console.log(assistantAnswer); 
-      res.json({ 
+      const assistantAnswer = await createAnalysis(
+        completedChat[user_id],
+        "AI와"
+      );
+      console.log(assistantAnswer);
+      res.json({
         message: "대화 분석 완료!",
-        analysis: assistantAnswer 
+        analysis: assistantAnswer,
       });
     } catch (err) {
       console.error(err);
@@ -170,39 +184,50 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
     (async () => {
       completedChat[user_id].push(...newMessages);
       console.log("분석용 사람간의 대화 기록 완성");
-    
+
       try {
-        const assistantAnswer = await createAnalysis(completedChat[user_id], "사람 간");
+        const assistantAnswer = await createAnalysis(
+          completedChat[user_id],
+          "사람 간"
+        );
         // AI가 분석한 내용 저장
         chatAnalysisMap.set(user_id, assistantAnswer);
-        console.log('사람 간의 대화 분석 기록 저장완료');
+        console.log("사람 간의 대화 분석 기록 저장완료");
       } catch (err) {
         console.error("LLM 대화 분석 실패", err);
-        chatAnalysisMap.set(user_id, "대화 분석 내용을 생성하는데 실패했습니다.")
-      }   
+        chatAnalysisMap.set(
+          user_id,
+          "대화 분석 내용을 생성하는데 실패했습니다."
+        );
+      }
     })();
-  
-    res.status(200).json({ message: "LLM에게 성공적으로 대화 분석을 맡겼습니다.", user_id: user_id });
+
+    res.status(200).json({
+      message: "LLM에게 성공적으로 대화 분석을 맡겼습니다.",
+      user_id: user_id,
+    });
   }
 }
 
-async function getAnalysis( req: Request, res: Response): Promise<void> {
+async function getAnalysis(req: Request, res: Response): Promise<void> {
   const { user_id } = req.body;
   console.log(user_id);
 
-  if(!chatAnalysisMap.has(user_id)) {
-    res.status(404).json({ message: "요청을 찾을 수 없습니다."});
+  if (!chatAnalysisMap.has(user_id)) {
+    res.status(404).json({ message: "요청을 찾을 수 없습니다." });
     return;
   }
 
   const analysis = chatAnalysisMap.get(user_id);
-  if(!analysis) {
-    res.status(202).json({ message: "분석 중입니다. 잠시 후 다시 시도해주세요."});
+  if (!analysis) {
+    res
+      .status(202)
+      .json({ message: "분석 중입니다. 잠시 후 다시 시도해주세요." });
     return;
   }
 
-  if(analysis === "대화 분석 내용을 생성하는데 실패했습니다.") {
-    res.status(404).json({ message: "대화 분석 기록이 없습니다."});
+  if (analysis === "대화 분석 내용을 생성하는데 실패했습니다.") {
+    res.status(404).json({ message: "대화 분석 기록이 없습니다." });
     return;
   }
 
