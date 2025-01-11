@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
+import { useDispatch } from 'react-redux';
+import { setReduxSocket, setRoom } from '../../store/socketSlice';
 
 interface UserPayload {
   user_id: string;
@@ -21,6 +23,7 @@ export default function MatchingPerson() {
   const [socket, setSocket] = useState<ReturnType<typeof io> | null>(null);
   const [user_id, setUserID] = useState('');
   const [user_gender, setUserGender] = useState('');
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const token = Cookies.get('access');
@@ -34,12 +37,11 @@ export default function MatchingPerson() {
     }
     // 소켓 연결 초기화
     const newSocket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`, {
-      // const newSocket = io('http://localhost:4000', {
       path: '/api/match',
       transports: ['websocket'],
     });
-
     setSocket(newSocket);
+    dispatch(setReduxSocket(newSocket));
 
     newSocket.on('connect', () => {
       console.log('Socket connected:', newSocket.id);
@@ -47,13 +49,12 @@ export default function MatchingPerson() {
 
     newSocket.on('matchSuccess', (data: { room_id: string }) => {
       console.log('Match success:', data);
+      dispatch(setRoom(data.room_id));
       router.push(`/MatchingPerson/ChatHuman?room=${data.room_id}`);
     });
 
-    return () => {
-      newSocket.disconnect();
-    };
-  }, [router]);
+    return;
+  }, [router, dispatch]);
 
   const handleMatching = () => {
     setIsMatching(true);
