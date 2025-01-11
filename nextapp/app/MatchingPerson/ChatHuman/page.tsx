@@ -213,9 +213,6 @@ function ChatContent() {
   };
 
   useEffect(() => {
-    console.log('rtcSocket', rtcSocket.id);
-    console.log('room_id', room_id);
-
     if (!('webkitSpeechRecognition' in window)) {
       alert('지원하지 않는 브라우저입니다.');
       return;
@@ -535,7 +532,7 @@ function ChatContent() {
     }
 
     // socket 상태 대신 rtcSocket 직접 사용
-    const currentSocket = socket;
+    const currentSocket = rtcSocket;
     if (currentSocket) {
       console.log('Sending endCall event with room:', room_id);
       currentSocket.emit('endCall', { room_id: room_id });
