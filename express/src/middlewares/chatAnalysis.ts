@@ -128,6 +128,10 @@ async function createAnalysis( record: ChatCompletionMessageParam[], partner: st
 
 async function chatAnalysis(req: Request, res: Response): Promise<void> {
   const { script, user_id } = req.body;
+  if(!script) {
+    res.status(404).json({ message: "대화 기록이 없습니다."});
+  }
+
   const AiPrompt = createAiPrompt(user_id);
   completedChat[user_id] = [];
   completedChat[user_id].push(AiPrompt);
@@ -151,7 +155,6 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
     try {
       const assistantAnswer = await createAnalysis(completedChat[user_id], "AI와");
       console.log(assistantAnswer); 
-      // req.body.script = assistantAnswer; // 왜 넣어놓은 거지?
       res.json({ 
         message: "대화 분석 완료!",
         analysis: assistantAnswer 

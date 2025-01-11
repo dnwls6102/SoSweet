@@ -43,7 +43,7 @@ export const feedbackSlice = createSlice({
     },
     clearFeedback: (state) => {
       state.summary = '';
-      state.conclusion = '',
+      state.conclusion = '';
       state.userID = '';
       state.emotionData = [];
       state.partnerFeedback = null;

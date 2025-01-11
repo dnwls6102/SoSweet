@@ -107,7 +107,7 @@ const logOut = (req: Request, res: Response, next: NextFunction): void => {
 
 
   try {
-    // jwt.verify(refreshToken, secretKey);
+    jwt.verify(refreshToken, secretKey);
     res.clearCookie('refresh', {
       secure: true,
       sameSite: 'strict', // 조정 가능
