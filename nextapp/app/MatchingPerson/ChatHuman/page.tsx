@@ -80,7 +80,6 @@ function ChatContent() {
 
   const dispatch = useDispatch();
   const rtcSocket = useSelector((state: RootState) => state.socket.socket);
-  if (!rtcSocket) return;
   useEffect(() => {
     const token = Cookies.get('access');
     if (token) {
@@ -213,6 +212,8 @@ function ChatContent() {
   };
 
   useEffect(() => {
+    if (!rtcSocket) return;
+
     if (!('webkitSpeechRecognition' in window)) {
       alert('지원하지 않는 브라우저입니다.');
       return;
@@ -315,6 +316,7 @@ function ChatContent() {
       }
     };
 
+    // rtcSocket.off('peerDisconnected');
     // WebRTC 소켓 이벤트 핸들러 설정
     rtcSocket.on('peerDisconnected', async () => {
       console.log('Peer disconnected - from rtcSocket');
@@ -508,10 +510,11 @@ function ChatContent() {
         newPeerConnection.close();
       }
 
-      // Socket 정리
-      if (socket) {
-        socket.disconnect();
-      }
+      rtcSocket.off('peerDisconnected');
+      // // Socket 정리
+      // if (socket) {
+      //   socket.disconnect();
+      // }
 
       // Recognition 정리
       if (recognition.current) {
