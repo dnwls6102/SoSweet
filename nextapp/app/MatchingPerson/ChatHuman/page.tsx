@@ -60,8 +60,11 @@ interface KeywordDict {
 }
 
 interface NlpResponse {
-  message: string;
   keyword_dict: KeywordDict;
+  noword_flag: boolean;
+  filler_flag: boolean;
+  noend_flag: boolean;
+  nopolite_flag: boolean;
 }
 
 function ChatContent() {
@@ -74,12 +77,11 @@ function ChatContent() {
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null); // 다시보기 녹화용 (Blob)
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]); // 녹화 데이터 쌓는 배열
-  const feedbackRef = useRef('');
 
   const router = useRouter();
   const room_id = useSelector((state: RootState) => state.socket.room);
   const [ID, setID] = useState('');
-  const [showGuide, setShowGuide] = useState(true);
+  const [showGuide, setShowGuide] = useState(false);
   const [guideMessage, setGuideMessage] = useState('같이 영화보러 가실래요?');
 
   const scriptRef = useRef('');
@@ -89,9 +91,15 @@ function ChatContent() {
   const dispatch = useDispatch();
   const rtcSocket = useSelector((state: RootState) => state.socket.socket);
 
+  const noword_flag = useRef(false);
+  const filler_flag = useRef(false);
+  const noend_flag = useRef(false);
+  const nopolite_flag = useRef(false);
+  const [emotion_msg, setEmotionMsg] = useState('');
+  const [verbal_msg, setVerbalMsg] = useState('');
+
   //대화 주제 파악을 위한 keyword dict
   const keywordRef = useRef<KeywordDict | null>(null);
-  const guideFlag = useRef(false);
 
   useEffect(() => {
     const token = Cookies.get('access');
@@ -118,14 +126,32 @@ function ChatContent() {
       );
       if (response.ok) {
         const result: NlpResponse = await response.json();
-        console.log(result.message);
         console.log('키워드 분석:', result.keyword_dict);
-        feedbackRef.current = result.message;
         keywordRef.current = result.keyword_dict;
+        noword_flag.current = result.noword_flag;
+        filler_flag.current = result.filler_flag;
+        noend_flag.current = result.noend_flag;
+        nopolite_flag.current = result.nopolite_flag;
       } else {
         const result = await response.json();
         console.log(result.error);
       }
+
+      let temp_msg = '';
+      if (noword_flag.current) {
+        temp_msg += '\n말을 너무 더듬고 있습니다.';
+      }
+      if (filler_flag.current) {
+        temp_msg +=
+          '\n아니 근데 이건 진짜 좀 많이 쓰는데요? 추임새를 줄여봅시다.';
+      }
+      if (noend_flag.current) {
+        temp_msg += '\n가급적 완성된 문장으로 말해봅시다.';
+      }
+      if (nopolite_flag.current) {
+        temp_msg += '\n처음 만나는 자리에서는 존댓말을 사용해주세요.';
+      }
+      setVerbalMsg(temp_msg);
     } catch (error) {
       console.log('서버 오류 발생: ', error);
     }
@@ -148,13 +174,14 @@ function ChatContent() {
       if (response.ok) {
         console.log('전송 성공');
         const data = await response.json();
-        console.log(data.guide_msg);
-        setGuideMessage(data.guide_msg);
-        setShowGuide(true);
-        setTimeout(() => {
-          setShowGuide(false);
-        }, 7000); // 7초 후에 모달 닫기
-        guideFlag.current = true;
+        console.log('가이드 메시지 : ', data.guide_msg);
+        if (data.guide_msg !== '') {
+          setGuideMessage(data.guide_msg);
+          setShowGuide(true);
+          setTimeout(() => {
+            setShowGuide(false);
+          }, 7000); // 7초 후에 모달 닫기
+        }
       } else {
         console.log('오류 발생');
       }
@@ -488,6 +515,25 @@ function ChatContent() {
             setRemoteEmotion(user1.emo_analysis_result.dominant_emotion);
             setRemoteValue(user1.emo_analysis_result.percentage);
           }
+
+          if (
+            remoteEmotion === '슬픔' ||
+            remoteEmotion === '불편함' ||
+            remoteEmotion === '긴장' ||
+            remoteEmotion === '두려움'
+          ) {
+            setEmotionMsg(
+              '상대가 어딘가 불편해 보입니다. 현재 감정 상태에 대해 질문해 보세요.',
+            );
+          } else if (remoteEmotion === '평온함') {
+            setEmotionMsg(
+              '분위기가 평이합니다. 자신감 있는 태도로 제 코칭을 참고하여 대화해 보세요!',
+            );
+          } else {
+            setEmotionMsg(
+              '분위기가 좋아 보입니다. 이대로 계속 자신있게 대화해 보세요!',
+            );
+          }
         }
       } catch (error) {
         console.error('전송 에러: ', error);
@@ -584,7 +630,7 @@ function ChatContent() {
   return (
     <div className={styles.wrapper}>
       {showGuide && <GuideModal message={guideMessage} />}
-      <Chatbot emotion={remoteEmotion} message="테스트 메시지입니다." />
+      <Chatbot emotion={remoteEmotion} message={emotion_msg + verbal_msg} />
       <div className={styles.left}>
         <div className={styles.videoContainer}>
           <Videobox
