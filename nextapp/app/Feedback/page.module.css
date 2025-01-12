@@ -1,93 +1,221 @@
 @font-face {
   font-family: 'logoFont';
-  src: url("../../fonts/Cafe24Ssurround-v2.0.ttf") format('truetype');
+  src: url("@/fonts/Cafe24Ssurround-v2.0.ttf") format('truetype');
   font-weight: bold;
 }
 
 @font-face {
   font-family: 'titleFont';
-  src: url("../../fonts/NotoSansKR-Black.ttf") format('truetype');
+  src: url("@/fonts/NotoSansKR-Black.ttf") format('truetype');
   font-weight: bold;
 }
 
 @font-face {
   font-family: 'contentFont';
-  src: url("../../fonts/NotoSansKR-Regular.ttf") format('truetype');
+  src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
   font-weight: normal;
 }
 
-.pageWrapper {
+body {
   overflow-x: hidden;
 }
 
-.container {
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 30px;
-  background-color: #fff;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  border-radius: 16px;
-  font-family: 'NotoSans', Arial, sans-serif;
-  color: #333;
-  animation: fadeIn 0.8s ease-in-out;
+.wrapper {
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 90%;
+  padding-left: 20px;
 }
 
-.logo {
-  font-size: 1.8em;
-  font-weight: bold;
-  font-family: 'logoFont', sans-serif;
-  margin-bottom: 25px;
-  text-align: center;
+/* 당신의 소개팅력은? */
+.header {
+  margin-top: 20px;
+  margin-left: 1%;
+  text-align: left;
 }
 
 .title {
-  font-size: 1.8em;
+  font-size: 2.2em;
   font-weight: bold;
   font-family: 'titleFont', sans-serif;
-  text-align: center;
   margin-bottom: 20px;
   color: #ff6b6b;
 }
 
-.chartContainer {
-  width: 50%;
-  max-width: 350px;
-  margin: 0 auto 20px auto;
-  font-family: 'contentFont', sans-serif;
+
+/* 컨테이너 */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  padding-left: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  font-family: 'NotoSans', Arial, sans-serif;
+  color: #333;
+  animation: fadeIn 0.8s ease-in-out;
+  position: relative;
+  padding-top: 50px; /* tabMenu와 여백을 맞추기 위한 패딩 */
+  border-radius: 20px;
 }
 
-.chartDetails {
+
+/* 탭 메뉴 */
+.tabMenu {
+  position: relative; /* absolute로 설정하여 header 아래에 위치 */
+  top: 0; /* container와 붙도록 top을 0으로 설정 */
+  left: 0; /* 왼쪽 여백을 container에 맞추기 위해 0으로 설정 */
+  width: 60%; /* container의 너비에 맞추기 */
+  z-index: 100; /* 다른 요소들보다 위에 보이도록 */
+  padding-left: 20px; /* container의 왼쪽 여백에 맞추기 위해 padding-left */
+  margin-top: 0;
+  padding: 0; /* 추가 여백 제거 */
+  margin: 0; /* 외부 여백 제거 */
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.tabMenu button {
+  flex: 1;
+  font-family: 'titleFont', sans-serif;
+  font-size: 1.6em;
+  padding: 15px 30px;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
   text-align: center;
-  margin-top: 20px;
-  font-family: 'contentFont', sans-serif;
 }
 
-.chartDetails ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.tabMenu button:hover {
+  background-color: #fabebe;
 }
 
-.chartDetails li {
-  margin-bottom: 10px;
-  font-size: 1.2em;
+.tabMenu button:focus, .focusedTab {
+  background: #ff6b6b !important;
+  color: white;
 }
 
+/* 섹션 */
 .section {
-  margin-top: 50px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid rgba(255, 182, 193, 0.3);
+  width: 90%;
+  padding-bottom: 10px;
+  animation: fadeIn 0.8s ease-in-out;
+  /* border-bottom: 2px solid rgba(255, 182, 193, 0.3); */
 }
 
 .sectionTitle {
   font-family: 'titleFont', sans-serif;
-  font-size: 1.4em;
+  font-size: 1.6em;
   font-weight: bold;
   margin-bottom: 15px;
   border-left: 5px solid #ff6b6b;
   padding-left: 12px;
 }
 
+
+/* 차트 */
+.chartWithLegend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chartContainer {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: 'contentFont', sans-serif;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.legendContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 350px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 12px;
+  width: 100%;
+
+}
+
+.colorBox {
+  width: 22px;
+  height: 22px;
+  margin-right: 8px;
+}
+
+.legendText {
+  font-size: 25px;
+  font-family: 'contentFont', sans-serif;
+}
+
+
+/* 대화 분석 */
+.summaryText {
+  margin-top: 20px;
+  margin-left: 15px;
+  font-size: 25px;
+  line-height: 1.5;
+  font-family: 'contentFont', sans-serif;
+}
+
+
+/* 동작 분석 */
+.actionsWrapper {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 30px;
+  flex-wrap: wrap;  /* 화면 크기에 맞춰 항목들이 자동으로 정렬되도록 */
+  padding: 10px 0;
+}
+
+.actionItem {
+  background: #fff;  /* 연한 핑크 배경 */
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px #0000001a;
+  text-align: center;
+  flex:  0 0 200px;  /* 각 항목이 3등분되도록 */
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.actionItem h4 {
+  font-family: 'titleFont', sans-serif;
+  font-size: 1.1em;
+  color: #0c0c0c;
+  margin-bottom: 10px;
+}
+
+.actionItem p {
+  font-family: 'contentFont', sans-serif;
+  font-size: 1em;
+  color: #333;
+  font-weight: bold;
+}
+
+.actionItem:hover {
+  background: #fffbf9; /* 살짝 밝은 핑크로 변경 */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: scale(1.05);  /* 마우스 오버 시 살짝 커짐 */
+}
+
+
+/* 종합 평가 */
 .overallSection {
   margin-top: 30px;
   text-align: center;
@@ -242,26 +370,8 @@
   }
 }
 
-.msg {
-  margin-top: 5px;
-  font-size: 14px;
-  color: #ff4388;
-  text-align: left;
-  min-height: 16px;
-  padding-left: 5px;
-  opacity: 0;
-  animation: msgFadeIn 1s forwards;
-}
 
-.msg.visible {
-  opacity: 1;
-}
-
-@keyframes msgFadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
+/* 로딩 스피너 */
 .loading {
   font-family: 'contentFont', sans-serif;
   font-size: 1em;
