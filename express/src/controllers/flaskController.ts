@@ -76,7 +76,11 @@ export const sendFrameInfoToFlask = async (req: Request, res: Response) => {
           dominant_emotion: "알 수 없음",
           percentage: 0,
         },
-        act_analysis: ["상대방 정보가 아직 없습니다."],
+        act_analysis: {
+          is_hand: 0,
+          is_side: 0,
+          is_eye: 0,
+        },
       };
     } else {
       // 상대방이 있다면, 그 user2Id의 분석 결과를 가져오기
@@ -84,19 +88,15 @@ export const sendFrameInfoToFlask = async (req: Request, res: Response) => {
     }
 
     // 응답 데이터 설정
-    const usersResponse = {
-      room_id: room_id,
-      user1: JSON.parse(JSON.stringify(user1)),
-      user2: JSON.parse(JSON.stringify(user2Data)),
-    };
+    // const usersResponse = {
+    //   room_id: room_id,
+    //   user1: JSON.parse(JSON.stringify(user1)),
+    //   user2: JSON.parse(JSON.stringify(user2Data)),
+    // };
 
     // 동작 분석 결과 없을 때
-    if (!usersResponse.user1.act_analysis.length) {
-      usersResponse.user1.act_analysis = ["동작 분석 결과가 없습니다."];
-    }
-    if (!usersResponse.user2.act_analysis.length) {
-      usersResponse.user2.act_analysis = ["동작 분석 결과가 없습니다."];
-    }
+    user1.act_analysis = user1.act_analysis || { is_hand: 0, is_side: 0, is_eye: 0 };
+    user2Data.act_analysis = user2Data.act_analysis || { is_hand: 0, is_side: 0, is_eye: 0 };
 
     // // "2명이 모두 들어온 경우"에만 roomData 삭제
     // const usersCount = Object.keys(roomData[room_id]).length;
@@ -106,7 +106,11 @@ export const sendFrameInfoToFlask = async (req: Request, res: Response) => {
 
     res.status(200).json({
       message: "분석 성공!",
-      data: usersResponse,
+      data: {
+        room_id,
+        user1,
+        user2: user2Data,
+      },
     });
   } catch (error) {
     console.error("Flask 분석 요청 오류: ", error);
