@@ -94,7 +94,7 @@ export default function MatchingPerson() {
         <div className={styles.rightSection}>
           <div className={styles.rankContainer}>
             <span className={styles.rankText}>
-              지금 클릭하세요 당신의 운명이 로딩 중입니다!
+              지금 클릭하세요, <br/> 당신의 운명이 로딩 중입니다!
             </span>
             {/* <span className={styles.rankText}>나의 등급</span>
             <Image
