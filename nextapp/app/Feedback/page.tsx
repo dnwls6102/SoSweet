@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import React from 'react';
 import styles from './page.module.css';
 // import Image from 'next/image';
-import Link from 'next/link';
+// import Link from 'next/link';
 import { VictoryPie } from 'victory';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
@@ -122,7 +122,6 @@ export default function Feedback() {
       console.log('서버 오류:', error);
     }
   };
-
   // 비언어적 분석 받아오기
   const fetchNonverbalData = async () => {
     try {
@@ -151,6 +150,12 @@ export default function Feedback() {
       console.log('서버 오류:', error);
     }
   };
+
+  // 데이터 요청
+  useEffect(() => {
+    fetchEmotionData();
+    fetchNonverbalData();
+  }, []);
 
   return (
     <div className={styles.wrapper}>

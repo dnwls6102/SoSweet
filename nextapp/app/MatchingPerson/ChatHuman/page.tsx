@@ -6,6 +6,8 @@ import 'webrtc-adapter';
 import styles from './page.module.css';
 import Image from 'next/image';
 import Videobox from '@/components/videobox';
+import GuideModal from '@/components/guideModal';
+import Chatbot from '@/components/chatbot';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
@@ -65,9 +67,9 @@ interface NlpResponse {
 function ChatContent() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const [myEmotion, setMyEmotion] = useState('행복');
+  const [myEmotion, setMyEmotion] = useState('평온함');
   const [myValue, setMyValue] = useState(30);
-  const [remoteEmotion, setRemoteEmotion] = useState('행복');
+  const [remoteEmotion, setRemoteEmotion] = useState('평온함');
   const [remoteValue, setRemoteValue] = useState(30);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null); // 다시보기 녹화용 (Blob)
@@ -77,6 +79,8 @@ function ChatContent() {
   const router = useRouter();
   const room_id = useSelector((state: RootState) => state.socket.room);
   const [ID, setID] = useState('');
+  const [showGuide, setShowGuide] = useState(true);
+  const [guideMessage, setGuideMessage] = useState('같이 영화보러 가실래요?');
 
   const scriptRef = useRef('');
   const isRecording = useRef(false);
@@ -87,6 +91,7 @@ function ChatContent() {
 
   //대화 주제 파악을 위한 keyword dict
   const keywordRef = useRef<KeywordDict | null>(null);
+  const guideFlag = useRef(false);
 
   useEffect(() => {
     const token = Cookies.get('access');
@@ -135,16 +140,21 @@ function ChatContent() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ user_id: ID, script, room_id }),
+          body: JSON.stringify({ user_id: ID, script, room_id, keywordRef }),
           mode: 'cors',
         },
       );
 
       if (response.ok) {
         console.log('전송 성공');
-        // 대화 주제에 기반한 가이드 응답이 왔다 치고
         const data = await response.json();
         console.log(data.guide_msg);
+        setGuideMessage(data.guide_msg);
+        setShowGuide(true);
+        setTimeout(() => {
+          setShowGuide(false);
+        }, 7000); // 7초 후에 모달 닫기
+        guideFlag.current = true;
       } else {
         console.log('오류 발생');
       }
@@ -326,7 +336,8 @@ function ChatContent() {
       }
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
+          // `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
+          `http://localhost:4000/api/human/dialog/end`,
           {
             method: 'POST',
             headers: {
@@ -507,7 +518,12 @@ function ChatContent() {
         newPeerConnection.close();
       }
 
+      // socket 응답을 중복하지 않도록 처리하기
       rtcSocket.off('peerDisconnected');
+      rtcSocket.off('ready');
+      rtcSocket.off('offer');
+      rtcSocket.off('answer');
+      rtcSocket.off('candidate');
 
       // Recognition 정리
       if (recognition.current) {
@@ -538,7 +554,8 @@ function ChatContent() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
+        // `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
+        `http://localhost:4000/api/human/dialog/end`,
         {
           method: 'POST',
           headers: {
@@ -566,6 +583,8 @@ function ChatContent() {
 
   return (
     <div className={styles.wrapper}>
+      {showGuide && <GuideModal message={guideMessage} />}
+      <Chatbot emotion={remoteEmotion} message="테스트 메시지입니다." />
       <div className={styles.left}>
         <div className={styles.videoContainer}>
           <Videobox
