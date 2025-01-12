@@ -1,0 +1,31 @@
+.modalContainer {
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background-color: rgba(255, 107, 107, 0.8);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: white;
+  max-width: 90%;
+  width: auto;
+}
+
+.title {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.message {
+  font-size: 36px;
+  margin: 20px 0;
+}
+
+.subMessage {
+  font-size: 32px;
+  margin-top: 20px;
+} 
