@@ -22,7 +22,7 @@
   margin: 0 auto;
   max-width: 90%;
   padding-left: 20px;
-  overflow-x: hidden;
+  animation: fadeIn 0.8s ease-in-out;
 }
 
 /* 당신의 소개팅력은? */
@@ -48,15 +48,16 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-  padding-left: 20px;
   background: rgba(255, 255, 255, 0.5);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   font-family: 'NotoSans', Arial, sans-serif;
   color: #333;
-  animation: fadeIn 0.8s ease-in-out;
   position: relative;
   padding-top: 50px; /* tabMenu와 여백을 맞추기 위한 패딩 */
-  border-radius: 20px;
+  border-top-left-radius: 0;   /* 상단 왼쪽 모서리 제외 */
+  border-top-right-radius: 20px;  /* 상단 오른쪽 모서리 제외 */
+  border-bottom-left-radius: 20px;  /* 하단 왼쪽 모서리 */
+  border-bottom-right-radius: 20px; /* 하단 오른쪽 모서리 */
 }
 
 
@@ -67,25 +68,28 @@
   left: 0; /* 왼쪽 여백을 container에 맞추기 위해 0으로 설정 */
   width: 60%; /* container의 너비에 맞추기 */
   z-index: 100; /* 다른 요소들보다 위에 보이도록 */
-  padding-left: 20px; /* container의 왼쪽 여백에 맞추기 위해 padding-left */
-  margin-top: 0;
   padding: 0; /* 추가 여백 제거 */
-  margin: 0; /* 외부 여백 제거 */
-  border-radius: 10px;
+  border-top-left-radius: 20px;   /* 상단 왼쪽 모서리 제외 */
+  border-top-right-radius: 20px;  /* 상단 오른쪽 모서리 제외 */
+  border-bottom-left-radius: 0;  /* 하단 왼쪽 모서리 */
+  border-bottom-right-radius: 0; /* 하단 오른쪽 모서리 */
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   overflow: hidden;
+  text-align: center;
+  flex-wrap: wrap
 }
 
 .tabMenu button {
-  flex: 1;
+  flex: 1 1 auto;
   font-family: 'titleFont', sans-serif;
-  font-size: 1.6em;
+  font-size: calc(1.2em + 0.5vw);
   padding: 15px 30px;
   background: rgba(255, 255, 255, 0.5);
   border: none;
   cursor: pointer;
   text-align: center;
+  justify-content: center;
 }
 
 .tabMenu button:hover {
@@ -97,12 +101,12 @@
   color: white;
 }
 
+
 /* 섹션 */
 .section {
   width: 90%;
   padding-bottom: 10px;
   animation: fadeIn 0.8s ease-in-out;
-  /* border-bottom: 2px solid rgba(255, 182, 193, 0.3); */
 }
 
 .sectionTitle {
@@ -172,43 +176,105 @@
 
 /* 동작 분석 */
 .actionsWrapper {
+  margin: 0 auto;
+  font-family: 'contentFont', sans-serif;
+  justify-content: center;
+  align-items: center;
   display: flex;
-  justify-content: space-evenly;
   gap: 30px;
-  flex-wrap: wrap;  /* 화면 크기에 맞춰 항목들이 자동으로 정렬되도록 */
   padding: 10px 0;
+  flex-wrap: wrap;
 }
 
 .actionItem {
-  background: #fff;  /* 연한 핑크 배경 */
-  padding: 20px;
+  width: 100%;
+  max-width: 200px;
+  background: #fff;
+  padding: 20px 48px;
   border-radius: 12px;
   border: 1px #0000001a;
   text-align: center;
-  flex:  0 0 200px;  /* 각 항목이 3등분되도록 */
+  flex:  1 1 auto;
   transition: all 0.3s ease-in-out;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   cursor: pointer;
+  width: 500px;
 }
 
 .actionItem h4 {
   font-family: 'titleFont', sans-serif;
-  font-size: 1.1em;
+  font-size: 25px;
   color: #0c0c0c;
   margin-bottom: 10px;
 }
 
 .actionItem p {
   font-family: 'contentFont', sans-serif;
-  font-size: 1em;
+  font-size: 25px;
   color: #333;
   font-weight: bold;
 }
 
 .actionItem:hover {
-  background: #fffbf9; /* 살짝 밝은 핑크로 변경 */
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   transform: scale(1.05);  /* 마우스 오버 시 살짝 커짐 */
+}
+
+
+/* 상대방의 평가 */
+.commentSection {
+  width: 50%;
+  margin: 0 auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 15px;
+}
+
+.commentTitle {
+  font-family: 'titleFont', sans-serif;
+  font-size: 1.8em;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+  border-bottom: 2px solid #ff6b6b;
+  padding-bottom: 8px;
+}
+
+.commentContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: left;
+  margin-top: 20px;
+}
+
+.ratingWrapper, .matchingStatusWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ratingHeart {
+  font-size: 1.8em;
+  color: #ff0000;
+  letter-spacing: 1px;
+}
+
+.matchingStatus {
+  font-family: 'contentFont', sans-serif;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #ff4757;
+  padding: 8px 12px; /* 내부 여백 추가 */
+  border-radius: 30px; /* 둥근 테두리 */
+  background-color: rgba(255, 107, 107, 0.1); /* 연한 배경색 */
+  text-align: center; /* 중앙 정렬 */
+}
+
+.commentText {
+  font-family: 'contentFont', sans-serif;
+  font-size: 1.6em;
+  text-align: left;
+  margin-top: 20px;
 }
 
 
@@ -224,7 +290,7 @@
 
 .overallTitle {
   font-family: 'titleFont', sans-serif;
-  font-size: 1.7em;
+  font-size: 1.8em;
   color: #461713;
   margin-bottom: 10px;
   letter-spacing: 2px;
@@ -232,7 +298,7 @@
 
 .overallText {
   font-family: 'contentFont', sans-serif;
-  font-size: 1.2em;
+  font-size: 1.5em;
   font-weight: bold;
   color: #333;
   line-height: 1.6;
@@ -243,6 +309,7 @@
   font-weight: bold;
 }
 
+/* 등급 */
 .rankContainer {
   display: flex;
   align-items: center;
@@ -278,13 +345,15 @@
   letter-spacing: 1.5px;
 }
 
+
+/* 실전 대비 개선 */
 .tipsSection {
   margin-top: 40px;
 }
 
 .tipsTitle {
   font-family: 'titleFont', sans-serif;
-  font-size: 1.4em;
+  font-size: 1.7em;
   font-weight: bold;
   margin-bottom: 12px;
 }
@@ -294,7 +363,7 @@
   padding: 14px;
   border-radius: 12px;
   font-family: 'contentFont', sans-serif;
-  font-size: 1em;
+  font-size: 1.2em;
 }
 
 .tipsContent ul {
@@ -322,6 +391,7 @@
   font-size: 0.9em;
   color: #777;
   margin-top: 30px;
+  margin-bottom: 20px;
 }
 
 /* Button Styles */
@@ -346,7 +416,6 @@
   display: block;
   margin-left: auto;
   margin-right: auto;
-  box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
   text-decoration: none;
 }
 
@@ -371,7 +440,7 @@
 /* 로딩 스피너 */
 .loading {
   font-family: 'contentFont', sans-serif;
-  font-size: 1em;
+  font-size: 1.4em;
   color: #ff6b6b;
   display: flex;
   flex-direction: column;
@@ -385,8 +454,8 @@
   border: 4px solid #f3f3f3;
   border-top: 4px solid #ff6b6b;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   animation: spin 2s linear infinite;
 }
 

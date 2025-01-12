@@ -8,6 +8,10 @@ const roomData: {
     [user_id: string]: any;
   };
 } = {}; // 빈 객체로 초기화
+  [room_id: string]: {
+    [user_id: string]: any;
+  };
+} = {}; // 빈 객체로 초기화
 
 // Flask 에서의 return 값
 // {
@@ -25,7 +29,14 @@ const roomData: {
 export const sendFrameInfoToFlask = async (req: Request, res: Response) => {
   try {
     const { frame, timestamp, user_id, room_id } = req.body;
+  try {
+    const { frame, timestamp, user_id, room_id } = req.body;
 
+    if (!frame || !timestamp || !user_id || !room_id) {
+      return res.status(400).json({
+        message: "frame, timestamp, user_id, room_id는 필수 입력입니다.",
+      });
+    }
     if (!frame || !timestamp || !user_id || !room_id) {
       return res.status(400).json({
         message: "frame, timestamp, user_id, room_id는 필수 입력입니다.",
@@ -42,7 +53,22 @@ export const sendFrameInfoToFlask = async (req: Request, res: Response) => {
         body: JSON.stringify({ frame, timestamp, user_id, room_id }),
       }
     );
+    const flaskResponse = await fetch(
+      `${FLASK_SERVER_URL}/api/human/frameInfo`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ frame, timestamp, user_id, room_id }),
+      }
+    );
 
+    if (!flaskResponse.ok) {
+      throw new Error(
+        `Flask 서버 오류: ${flaskResponse.statusText || "알 수 없는 오류"}`
+      );
+    }
     if (!flaskResponse.ok) {
       throw new Error(
         `Flask 서버 오류: ${flaskResponse.statusText || "알 수 없는 오류"}`
@@ -57,13 +83,27 @@ export const sendFrameInfoToFlask = async (req: Request, res: Response) => {
       roomData[room_id] = {};
     }
     roomData[room_id][user_id] = flaskResult;
+    const flaskResult = await flaskResponse.json();
 
+    // 상대방 user_id 에 대한 데이터도 오면 취합해서 같이 클라이언트로 보내기
+    // roomData에 해당 방의 데이터 저장
+    if (!roomData[room_id]) {
+      roomData[room_id] = {};
+    }
+    roomData[room_id][user_id] = flaskResult;
+
+    // 현재 방에 존재하는 user_id 목록
+    const usersInRoom = Object.keys(roomData[room_id]);
     // 현재 방에 존재하는 user_id 목록
     const usersInRoom = Object.keys(roomData[room_id]);
 
     // user1은 이번에 들어온 user_id
     let user1 = roomData[room_id][user_id];
+    // user1은 이번에 들어온 user_id
+    let user1 = roomData[room_id][user_id];
 
+    // 상대방 user_id 찾기
+    const user2Id = usersInRoom.find((id) => id !== user_id); // string | undefined
     // 상대방 user_id 찾기
     const user2Id = usersInRoom.find((id) => id !== user_id); // string | undefined
 
@@ -117,3 +157,4 @@ export const sendFrameInfoToFlask = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Flask 서버 요청 실패", error });
   }
 };
+
