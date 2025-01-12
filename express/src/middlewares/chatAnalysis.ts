@@ -245,7 +245,7 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
     const AiPrompt = createAiPrompt(user_id, "AI");
     completedChat[user_id] = [];
     completedChat[user_id].push(AiPrompt);
-    console.log("프롬프트 입력 완료, AI");
+    console.log("프롬프트 입력 완료, AI", completedChat[user_id]);
 
     completedChat[user_id].push(...newMessages);
     console.log("분석용 AI와의 대화 기록 완성");
@@ -269,7 +269,7 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
     const AiPrompt = createAiPrompt(user_id, "사람");
     completedChat[user_id] = [];
     completedChat[user_id].push(AiPrompt);
-    console.log("프롬프트 입력 완료, 사람");
+    console.log("프롬프트 입력 완료, 사람", completedChat[user_id]);
 
     // LLM의 응답을 담을 객체 초기화
     chatAnalysisMap.set(user_id, "");
