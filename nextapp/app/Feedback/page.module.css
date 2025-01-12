@@ -182,9 +182,9 @@
 
 .actionItem {
   width: 100%;
-  max-width: 200px;
+  max-width: 250px;
   background: #fff;
-  padding: 20px 48px;
+  padding: 18px 48px;
   border-radius: 12px;
   border: 1px #0000001a;
   text-align: center;
@@ -197,14 +197,14 @@
 
 .actionItem h4 {
   font-family: 'titleFont', sans-serif;
-  font-size: 25px;
-  color: #0c0c0c;
+  font-size: 27px;
+  color: #d14788;
   margin-bottom: 10px;
 }
 
 .actionItem p {
   font-family: 'contentFont', sans-serif;
-  font-size: 25px;
+  font-size: 26px;
   color: #333;
   font-weight: bold;
 }
@@ -213,6 +213,16 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   transform: scale(1.05); /* 마우스 오버 시 살짝 커짐 */
 }
+
+.icon {
+  display: inline-block; /* 아이콘을 한 줄에 표시 */
+  transition: transform 0.3s ease-in-out; /* 애니메이션 효과 */
+}
+
+.icon:hover {
+  transform: scale(1.1); /* 호버 시 살짝 확대 */
+}
+
 
 /* 상대방의 평가 */
 .commentSection {

@@ -10,6 +10,7 @@ import { RootState } from '@/store/store';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import router from 'next/router';
+import Image from 'next/image';
 
 const COLORS = [
   '#FF6384',
@@ -240,17 +241,29 @@ export default function Feedback() {
                 typeof nonverbal === 'object' && nonverbal.counters ? (
                   <div className={styles.actionsWrapper}>
                     <div className={styles.actionItem}>
-                      <h1>👋</h1>
+                      <Image
+                        src="/facepalm.svg"
+                        alt="Facepalm Icon"
+                        width={120}
+                        height={110}
+                        className={styles.icon}
+                      />
                       <h4>산만한 손 동작</h4>
                       <p>{nonverbal.counters.hand_message_count} 회</p>
                     </div>
-                    <div className={styles.actionItem}>
+                    {/* <div className={styles.actionItem}>
                       <h1>🙆‍♀️</h1>
                       <h4>산만한 팔 동작</h4>
                       <p>{nonverbal.counters.folded_arm_message_count} 회</p>
-                    </div>
+                    </div> */}
                     <div className={styles.actionItem}>
-                      <h1>🕺</h1>
+                      <Image
+                        src="/sidemove.svg"
+                        alt="Sidemove Icon"
+                        width={120}
+                        height={110}
+                        className={styles.icon}
+                      />
                       <h4>좌우 움직임</h4>
                       <p>{nonverbal.counters.side_move_message_count} 회</p>
                     </div>

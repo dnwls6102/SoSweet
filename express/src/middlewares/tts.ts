@@ -31,7 +31,7 @@ async function initTTS(req: Request, res: Response): Promise<void> {
 // TTS 미들웨어
 async function ttsMiddleware(req: Request, res: Response): Promise<void> {
   try {
-    const { script, user_gender} = req.body; // 클라이언트에서 텍스트를 전달받음
+    const { script, user_gender } = req.body; // 클라이언트에서 텍스트를 전달받음
     if (!script) {
       res.status(500).send("AI 응답 데이터가 없습니다.");
       return;
@@ -56,6 +56,7 @@ async function ttsMiddleware(req: Request, res: Response): Promise<void> {
     res.set({
       "Content-Type": "audio/opus",
       "Content-Disposition": 'attachment; filename="output_speech.opus"',
+      "X-script": script,
     });
     res.send(buffer);
   } catch (error) {
