@@ -1,18 +1,18 @@
 @font-face {
   font-family: 'logoFont';
-  src: url("@/fonts/Cafe24Ssurround-v2.0.ttf") format('truetype');
+  src: url('../../fonts/Cafe24Ssurround-v2.0.ttf') format('truetype');
   font-weight: bold;
 }
 
 @font-face {
   font-family: 'titleFont';
-  src: url("@/fonts/NotoSansKR-Black.ttf") format('truetype');
+  src: url('../../fonts/NotoSansKR-Black.ttf') format('truetype');
   font-weight: bold;
 }
 
 @font-face {
   font-family: 'contentFont';
-  src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
+  src: url('../../fonts/NotoSansKR-Regular.ttf') format('truetype');
   font-weight: normal;
 }
 
@@ -40,7 +40,6 @@
   color: #ff6b6b;
 }
 
-
 /* 컨테이너 */
 .container {
   display: flex;
@@ -58,7 +57,6 @@
   padding-top: 50px; /* tabMenu와 여백을 맞추기 위한 패딩 */
   border-radius: 20px;
 }
-
 
 /* 탭 메뉴 */
 .tabMenu {
@@ -92,7 +90,8 @@
   background-color: #fabebe;
 }
 
-.tabMenu button:focus, .focusedTab {
+.tabMenu button:focus,
+.focusedTab {
   background: #ff6b6b !important;
   color: white;
 }
@@ -113,7 +112,6 @@
   border-left: 5px solid #ff6b6b;
   padding-left: 12px;
 }
-
 
 /* 차트 */
 .chartWithLegend {
@@ -145,7 +143,6 @@
   margin-bottom: 8px;
   gap: 12px;
   width: 100%;
-
 }
 
 .colorBox {
@@ -159,7 +156,6 @@
   font-family: 'contentFont', sans-serif;
 }
 
-
 /* 대화 분석 */
 .summaryText {
   margin-top: 20px;
@@ -169,23 +165,22 @@
   font-family: 'contentFont', sans-serif;
 }
 
-
 /* 동작 분석 */
 .actionsWrapper {
   display: flex;
   justify-content: space-evenly;
   gap: 30px;
-  flex-wrap: wrap;  /* 화면 크기에 맞춰 항목들이 자동으로 정렬되도록 */
+  flex-wrap: wrap; /* 화면 크기에 맞춰 항목들이 자동으로 정렬되도록 */
   padding: 10px 0;
 }
 
 .actionItem {
-  background: #fff;  /* 연한 핑크 배경 */
+  background: #fff; /* 연한 핑크 배경 */
   padding: 20px;
   border-radius: 12px;
   border: 1px #0000001a;
   text-align: center;
-  flex:  0 0 200px;  /* 각 항목이 3등분되도록 */
+  flex: 0 0 200px; /* 각 항목이 3등분되도록 */
   transition: all 0.3s ease-in-out;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   cursor: pointer;
@@ -208,9 +203,8 @@
 .actionItem:hover {
   background: #fffbf9; /* 살짝 밝은 핑크로 변경 */
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  transform: scale(1.05);  /* 마우스 오버 시 살짝 커짐 */
+  transform: scale(1.05); /* 마우스 오버 시 살짝 커짐 */
 }
-
 
 /* 종합 평가 */
 .overallSection {
@@ -259,14 +253,24 @@
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes scaleEffect {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.15); }
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.15);
+  }
 }
 
 .rankText {
@@ -315,7 +319,6 @@
   left: 0;
   font-size: 1em;
 }
-
 
 .footer {
   text-align: center;
@@ -367,7 +370,6 @@
   }
 }
 
-
 /* 로딩 스피너 */
 .loading {
   font-family: 'contentFont', sans-serif;
@@ -377,7 +379,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%;  /* 부모 요소가 높이를 정의했을 경우에 필요 */
+  height: 100%; /* 부모 요소가 높이를 정의했을 경우에 필요 */
 }
 
 .spinner {
@@ -391,6 +393,10 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
