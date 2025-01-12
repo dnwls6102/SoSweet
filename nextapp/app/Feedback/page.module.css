@@ -16,10 +16,6 @@
   font-weight: normal;
 }
 
-body {
-  overflow-x: hidden;
-}
-
 .wrapper {
   align-items: center;
   justify-content: center;

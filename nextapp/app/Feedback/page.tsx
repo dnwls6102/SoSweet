@@ -217,10 +217,7 @@ export default function Feedback() {
   // 데이터 요청
   useEffect(() => {
     fetchEmotionData();
-    fetchVerbalData();
     fetchNonverbalData();
-    fetchNonverbalTimeline();
-    fetchSummary();
   }, []);
 
   return (
