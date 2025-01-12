@@ -86,6 +86,25 @@ export const sendFrameInfoToFlask = async (req: Request, res: Response) => {
       // 상대방이 있다면, 그 user2Id의 분석 결과를 가져오기
       user2Data = roomData[room_id][user2Id];
     }
+    let user2Data: any; // 상대방의 실제 분석 데이터 객체
+    if (!user2Id) {
+      // 아직 상대방이 roomData에 등록되지 않았음
+      user2Data = {
+        user_id: "unknown",
+        emo_analysis_result: {
+          dominant_emotion: "알 수 없음",
+          percentage: 0,
+        },
+        act_analysis: {
+          is_hand: 0,
+          is_side: 0,
+          is_eye: 0,
+        },
+      };
+    } else {
+      // 상대방이 있다면, 그 user2Id의 분석 결과를 가져오기
+      user2Data = roomData[room_id][user2Id];
+    }
 
     // 응답 데이터 설정
     // const usersResponse = {
