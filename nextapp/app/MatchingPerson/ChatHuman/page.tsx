@@ -507,7 +507,12 @@ function ChatContent() {
         newPeerConnection.close();
       }
 
+      // socket 응답을 중복하지 않도록 처리하기
       rtcSocket.off('peerDisconnected');
+      rtcSocket.off('ready');
+      rtcSocket.off('offer');
+      rtcSocket.off('answer');
+      rtcSocket.off('candidate');
 
       // Recognition 정리
       if (recognition.current) {
