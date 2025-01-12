@@ -86,17 +86,6 @@ function ChatContent() {
     }
   }, [router]);
 
-  useEffect(() => {
-    const token = Cookies.get('access');
-    if (token) {
-      const decoded = jwtDecode<UserPayload>(token);
-      setID(decoded.user_id);
-    } else {
-      alert('유효하지 않은 접근입니다.');
-      router.replace('/');
-    }
-  }, [router]);
-
   const tryNlp = async (script: string) => {
     try {
       const response = await fetch(
