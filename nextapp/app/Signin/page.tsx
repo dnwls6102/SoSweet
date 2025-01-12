@@ -20,7 +20,6 @@ export default function Signin() {
   const [flag, setFlag] = useState(false);
 
   const [toastMsg, setToastMsg] = useState(''); // 토스트 메시지
-  // const [showToast, setShowToast] = useState(false); // 토스트 표시 여부
 
   const router = useRouter();
 
@@ -77,6 +76,7 @@ export default function Signin() {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/users/check`,
         {
+          // const response = await fetch('http://localhost:4000/users/check', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ export default function Signin() {
 
   const handleSubmit = async () => {
     if (flag === false) {
-      alert('비밀번호 체크를 다시 한 번 해보세요');
+      setToastMsg('비밀번호 체크를 다시 한 번 해보세요');
     } else {
       const userData = {
         user_id: id,
@@ -119,6 +119,7 @@ export default function Signin() {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/users`,
           {
+            // const response = await fetch('http://localhost:4000/users', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -129,7 +130,7 @@ export default function Signin() {
 
         if (response.ok) {
           console.log('회원가입 성공');
-          alert('회원가입 성공!');
+          setToastMsg('회원가입 성공!');
           router.push('/');
         } else {
           console.error('회원가입 실패');
