@@ -135,7 +135,7 @@ function ChatContent() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ user_id: ID, script, room_id, keywordRef }),
+          body: JSON.stringify({ user_id: ID, script, room_id }),
           mode: 'cors',
         },
       );
