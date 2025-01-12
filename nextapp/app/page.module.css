@@ -17,13 +17,19 @@
 
 @font-face {
   font-family: 'logoFont';
-  src: url("../fonts/Cafe24Ssurround-v2.0.ttf") format('truetype');
+  src: url("@/fonts/Cafe24Ssurround-v2.0.ttf") format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'titleFont';
+  src: url("@/fonts/NotoSansKR-Black.ttf") format('truetype');
   font-weight: bold;
 }
 
 @font-face {
   font-family: 'contentFont';
-  src: url("../fonts/NotoSansKR-Regular.ttf") format('truetype');
+  src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
   font-weight: normal;
 }
 
@@ -119,4 +125,49 @@
 .button:active {
   transform: translateY(0);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toast {
+  position: fixed; /* 화면에 고정 */
+  top: 10%;  /* 화면 위에서 조금 아래 */
+  left: 50%; /* 가로 중앙 */
+  transform: translateX(-50%); /* 가운데 정렬 */
+  background-color: rgba(255, 235, 241, 0.95); /* 부드러운 핑크색 배경 */
+  color: #e84393; /* 텍스트 색상 */
+  font-family: 'titleFont', sans-serif;
+  font-size: 15px;
+  padding: 11px 22px;
+  border-radius: 12px; /* 둥근 모서리 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  opacity: 0; /* 초기 상태 숨김 */
+  z-index: 1000; /* 다른 요소 위 */
+  transition: opacity 0.4s ease, transform 0.4s ease; /* 부드러운 전환 */
+  pointer-events: none; /* 클릭 방지 */
+  animation: fade-in-out 3s ease-in-out;
+}
+
+.toast.visible {
+  opacity: 0.9; /* 보이기 */
+  transform: translate(-50%, 0); /* 원래 위치로 */
+}
+
+.toast.hidden {
+  opacity: 0; /* 숨기기 */
+  transform: translate(-50%, -20px); /* 위로 사라짐 */
+}
+
+
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) translateX(-50%);
+  }
+  10%, 90% {
+    opacity: 1;
+    transform: translateY(0) translateX(-50%);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(10px) translateX(-50%);
+  }
 }

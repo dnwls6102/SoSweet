@@ -1,15 +1,8 @@
-.back {
+:root {
     background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%);
     background-attachment: fixed;
     padding-top: 100px;
     min-height: 100vh;
     height: 100%;
     box-sizing: border-box;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow-x: hidden;
 }
