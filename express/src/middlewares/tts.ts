@@ -30,8 +30,9 @@ async function initTTS(req: Request, res: Response): Promise<void> {
 
 // TTS 미들웨어
 async function ttsMiddleware(req: Request, res: Response): Promise<void> {
+  const { script, user_gender } = req.body; // 클라이언트에서 텍스트를 전달받음
+  
   try {
-    const { script, user_gender } = req.body; // 클라이언트에서 텍스트를 전달받음
     if (!script) {
       res.status(500).send("AI 응답 데이터가 없습니다.");
       return;
@@ -51,16 +52,21 @@ async function ttsMiddleware(req: Request, res: Response): Promise<void> {
 
     // 음성 데이터를 버퍼로 변환
     const buffer: Buffer = Buffer.from(await opus.arrayBuffer());
-
+    console.log('script:', script);
     // 음성 데이터를 HTTP 응답으로 반환
     res.set({
       "Content-Type": "audio/opus",
       "Content-Disposition": 'attachment; filename="output_speech.opus"',
-      "X-script": script,
+      "X-Script": Buffer.from(script).toString('base64'),
     });
     res.send(buffer);
   } catch (error) {
     console.error("TTS 생성 중 오류 발생:", (error as Error).message);
+    if (script) {
+      res.set({
+        "X-Script": Buffer.from(script).toString('base64'),
+      });
+    }
     res.status(500).json({ error: "TTS 생성 중 오류가 발생했습니다." });
   }
 }
