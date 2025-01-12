@@ -357,14 +357,25 @@ function ChatContent() {
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = null;
       }
+      // 종료 당한 클라이언트 카메라/오디오 해제
+      await new Promise((resolve) => {
+        if (localVideoRef.current?.srcObject) {
+          const tracks = (
+            localVideoRef.current.srcObject as MediaStream
+          ).getTracks();
+          console.log('tracks : ', tracks);
+          tracks.forEach((track) => track.stop());
+          // tracks.forEach((track) => track.stop());
+        }
+        resolve('good');
+      });
       alert('상대방이 연결을 종료했습니다.');
       if (mediaRecorderRef.current) {
         mediaRecorderRef.current.stop();
       }
       try {
         const response = await fetch(
-          // `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
-          `http://localhost:4000/api/human/dialog/end`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
           {
             method: 'POST',
             headers: {
@@ -551,14 +562,6 @@ function ChatContent() {
         mediaRecorderRef.current.stop();
       }
 
-      // 스트림 정리
-      if (localVideoRef.current?.srcObject) {
-        const tracks = (
-          localVideoRef.current.srcObject as MediaStream
-        ).getTracks();
-        tracks.forEach((track) => track.stop());
-      }
-
       // PeerConnection 정리
       if (newPeerConnection.signalingState !== 'closed') {
         newPeerConnection.close();
@@ -581,6 +584,19 @@ function ChatContent() {
   }, [room_id, recordedChunks, dispatch, router, ID, rtcSocket]);
 
   const handleNavigation = async () => {
+    // 종료한 클라이언트 카메라/오디오 해제
+    await new Promise((resolve) => {
+      if (localVideoRef.current?.srcObject) {
+        const tracks = (
+          localVideoRef.current.srcObject as MediaStream
+        ).getTracks();
+        console.log('tracks : ', tracks);
+        tracks.forEach((track) => track.stop());
+        // tracks.forEach((track) => track.stop());
+      }
+      resolve('good');
+    });
+
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
       console.log('녹화 중지됨!');
@@ -600,8 +616,7 @@ function ChatContent() {
 
     try {
       const response = await fetch(
-        // `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
-        `http://localhost:4000/api/human/dialog/end`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
         {
           method: 'POST',
           headers: {
