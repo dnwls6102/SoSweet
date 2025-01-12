@@ -12,6 +12,7 @@ import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store/store';
+import FeedbackModal from '@/components/feedbackModal';
 
 interface UserPayload {
   user_id: string;
@@ -101,6 +102,8 @@ function ChatContent() {
   //대화 주제 파악을 위한 keyword dict
   const keywordRef = useRef<KeywordDict | null>(null);
 
+  const [showFeedback, setShowFeedback] = useState(false);
+
   useEffect(() => {
     const token = Cookies.get('access');
     if (token) {
@@ -132,26 +135,43 @@ function ChatContent() {
         filler_flag.current = result.filler_flag;
         noend_flag.current = result.noend_flag;
         nopolite_flag.current = result.nopolite_flag;
+        console.log('말 더듬음: ', noword_flag.current);
+        console.log('추임새 많음: ', filler_flag.current);
+        console.log('문장 끝 없음: ', noend_flag.current);
+        console.log('반말 사용: ', nopolite_flag.current);
       } else {
         const result = await response.json();
         console.log(result.error);
       }
 
-      let temp_msg = '';
+      // 메시지 배열을 사용하여 필요한 메시지들을 수집
+      const messages: string[] = [];
+
       if (noword_flag.current) {
-        temp_msg += '\n말을 너무 더듬고 있습니다.';
+        messages.push('말을 너무 더듬고 있습니다.');
       }
       if (filler_flag.current) {
-        temp_msg +=
-          '\n아니 근데 이건 진짜 좀 많이 쓰는데요? 추임새를 줄여봅시다.';
+        messages.push(
+          '아니 근데 이건 진짜 좀 많이 쓰는데요? 추임새를 줄여봅시다.',
+        );
       }
       if (noend_flag.current) {
-        temp_msg += '\n가급적 완성된 문장으로 말해봅시다.';
+        messages.push('가급적 완성된 문장으로 말해봅시다.');
       }
       if (nopolite_flag.current) {
-        temp_msg += '\n처음 만나는 자리에서는 존댓말을 사용해주세요.';
+        messages.push('처음 만나는 자리에서는 존댓말을 사용해주세요.');
       }
-      setVerbalMsg(temp_msg);
+
+      // 수집된 메시지들을 줄바꿈으로 연결하여 한 번에 설정
+      setVerbalMsg(messages.join('\n'));
+
+      // 메시지가 있을 경우에만 피드백 모달 표시
+      if (messages.length > 0) {
+        setShowFeedback(true);
+        setTimeout(() => {
+          setShowFeedback(false);
+        }, 5000); // 5초 후에 모달 닫기
+      }
     } catch (error) {
       console.log('서버 오류 발생: ', error);
     }
@@ -645,7 +665,8 @@ function ChatContent() {
   return (
     <div className={styles.wrapper}>
       {showGuide && <GuideModal message={guideMessage} />}
-      <Chatbot emotion={remoteEmotion} message={emotion_msg + verbal_msg} />
+      {showFeedback && <FeedbackModal message={verbal_msg} />}
+      <Chatbot emotion={remoteEmotion} message={emotion_msg} />
       <div className={styles.left}>
         <div className={styles.videoContainer}>
           <Videobox

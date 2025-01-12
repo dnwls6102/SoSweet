@@ -12,6 +12,7 @@ import Image from 'next/image';
 interface UserPayload {
   user_id: string;
   user_gender: string;
+  user_nickname: string;
   iat: number;
   exp: number;
 }
@@ -56,7 +57,7 @@ export default function Chat() {
   const router = useRouter();
   const [user_id, setUserId] = useState('');
   const [user_gender, setUserGender] = useState('');
-
+  const [user_nickname, setUserNickname] = useState('');
   // 토큰 디코딩을 위한 useEffect
   useEffect(() => {
     const token = Cookies.get('access');
@@ -64,6 +65,7 @@ export default function Chat() {
       const decoded = jwtDecode<UserPayload>(token);
       setUserId(decoded.user_id);
       setUserGender(decoded.user_gender);
+      setUserNickname(decoded.user_nickname);
     } else {
       alert('유효하지 않은 접근입니다.');
       router.replace('/');
@@ -150,6 +152,16 @@ export default function Chat() {
       );
 
       if (response.ok) {
+        const encodedScript = await response.headers.get('X-Script');
+        console.log('encoded script:', encodedScript);
+        if (encodedScript) {
+          const decodedBytes = Buffer.from(encodedScript, 'base64');
+          const decodedScript = new TextDecoder('utf-8').decode(decodedBytes);
+          console.log('decoded script:', decodedScript);
+          setScript((prev) =>
+            prev ? `${prev}\n${decodedScript}` : decodedScript,
+          );
+        }
         const audioBlob = await response.blob(); // 서버 응답 데이터를 Blob으로 변환
         const audioUrl = URL.createObjectURL(audioBlob); // Blob에서 재생 가능한 URL 생성
         const audio = new Audio(audioUrl); // Audio 객체 생성
@@ -423,7 +435,7 @@ export default function Chat() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ script: 'end', user_id }),
+          body: JSON.stringify({ script: 'end', user_id, user_nickname }),
           credentials: 'include',
         },
       );
