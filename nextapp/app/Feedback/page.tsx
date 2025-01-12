@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import React from 'react';
 import styles from './page.module.css';
 // import Image from 'next/image';
-import Link from 'next/link';
+// import Link from 'next/link';
 import { VictoryPie } from 'victory';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
@@ -176,64 +176,10 @@ export default function Feedback() {
     }
   };
 
-  // 비언어적 습관 몇 분 몇 초에 했는지 받아오기
-  const fetchNonverbalTimeline = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback/timeline/${userID}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
-      if (response.ok) {
-        const timelineData = await response.json();
-        console.log('비언어적 습관 시간 데이터:', timelineData); // 테스트용, 나중에 삭제 가능
-      } else {
-        console.log(
-          '비언어적 습관 시간 데이터 가져오기 실패:',
-          response.status,
-        );
-      }
-    } catch (error) {
-      console.log('서버 오류:', error);
-    }
-  };
-
-  // 사용자 대화 한 줄 평가 받아오기
-  const fetchSummary = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feedback?userID=${userID}&number=${number}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
-      if (response.ok) {
-        const summary = await response.json();
-        setSummary(summary.comment);
-      } else {
-        console.log('한 줄 평가 데이터 가져오기 실패:', response.status);
-      }
-    } catch (error) {
-      console.log('서버 오류:', error);
-    }
-  };
-
   // 데이터 요청
   useEffect(() => {
     fetchEmotionData();
-    fetchVerbalData();
     fetchNonverbalData();
-    fetchNonverbalTimeline();
-    fetchSummary();
   }, []);
 
   return (
