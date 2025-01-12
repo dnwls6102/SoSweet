@@ -1,18 +1,18 @@
 @font-face {
   font-family: 'logoFont';
-  src: url("@/fonts/Cafe24Ssurround-v2.0.ttf") format('truetype');
+  src: url('../../fonts/Cafe24Ssurround-v2.0.ttf') format('truetype');
   font-weight: bold;
 }
 
 @font-face {
   font-family: 'titleFont';
-  src: url("@/fonts/NotoSansKR-Black.ttf") format('truetype');
+  src: url('../../fonts/NotoSansKR-Black.ttf') format('truetype');
   font-weight: bold;
 }
 
 @font-face {
   font-family: 'contentFont';
-  src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
+  src: url('../../fonts/NotoSansKR-Regular.ttf') format('truetype');
   font-weight: normal;
 }
 
@@ -40,7 +40,6 @@
   color: #ff6b6b;
 }
 
-
 /* 컨테이너 */
 .container {
   display: flex;
@@ -54,12 +53,11 @@
   color: #333;
   position: relative;
   padding-top: 50px; /* tabMenu와 여백을 맞추기 위한 패딩 */
-  border-top-left-radius: 0;   /* 상단 왼쪽 모서리 제외 */
-  border-top-right-radius: 20px;  /* 상단 오른쪽 모서리 제외 */
-  border-bottom-left-radius: 20px;  /* 하단 왼쪽 모서리 */
+  border-top-left-radius: 0; /* 상단 왼쪽 모서리 제외 */
+  border-top-right-radius: 20px; /* 상단 오른쪽 모서리 제외 */
+  border-bottom-left-radius: 20px; /* 하단 왼쪽 모서리 */
   border-bottom-right-radius: 20px; /* 하단 오른쪽 모서리 */
 }
-
 
 /* 탭 메뉴 */
 .tabMenu {
@@ -69,15 +67,15 @@
   width: 60%; /* container의 너비에 맞추기 */
   z-index: 100; /* 다른 요소들보다 위에 보이도록 */
   padding: 0; /* 추가 여백 제거 */
-  border-top-left-radius: 20px;   /* 상단 왼쪽 모서리 제외 */
-  border-top-right-radius: 20px;  /* 상단 오른쪽 모서리 제외 */
-  border-bottom-left-radius: 0;  /* 하단 왼쪽 모서리 */
+  border-top-left-radius: 20px; /* 상단 왼쪽 모서리 제외 */
+  border-top-right-radius: 20px; /* 상단 오른쪽 모서리 제외 */
+  border-bottom-left-radius: 0; /* 하단 왼쪽 모서리 */
   border-bottom-right-radius: 0; /* 하단 오른쪽 모서리 */
   display: flex;
   justify-content: space-evenly;
   overflow: hidden;
   text-align: center;
-  flex-wrap: wrap
+  flex-wrap: wrap;
 }
 
 .tabMenu button {
@@ -96,11 +94,11 @@
   background-color: #fabebe;
 }
 
-.tabMenu button:focus, .focusedTab {
+.tabMenu button:focus,
+.focusedTab {
   background: #ff6b6b !important;
   color: white;
 }
-
 
 /* 섹션 */
 .section {
@@ -117,7 +115,6 @@
   border-left: 5px solid #ff6b6b;
   padding-left: 12px;
 }
-
 
 /* 차트 */
 .chartWithLegend {
@@ -149,7 +146,6 @@
   margin-bottom: 8px;
   gap: 12px;
   width: 100%;
-
 }
 
 .colorBox {
@@ -163,7 +159,6 @@
   font-family: 'contentFont', sans-serif;
 }
 
-
 /* 대화 분석 */
 .summaryText {
   margin-top: 20px;
@@ -172,7 +167,6 @@
   line-height: 1.5;
   font-family: 'contentFont', sans-serif;
 }
-
 
 /* 동작 분석 */
 .actionsWrapper {
@@ -194,7 +188,7 @@
   border-radius: 12px;
   border: 1px #0000001a;
   text-align: center;
-  flex:  1 1 auto;
+  flex: 1 1 auto;
   transition: all 0.3s ease-in-out;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   cursor: pointer;
@@ -217,9 +211,8 @@
 
 .actionItem:hover {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  transform: scale(1.05);  /* 마우스 오버 시 살짝 커짐 */
+  transform: scale(1.05); /* 마우스 오버 시 살짝 커짐 */
 }
-
 
 /* 상대방의 평가 */
 .commentSection {
@@ -247,7 +240,8 @@
   margin-top: 20px;
 }
 
-.ratingWrapper, .matchingStatusWrapper {
+.ratingWrapper,
+.matchingStatusWrapper {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -276,7 +270,6 @@
   text-align: left;
   margin-top: 20px;
 }
-
 
 /* 종합 평가 */
 .overallSection {
@@ -326,14 +319,24 @@
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes scaleEffect {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.15); }
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.15);
+  }
 }
 
 .rankText {
@@ -344,7 +347,6 @@
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
   letter-spacing: 1.5px;
 }
-
 
 /* 실전 대비 개선 */
 .tipsSection {
@@ -384,7 +386,6 @@
   left: 0;
   font-size: 1em;
 }
-
 
 .footer {
   text-align: center;
@@ -436,7 +437,6 @@
   }
 }
 
-
 /* 로딩 스피너 */
 .loading {
   font-family: 'contentFont', sans-serif;
@@ -446,7 +446,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%;  /* 부모 요소가 높이를 정의했을 경우에 필요 */
+  height: 100%; /* 부모 요소가 높이를 정의했을 경우에 필요 */
 }
 
 .spinner {
@@ -460,6 +460,10 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

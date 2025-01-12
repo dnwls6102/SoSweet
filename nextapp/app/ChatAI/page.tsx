@@ -75,22 +75,21 @@ export default function Chat() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const isRecording = useRef<boolean>(false);
-  const [feedback, setFeedback] = useState('');
   const [script, setScript] = useState('');
   const scriptRef = useRef('');
   const recognition = useRef<SpeechRecognition | null>(null);
 
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]); // 녹화 데이터 쌓는 배열
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-
-  // 감정 분석을 위한 상태 추가
-  // const [myEmotion, setMyEmotion] = useState('평온함');
   const myEmotionRef = useRef('평온함');
-  // const [myValue, setMyValue] = useState(0);
   const myValueRef = useRef(0);
 
+  const noword_flag = useRef(false);
+  const filler_flag = useRef(false);
+  const noend_flag = useRef(false);
+  const nopolite_flag = useRef(false);
+
   const dispatch = useDispatch();
-  // const [relationshipScore, setRelationshipScore] = useState(48);
 
   //대화 영상 전체 / n분 간격으로 서버로 보내는 함수
 
@@ -108,8 +107,10 @@ export default function Chat() {
       );
       if (response.ok) {
         const result = await response.json();
-        setFeedback(result.message);
-        console.log(feedback);
+        noword_flag.current = result.noword_flag;
+        filler_flag.current = result.filler_flag;
+        noend_flag.current = result.noend_flag;
+        nopolite_flag.current = result.nopolite_flag;
       } else {
         const result = await response.json();
         console.log(result.error);

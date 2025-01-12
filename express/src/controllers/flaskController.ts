@@ -136,4 +136,3 @@ export const sendFrameInfoToFlask = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Flask 서버 요청 실패", error });
   }
 };
-
