@@ -53,6 +53,15 @@ interface Window {
 // 프레임 카운터 추가
 let frameCounter = 0;
 
+interface KeywordDict {
+  [key: string]: number;
+}
+
+interface NlpResponse {
+  message: string;
+  keyword_dict: KeywordDict;
+}
+
 function ChatContent() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
@@ -75,6 +84,10 @@ function ChatContent() {
 
   const dispatch = useDispatch();
   const rtcSocket = useSelector((state: RootState) => state.socket.socket);
+
+  //대화 주제 파악을 위한 keyword dict
+  const keywordRef = useRef<KeywordDict | null>(null);
+
   useEffect(() => {
     const token = Cookies.get('access');
     if (token) {
@@ -99,9 +112,11 @@ function ChatContent() {
         },
       );
       if (response.ok) {
-        const result = await response.json();
+        const result: NlpResponse = await response.json();
         console.log(result.message);
-        feedbackRef.current = result.meesage;
+        console.log('키워드 분석:', result.keyword_dict);
+        feedbackRef.current = result.message;
+        keywordRef.current = result.keyword_dict;
       } else {
         const result = await response.json();
         console.log(result.error);
@@ -120,13 +135,16 @@ function ChatContent() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ user_id: ID, script, room_id }),
+          body: JSON.stringify({ user_id: ID, script, room_id, keywordRef }),
           mode: 'cors',
         },
       );
 
       if (response.ok) {
         console.log('전송 성공');
+        // 대화 주제에 기반한 가이드 응답이 왔다 치고
+        const data = await response.json();
+        console.log(data.guide_msg);
       } else {
         console.log('오류 발생');
       }
