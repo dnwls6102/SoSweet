@@ -489,8 +489,8 @@ export default function Chat() {
               onClick={handleNavigation}
               src="/call-end.svg"
               alt="대화 종료"
-              width={50}
-              height={50}
+              width={80}
+              height={80}
             />
           </div>
         </div>
