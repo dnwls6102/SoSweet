@@ -262,7 +262,7 @@ export default function Feedback() {
                       />
                       <h4>눈에 손 올리기</h4>
                       <p>{nonverbal.counters.folded_arm_message_count} 회</p>
-                    </div>
+                    </div> */}
                     <div className={styles.actionItem}>
                       <Image
                         src="/sidemove.svg"
