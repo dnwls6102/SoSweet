@@ -50,6 +50,7 @@ export default function Feedback() {
     null,
   );
   const [summary, setSummary] = useState('');
+  const [conclusion, setConclusion] = useState('');
   const [selectedTab, setSelectedTab] = useState('emotion');
   const [user_id, setUserID] = useState('');
 
@@ -71,6 +72,7 @@ export default function Feedback() {
   useEffect(() => {
     if (feedbackData.summary) {
       setSummary(feedbackData.summary);
+      setConclusion(feedbackData.conclusion);
       fetchEmotionData();
     }
   }, [feedbackData.summary]);
@@ -222,8 +224,8 @@ export default function Feedback() {
         {selectedTab === 'verbal' && (
           <div className={styles.section}>
             <h2 className={styles.sectionTitle}>대화 분석</h2>
-            {feedbackData.summary ? (
-              <div className={styles.summaryText}>{feedbackData.summary}</div>
+            {conclusion ? (
+              <div className={styles.summaryText}>{conclusion}</div>
             ) : (
               <div className={styles.loading}>
                 <p>대화 분석 데이터를 불러오는 중입니다.</p>
