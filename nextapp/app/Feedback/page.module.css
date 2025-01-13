@@ -182,10 +182,12 @@
 }
 
 .actionItem {
+  margin-top: 20px;
   width: 100%;
-  max-width: 250px;
+  max-width: 350px;
+  max-height: 375px;
   background: #ffe4e9;
-  padding: 18px 48px;
+  padding: 20px 50px;
   border-radius: 12px;
   border: 1px #0000001a;
   text-align: center;
@@ -198,14 +200,14 @@
 
 .actionItem h4 {
   font-family: 'titleFont', sans-serif;
-  font-size: 1.7em;
+  font-size: 2.2em;
   color: #d14788;
   margin-bottom: 10px;
 }
 
 .actionItem p {
   font-family: 'contentFont', sans-serif;
-  font-size: 1.5em;
+  font-size: 2em;
   color: #333;
   font-weight: bold;
 }
@@ -421,7 +423,7 @@
   border-radius: 30px;
   cursor: pointer;
   font-family: 'logoFont', sans-serif;
-  font-size: 1.5em;
+  font-size: 2.2em;
   font-weight: 600;
   margin-top: 20px;
   transition: all 0.3s ease;
@@ -451,7 +453,7 @@
 /* 로딩 스피너 */
 .loading {
   font-family: 'contentFont', sans-serif;
-  font-size: 2em;
+  font-size: 2.1em;
   color: #ff6b6b;
   display: flex;
   flex-direction: column;

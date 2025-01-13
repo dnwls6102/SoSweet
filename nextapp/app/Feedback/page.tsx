@@ -244,26 +244,31 @@ export default function Feedback() {
                   <div className={styles.actionsWrapper}>
                     <div className={styles.actionItem}>
                       <Image
-                        src="/facepalm.svg"
-                        alt="Facepalm Icon"
-                        width={120}
-                        height={110}
+                        src="/hand.svg"
+                        alt="Hand Icon"
+                        width={190}
+                        height={180}
                         className={styles.icon}
                       />
                       <h4>산만한 손 동작</h4>
                       <p>{nonverbal.counters.hand_message_count} 회</p>
                     </div>
-                    {/* <div className={styles.actionItem}>
-                      <h1>🙆‍♀️</h1>
-                      <h4>산만한 팔 동작</h4>
+                    <div className={styles.actionItem}>
+                      <Image
+                        src="/facepalm.svg"
+                        alt="Facepalm Icon"
+                        width={190}
+                        height={180}
+                      />
+                      <h4>눈에 손 올리기</h4>
                       <p>{nonverbal.counters.folded_arm_message_count} 회</p>
                     </div> */}
                     <div className={styles.actionItem}>
                       <Image
                         src="/sidemove.svg"
                         alt="Sidemove Icon"
-                        width={120}
-                        height={110}
+                        width={190}
+                        height={180}
                         className={styles.icon}
                       />
                       <h4>좌우 움직임</h4>
@@ -298,13 +303,13 @@ export default function Feedback() {
                     <div className={styles.commentContent}>
                       <div className={styles.ratingWrapper}>
                         <span className={styles.ratingHeart}>
-                          평점:{' '}
+                          {' '}
                           {'❤'.repeat(feedbackData.partnerFeedback.rating)}
                         </span>
                       </div>
                       <div className={styles.matchingStatusWrapper}>
                         <span className={styles.matchingStatus}>
-                          재매칭 의사:{' '}
+                          {' '}
                           {feedbackData.partnerFeedback.like
                             ? '💕 다시 만나고 싶어요'
                             : '💔 만나고 싶지 않아요'}
@@ -312,7 +317,7 @@ export default function Feedback() {
                       </div>
                     </div>
                     <p className={styles.commentText}>
-                      코멘트: {feedbackData.partnerFeedback.comment}
+                      {feedbackData.partnerFeedback.comment}
                     </p>
                   </>
                 ) : (
