@@ -36,8 +36,8 @@
 .matchImage {
   width: 100%;      /* 고정값 대신 비율로 변경 */
   height: auto;     /* 비율 유지 */
-  max-width: 750px; /* 최대 크기 제한 */
-  max-height: 750px;
+  max-width: 800px; /* 최대 크기 제한 */
+  max-height: 800px;
   object-fit: contain; /* 이미지 비율 유지 */
   transition: transform 0.5s ease;
   animation: float 3s ease-in-out infinite;
@@ -82,7 +82,7 @@
   border: 2px solid rgba(255, 182, 193, 0.5);
   position: relative;
   overflow: hidden;
-  width: 80%;
+  width: 100%;
   max-width: 450px;
   transform-style: preserve-3d;
   transition: all 0.3s ease;
@@ -140,7 +140,7 @@
 }
 
 .rankText {
-  font-size: 24px;
+  font-size: 30px;
   font-weight: bold;
   font-family: 'contentFont', sans-serif;
   text-align: center;
@@ -228,7 +228,7 @@
 }
 
 .matchButton {
-  padding: 20px 60px;
+  padding: 20px 65px;
   font-size: 50px;
   font-weight: bold;
   font-family: 'logoFont', sans-serif;
