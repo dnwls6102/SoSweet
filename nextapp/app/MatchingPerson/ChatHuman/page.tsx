@@ -13,6 +13,7 @@ import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store/store';
 import FeedbackModal from '@/components/feedbackModal';
+import WarningModal from '@/components/warningModal';
 
 interface UserPayload {
   user_id: string;
@@ -103,6 +104,11 @@ function ChatContent() {
   const keywordRef = useRef<KeywordDict | null>(null);
 
   const [showFeedback, setShowFeedback] = useState(false);
+  const [showHandWarning, setShowHandWarning] = useState(false);
+  const [showSideWarning, setShowSideWarning] = useState(false);
+  const [showEyeWarning, setShowEyeWarning] = useState(false);
+  const [warningMessage, setWarningMessage] = useState('');
+  const imgRef = useRef('');
 
   useEffect(() => {
     const token = Cookies.get('access');
@@ -565,6 +571,44 @@ function ChatContent() {
               '분위기가 좋아 보입니다. 이대로 계속 자신있게 대화해 보세요!',
             );
           }
+
+          // actAnalysis 체크를 현재 분석 결과로 직접 수행
+          const currentActAnalysis =
+            user1.user_id === ID ? user1.act_analysis : user2.act_analysis;
+          if (currentActAnalysis) {
+            if (currentActAnalysis.is_hand === 1) {
+              console.log('is_hand 발동');
+              setShowHandWarning(true);
+              setWarningMessage('손동작이 과도합니다. 차분히 대화해주세요.');
+              imgRef.current = '/nohand.png';
+              setTimeout(() => {
+                setShowHandWarning(false);
+                setWarningMessage('');
+              }, 7000);
+            }
+            if (currentActAnalysis.is_side === 1) {
+              console.log('is_side 발동');
+              setShowSideWarning(true);
+              setWarningMessage(
+                '자세가 불안정합니다. 바른 자세를 유지해주세요.',
+              );
+              imgRef.current = '/stopblack.png';
+              setTimeout(() => {
+                setShowSideWarning(false);
+                setWarningMessage('');
+              }, 7000);
+            }
+            if (currentActAnalysis.is_eye === 1) {
+              console.log('is_eye 발동');
+              setShowEyeWarning(true);
+              setWarningMessage('눈을 자주 만지지 마세요.');
+              imgRef.current = '/noeye.png';
+              setTimeout(() => {
+                setShowEyeWarning(false);
+                setWarningMessage('');
+              }, 7000);
+            }
+          }
         }
       } catch (error) {
         console.error('전송 에러: ', error);
@@ -669,6 +713,25 @@ function ChatContent() {
       <Chatbot emotion={remoteEmotion} message={emotion_msg} />
       <div className={styles.left}>
         <div className={styles.videoContainer}>
+          {(showHandWarning || showSideWarning || showEyeWarning) && (
+            <div className={styles.sideWarningOverlay}>
+              <Image
+                src={imgRef.current}
+                alt="Stop Warning"
+                width={600}
+                height={600}
+                quality={100}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  filter: 'contrast(1.2) brightness(1.1)',
+                }}
+                priority
+              />
+            </div>
+          )}
+          {warningMessage && <WarningModal message={warningMessage} />}
           <Videobox
             videoref={localVideoRef}
             keys={myEmotion}
