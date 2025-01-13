@@ -8,6 +8,7 @@ import { useState } from 'react';
 interface UserPayload {
   user_id: string;
   user_gender: string;
+  user_nickname: string;
   iat: number;
   exp: number;
 }
@@ -17,10 +18,12 @@ function SetAI() {
   const token = Cookies.get('access');
   let ID = '';
   let gender = '';
+  let user_nickname = '';
   if (token) {
     const decoded = jwtDecode<UserPayload>(token);
     ID = decoded.user_id;
     gender = decoded.user_gender;
+    user_nickname = decoded.user_nickname;
   }
   const [ai_name, setAiName] = useState('');
   const [ai_age, setAiAge] = useState('');
@@ -40,6 +43,7 @@ function SetAI() {
           body: JSON.stringify({
             user_id: ID,
             user_gender: gender,
+            user_nickname: user_nickname,
             ai_name: ai_name,
             ai_age: ai_age,
             ai_personality: ai_personality,

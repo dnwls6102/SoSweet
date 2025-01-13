@@ -23,7 +23,7 @@
 }
 
 .container {
-  background: rgba(255, 255, 255, 0.5);
+  background-color: white;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   border-radius: 20px;
   padding: 30px;
@@ -36,6 +36,7 @@
   margin-bottom: 10px;
   font-family: 'titleFont', sans-serif;
   color: #ff4d8d;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
 }
 
 .subtitle {
@@ -117,7 +118,7 @@
   font-weight: bold;
   font-family: 'logoFont', sans-serif;
   color: white;
-  background: linear-gradient(45deg, #ff6b6b, #ff8787, #ff6b6b);
+  background: linear-gradient(45deg, #ff4d88, #ff85a5);
   border: none;
   border-radius: 30px;
   cursor: pointer;

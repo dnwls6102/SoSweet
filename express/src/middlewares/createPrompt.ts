@@ -485,7 +485,7 @@ async function genPrompt(
   const { user_gender, ai_name, ai_age, ai_job, ai_hobby, ai_personality } =
     req.body;
   const ai_gender = user_gender === "남성" ? "여성" : "남성";
-  const persona_level: number = 1;
+  const persona_level: number = 2;
   const prompt_input: ChatCompletionMessageParam[] = [
     {
       role: "system",

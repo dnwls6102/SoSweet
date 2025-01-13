@@ -39,7 +39,9 @@ app.use(
       "Authorization",
       "X-Requested-With",
       "Accept",
+      "X-Script"
     ],
+    exposedHeaders: ["X-Script"],
     credentials: true,
     preflightContinue: false,
     optionsSuccessStatus: 204,
