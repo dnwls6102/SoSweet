@@ -58,6 +58,7 @@ async function ttsMiddleware(req: Request, res: Response): Promise<void> {
       "Content-Type": "audio/opus",
       "Content-Disposition": 'attachment; filename="output_speech.opus"',
       "X-Script": Buffer.from(script).toString('base64'),
+      "Access-Control-Expose-Headers": "X-Script" //서버 환경 전용
     });
     res.send(buffer);
   } catch (error) {
