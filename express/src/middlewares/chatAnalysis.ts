@@ -327,7 +327,7 @@ async function getAnalysis(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  res.status(200).json({ analysis });
+  res.status(200).json(analysis);
 }
 
 export { chatAnalysis, getAnalysis };
