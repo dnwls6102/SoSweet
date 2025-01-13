@@ -67,7 +67,7 @@
 
 .progressFill {
   height: 100%;
-  background-color: #ff4757;
+  background: linear-gradient(45deg, #ff6b6b, #ff4757, #ff4757);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -93,14 +93,13 @@
   left: 50%;
   transform: translateX(-50%);
   cursor: pointer;
-  background-color: #ff4757;
   border-radius: 50%;
   padding: 10px;
   transition: background-color 0.2s;
 }
 
 .callEndIcon:hover {
-  background-color: #ff2d40;
+  transform: translateX(-50%) scale(1.1);
 }
 
 .right {
@@ -108,12 +107,12 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  height: 100%;
+  height: 101%;
 }
 
 .chatContainer {
   flex: 1;
-  background: white;
+  background: rgba(255, 255, 255, 0.4);
   border-radius: 20px;
   padding: 20px;
   overflow-y: auto;
@@ -131,17 +130,24 @@
 
 .userMessage {
   align-self: flex-end;
-  background-color: #ff4757;
+  background: linear-gradient(45deg, #ff6b6b, #ff8787, #ff6b6b);
+  font-size: 1.5rem;
+  font-family: 'contentFont', sans-serif;
   color: white;
+  border-top-left-radius: 20px; /* 상단 왼쪽 모서리 */
+  border-top-right-radius: 20px; /* 상단 오른쪽 모서리 */
+  border-bottom-left-radius: 20px; /* 하단 왼쪽 모서리 */
+  border-bottom-right-radius: 0; /* 하단 오른쪽 모서리 제외*/
 }
 
 .aiMessage {
   align-self: flex-start;
   background-color: #f0f0f0;
+  font-size: 1.5rem;
+  font-family: 'contentFont', sans-serif;
   color: #333;
-}
-
-.imageBorderActive {
-  border: 3px solid #ff4757;
-  border-radius: 20px;
+  border-top-left-radius: 20px; /* 상단 왼쪽 모서리 */
+  border-top-right-radius: 20px; /* 상단 오른쪽 모서리 */
+  border-bottom-left-radius: 0; /* 하단 왼쪽 모서리 제외 */
+  border-bottom-right-radius: 20px; /* 하단 오른쪽 모서리 */
 }

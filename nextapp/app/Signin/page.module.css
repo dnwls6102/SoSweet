@@ -29,7 +29,7 @@
 
 .title {
   font-family: 'titleFont', sans-serif;
-  font-size: 38px;
+  font-size: 45px;
   text-align: center;
   margin-bottom: 30px;
   padding-bottom: 15px;
@@ -60,14 +60,14 @@
 }
 
 .submitButton {
-  width: 25%;
-  height: 45px;
+  width: 32%;
+  height: 50px;
   background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
   color: white;
   border: none;
-  border-radius: 25px;
+  border-radius: 20px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 25px;
   font-family: 'logoFont', sans-serif;
   font-weight: 600;
   transition: all 0.3s ease;
@@ -76,9 +76,14 @@
 
 .submitButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(232, 67, 147, 0.4);
-  width: 62%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+.submitButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 
 .toast {
   position: fixed; /* 화면에 고정 */
@@ -88,7 +93,7 @@
   background-color: rgba(255, 235, 241, 0.95); /* 부드러운 핑크색 배경 */
   color: #e84393; /* 텍스트 색상 */
   font-family: 'titleFont', sans-serif;
-  font-size: 15px;
+  font-size: 22px;
   padding: 11px 22px;
   border-radius: 12px; /* 둥근 모서리 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
