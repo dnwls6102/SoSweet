@@ -83,7 +83,7 @@
   position: relative;
   overflow: hidden;
   width: 80%;
-  max-width: 400px;
+  max-width: 450px;
   transform-style: preserve-3d;
   transition: all 0.3s ease;
 }
@@ -140,6 +140,7 @@
 }
 
 .rankText {
+  font-size: 24px;
   font-size: 24px;
   font-weight: bold;
   font-family: 'contentFont', sans-serif;
@@ -229,7 +230,7 @@
 
 .matchButton {
   padding: 20px 60px;
-  font-size: 40px;
+  font-size: 28px;
   font-weight: bold;
   font-family: 'logoFont', sans-serif;
   color: white;
