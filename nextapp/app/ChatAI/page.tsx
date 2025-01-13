@@ -443,11 +443,11 @@ export default function Chat() {
       if (response.ok) {
         const json_data = await response.json();
         console.log('받은 데이터:', json_data.analysis);
-        const data = JSON.parse(json_data.analysis);
-        console.log('파싱된 데이터:', data);
-        console.log('분석:', data.analysis);
-        console.log('결론:', data.conclusion);
-        dispatch(setGPTFeedback(data.conclusion));
+        const feedback =
+          typeof json_data.analysis === 'string'
+            ? { analysis: json_data.analysis, conclusion: json_data.analysis }
+            : json_data.analysis;
+        dispatch(setGPTFeedback(feedback));
         router.push('/FeedbackAI');
       } else {
         console.log('대화 종료 요청 실패');
