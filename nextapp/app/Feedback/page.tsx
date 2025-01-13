@@ -12,14 +12,6 @@ import { jwtDecode } from 'jwt-decode';
 import router from 'next/router';
 import Image from 'next/image';
 
-const DEFAULT_NONVERBAL = {
-  counters: {
-    hand_message_count: 0,
-    folded_arm_message_count: 0,
-    side_move_message_count: 0,
-  },
-};
-
 const COLORS = [
   '#FF6384',
   '#36A2EB',
@@ -53,11 +45,10 @@ interface NonverbalData {
 }
 
 export default function Feedback() {
-  const [nonverbal, setNonverbal] = useState(DEFAULT_NONVERBAL);
   const [emotionData, setEmotionData] = useState<EmotionScores | null>(null);
-  // const [nonverbal, setNonverbal] = useState<NonverbalData | string | null>(
-  //   null,
-  // );
+  const [nonverbal, setNonverbal] = useState<NonverbalData | string | null>(
+    null,
+  );
   const [summary, setSummary] = useState('');
   const [conclusion, setConclusion] = useState('');
   const [selectedTab, setSelectedTab] = useState('emotion');
