@@ -1,3 +1,9 @@
+@font-face {
+  font-family: 'contentFont';
+  src: url("@/fonts/NotoSansKR-Regular.ttf") format('truetype');
+  font-weight: normal;
+}
+
 .modalContainer {
   position: fixed;
   top: 50%;
@@ -16,10 +22,11 @@
 
 .message {
   color: white;
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   margin: 0;
   white-space: pre-wrap;
   text-align: center;
+  font-family: 'contentFont', sans-serif;
 }
 
 @keyframes slideIn {
