@@ -23,15 +23,15 @@
     margin-bottom: 6px;
     font-family: 'contentFont', sans-serif;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 20px;
     color: #2d3748;
 }
 
 .input {
     padding: 0 14px;
     height: 40px;
-    width: 355px;
-    font-size: 14px;
+    width: 232px;
+    font-size: 18px;
     font-family: 'contentFont', sans-serif;
     border: 2px solid #e2e8f0;
     border-radius: 8px;
@@ -55,8 +55,9 @@
 
 .button {
     font-family: 'contentFont', sans-serif;
+    font-size: 16px;
     margin-left: 10px;
-    height: 40px;
+    height: 47px;
     padding: 0 14px;
     border: 2px solid #e2e8f0;
     border-radius: 8px;
