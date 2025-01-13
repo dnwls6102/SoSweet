@@ -310,7 +310,11 @@ async function getAnalysis(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const analysis = chatAnalysisMap.get(user_id);
+  let analysis = chatAnalysisMap.get(user_id);
+  const feedbackIdx = `${analysis}`.lastIndexOf("{");
+  analysis = `${analysis}`.substring(feedbackIdx);
+  analysis = JSON.parse(JSON.stringify(analysis));
+
   if (!analysis) {
     res
       .status(202)
