@@ -33,7 +33,7 @@
 }
 
 .title {
-  font-size: 2.2em;
+  font-size: 3em;
   font-weight: bold;
   font-family: 'titleFont', sans-serif;
   margin-bottom: 20px;
@@ -183,7 +183,7 @@
 .actionItem {
   width: 100%;
   max-width: 250px;
-  background: #fff;
+  background: #ffe4e9;
   padding: 18px 48px;
   border-radius: 12px;
   border: 1px #0000001a;
