@@ -109,6 +109,7 @@ function ChatContent() {
   const [showEyeWarning, setShowEyeWarning] = useState(false);
   const [warningMessage, setWarningMessage] = useState('');
   const imgRef = useRef('');
+  const [waiting, setWaiting] = useState(false);
 
   useEffect(() => {
     const token = Cookies.get('access');
@@ -396,6 +397,7 @@ function ChatContent() {
         resolve('good');
       });
       alert('상대방이 연결을 종료했습니다.');
+      setWaiting(true);
       if (mediaRecorderRef.current) {
         mediaRecorderRef.current.stop();
       }
@@ -661,6 +663,8 @@ function ChatContent() {
       resolve('good');
     });
 
+    setWaiting(true);
+
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
       console.log('녹화 중지됨!');
@@ -705,6 +709,15 @@ function ChatContent() {
 
     router.push('/Comment');
   };
+
+  if (waiting) {
+    return (
+      <div className={styles.loading}>
+        <p>상대방의 응답을 기다리고 있어요</p>
+        <div className={styles.spinner}></div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.wrapper}>
