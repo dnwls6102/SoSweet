@@ -140,7 +140,7 @@
 }
 
 .rankText {
-  font-size: 30px;
+  font-size: 2em;
   font-weight: bold;
   font-family: 'contentFont', sans-serif;
   text-align: center;
@@ -194,7 +194,7 @@
 }
 
 .rankLevel {
-  font-size: 36px;
+  font-size: 2.5em;
   font-weight: bold;
   font-family: 'logoFont', sans-serif;
   background: linear-gradient(to bottom, #ff6b6b, #ff8787);
@@ -229,7 +229,7 @@
 
 .matchButton {
   padding: 20px 65px;
-  font-size: 50px;
+  font-size: 3.5rem;
   font-weight: bold;
   font-family: 'logoFont', sans-serif;
   color: white;

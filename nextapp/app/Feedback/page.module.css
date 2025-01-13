@@ -54,7 +54,7 @@
   position: relative;
   padding-top: 50px; /* tabMenu와 여백을 맞추기 위한 패딩 */
   border-top-left-radius: 0; /* 상단 왼쪽 모서리 제외 */
-  border-top-right-radius: 20px; /* 상단 오른쪽 모서리 제외 */
+  border-top-right-radius: 20px; /* 상단 오른쪽 모서리 */
   border-bottom-left-radius: 20px; /* 하단 왼쪽 모서리 */
   border-bottom-right-radius: 20px; /* 하단 오른쪽 모서리 */
 }
