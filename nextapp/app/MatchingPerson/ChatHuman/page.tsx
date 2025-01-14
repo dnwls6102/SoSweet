@@ -109,7 +109,6 @@ function ChatContent() {
   const [showEyeWarning, setShowEyeWarning] = useState(false);
   const [warningMessage, setWarningMessage] = useState('');
   const imgRef = useRef('');
-  const [waiting, setWaiting] = useState(false);
 
   useEffect(() => {
     const token = Cookies.get('access');
@@ -392,38 +391,12 @@ function ChatContent() {
           ).getTracks();
           console.log('tracks : ', tracks);
           tracks.forEach((track) => track.stop());
-          // tracks.forEach((track) => track.stop());
         }
         resolve('good');
       });
       alert('상대방이 연결을 종료했습니다.');
-      setWaiting(true);
       if (mediaRecorderRef.current) {
         mediaRecorderRef.current.stop();
-      }
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              room_id: room_id,
-              user_id: ID,
-              script: '',
-            }),
-            credentials: 'include',
-          },
-        );
-        if (response.ok) {
-          console.log('대화 종료 요청 성공');
-        } else {
-          console.error('요청을 받았지만 200을 반환하지 않음');
-        }
-      } catch (error) {
-        console.error('대화 종료 요청 실패:', error);
       }
       router.push('/Comment');
     });
@@ -658,12 +631,9 @@ function ChatContent() {
         ).getTracks();
         console.log('tracks : ', tracks);
         tracks.forEach((track) => track.stop());
-        // tracks.forEach((track) => track.stop());
       }
       resolve('good');
     });
-
-    setWaiting(true);
 
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
@@ -682,42 +652,8 @@ function ChatContent() {
       console.log('Socket is not available');
     }
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            room_id: room_id,
-            user_id: ID,
-            script: '',
-          }),
-          credentials: 'include',
-        },
-      );
-      if (response.ok) {
-        console.log('대화 종료 요청 성공');
-      } else {
-        console.error('요청을 받았지만 200을 반환하지 않음');
-      }
-    } catch (error) {
-      console.error('대화 종료 요청 실패:', error);
-    }
-
     router.push('/Comment');
   };
-
-  if (waiting) {
-    return (
-      <div className={styles.loading}>
-        <p>대화를 분석하고 있어요</p>
-        <div className={styles.spinner}></div>
-      </div>
-    );
-  }
 
   return (
     <div className={styles.wrapper}>

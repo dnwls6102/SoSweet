@@ -303,10 +303,29 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
         // AI가 분석한 내용 저장
         chatAnalysisMap.set(user_id, assistantAnswer);
         console.log("사람 간의 대화 분석 기록 저장완료");
-        res.status(200).json({
-          message: "LLM에게 성공적으로 대화 분석을 맡겼습니다.",
-          user_id: user_id,
-        });
+        if (!chatAnalysisMap.has(user_id)) {
+          res.status(404).json({ message: "요청을 찾을 수 없습니다." });
+          return;
+        }
+
+        let analysis = chatAnalysisMap.get(user_id);
+        const feedbackIdx = `${analysis}`.lastIndexOf("{");
+        analysis = `${analysis}`.substring(feedbackIdx);
+        analysis = JSON.parse(JSON.stringify(analysis));
+
+        if (!analysis) {
+          res
+            .status(202)
+            .json({ message: "분석 중입니다. 잠시 후 다시 시도해주세요." });
+          return;
+        }
+
+        if (analysis === "대화 분석 내용을 생성하는데 실패했습니다.") {
+          res.status(404).json({ message: "대화 분석 기록이 없습니다." });
+          return;
+        }
+
+        res.status(200).json(analysis);
       } catch (err) {
         console.error("LLM 대화 분석 실패", err);
         chatAnalysisMap.set(
@@ -318,33 +337,4 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
   }
 }
 
-async function getAnalysis(req: Request, res: Response): Promise<void> {
-  const { user_id } = req.body;
-  console.log(user_id);
-
-  if (!chatAnalysisMap.has(user_id)) {
-    res.status(404).json({ message: "요청을 찾을 수 없습니다." });
-    return;
-  }
-
-  let analysis = chatAnalysisMap.get(user_id);
-  const feedbackIdx = `${analysis}`.lastIndexOf("{");
-  analysis = `${analysis}`.substring(feedbackIdx);
-  analysis = JSON.parse(JSON.stringify(analysis));
-
-  if (!analysis) {
-    res
-      .status(202)
-      .json({ message: "분석 중입니다. 잠시 후 다시 시도해주세요." });
-    return;
-  }
-
-  if (analysis === "대화 분석 내용을 생성하는데 실패했습니다.") {
-    res.status(404).json({ message: "대화 분석 기록이 없습니다." });
-    return;
-  }
-
-  res.status(200).json(analysis);
-}
-
-export { chatAnalysis, getAnalysis };
+export { chatAnalysis };
