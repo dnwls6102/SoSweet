@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import { useDispatch } from 'react-redux';
-import { setGPTFeedback } from '@/store/GPTfeedbackSlice';
+import { setGPTFeedback, setGPTAudioUrl } from '@/store/GPTfeedbackSlice';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import Image from 'next/image';
@@ -438,15 +438,26 @@ export default function Chat() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ script: 'end', user_id, user_nickname }),
+          body: JSON.stringify({
+            script: 'end',
+            user_id,
+            user_nickname,
+            user_gender,
+          }),
           credentials: 'include',
         },
       );
 
       if (response.ok) {
-        const json_data = await response.json();
-        console.log('받은 데이터:', json_data.analysis);
-        dispatch(setGPTFeedback(json_data.analysis)); // 문자열 직접 저장
+        const encodedScript = response.headers.get('X-Script');
+        if (encodedScript) {
+          const decodedBytes = Buffer.from(encodedScript, 'base64');
+          const decodedScript = new TextDecoder('utf-8').decode(decodedBytes);
+          const audioBlob = await response.blob();
+          const audioUrl = URL.createObjectURL(audioBlob);
+          dispatch(setGPTFeedback(decodedScript));
+          dispatch(setGPTAudioUrl(audioUrl));
+        }
         router.push('/FeedbackAI');
       } else {
         console.log('대화 종료 요청 실패');
