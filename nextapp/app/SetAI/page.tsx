@@ -30,8 +30,10 @@ function SetAI() {
   const [ai_personality, setAiPersonality] = useState('');
   const [ai_job, setAiJob] = useState('');
   const [ai_hobby, setAiHobby] = useState('');
+  const [waiting, setWaiting] = useState(false);
 
   const handleNavigation = async () => {
+    setWaiting(true);
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/dialog/start`,
@@ -62,6 +64,15 @@ function SetAI() {
     }
     router.replace('/ChatAI');
   };
+
+  if (waiting) {
+    return (
+      <div className={styles.loading}>
+        <p>AI 인격을 생성하고 있어요!</p>
+        <div className={styles.spinner}></div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.wrapper}>
@@ -119,7 +130,6 @@ function SetAI() {
                 onChange={(e) => setAiHobby(e.target.value)}
               />
             </div>
-
           </div>
         </div>
       </div>

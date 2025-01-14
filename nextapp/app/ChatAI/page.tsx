@@ -93,6 +93,8 @@ export default function Chat() {
 
   const dispatch = useDispatch();
 
+  const [waiting, setWaiting] = useState(false);
+
   //대화 영상 전체 / n분 간격으로 서버로 보내는 함수
 
   const tryNlp = async (script: string) => {
@@ -411,6 +413,7 @@ export default function Chat() {
   }, [user_id]);
 
   const handleNavigation = async () => {
+    setWaiting(true);
     try {
       // 먼저 모든 리소스를 정리
       if (
@@ -452,6 +455,15 @@ export default function Chat() {
       console.error('대화 종료 요청 오류:', error);
     }
   };
+
+  if (waiting) {
+    return (
+      <div className={styles.loading}>
+        <p>방금 대화를 분석하고 있어요</p>
+        <div className={styles.spinner}></div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.wrapper}>
