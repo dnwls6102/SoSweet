@@ -18,7 +18,7 @@
 
 .wrapper {
   padding: 40px;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 180px);
 }
 
 .content {
@@ -130,8 +130,8 @@
 
 .userMessage {
   align-self: flex-end;
-  background: linear-gradient(45deg, #ff6b6b, #ff8787, #ff6b6b);
-  font-size: 1.5rem;
+  background-image: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
+  font-size: 2rem;
   font-family: 'contentFont', sans-serif;
   color: white;
   border-top-left-radius: 20px; /* 상단 왼쪽 모서리 */
@@ -143,7 +143,7 @@
 .aiMessage {
   align-self: flex-start;
   background-color: #f0f0f0;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-family: 'contentFont', sans-serif;
   color: #333;
   border-top-left-radius: 20px; /* 상단 왼쪽 모서리 */

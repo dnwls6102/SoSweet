@@ -35,12 +35,11 @@
   font-size: 3rem;
   margin-bottom: 10px;
   font-family: 'titleFont', sans-serif;
-  color: #ff4d8d;
   text-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
 }
 
 .subtitle {
-  color: #ff8db7;
+  color: gray;
   font-size: 1.8rem;
   margin-top: 10px;
   margin-bottom: 30px;
@@ -56,7 +55,7 @@
 
 .imageSection {
   flex: 1;
-  background-color: #ffe4e9;
+  background: #d6d6d6;
   border-radius: 10px;
   min-height: 500px;
   max-height: 700px;
@@ -88,13 +87,13 @@
 
 .input {
   width: 95%;
-  height: 30px;
+  height: 41px;
   padding: 12px;
   border: 2px solid #ffb6c1;
   border-radius: 8px;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   resize: none;
-  min-height: 40px;
+  min-height: 41px;
   font-family: 'contentFont', sans-serif;
 }
 
@@ -118,7 +117,7 @@
   font-weight: bold;
   font-family: 'logoFont', sans-serif;
   color: white;
-  background: linear-gradient(45deg, #ff4d88, #ff85a5);
+  background-image: linear-gradient(to right, #f78ca0 0%, #f9748f 19%, #fd868c 60%, #fe9a8b 100%);
   border: none;
   border-radius: 30px;
   cursor: pointer;
