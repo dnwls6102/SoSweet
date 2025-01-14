@@ -68,7 +68,7 @@ function SetAI() {
   if (waiting) {
     return (
       <div className={styles.loading}>
-        <p>AI 인격을 생성하고 있어요!</p>
+        <p>AI를 생성 중이에요</p>
         <div className={styles.spinner}></div>
       </div>
     );

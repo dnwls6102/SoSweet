@@ -23,8 +23,8 @@
 
 .callEndIcon {
   position: absolute;
-  bottom: 10px;
   left: 50%;
+  bottom: 10px;
   transform: translateX(-50%);
   cursor: pointer;
   transition: all 0.3s ease;

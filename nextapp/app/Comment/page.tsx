@@ -175,13 +175,13 @@ export default function RatingPage() {
         <h2 className={styles.title}>다음에 또 만나고 싶으신가요?</h2>
         <div className={styles.actions}>
           <button className={styles.likeButton} onClick={() => setLike(true)}>
-            💕 다시 만나고 싶어요
+            💕 <br/> 다시 만나고 싶어요
           </button>
           <button
             className={styles.dislikeButton}
             onClick={() => setLike(false)}
           >
-            💔 만나고 싶지 않아요
+            💔 <br/> 만나고 싶지 않아요
           </button>
         </div>
         <button className={styles.submitButton} onClick={handleSubmit}>

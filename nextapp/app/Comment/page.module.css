@@ -30,7 +30,7 @@
   background-color: white;
   border-radius: 16px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
+  padding: 2.5rem;
   width: 90%;
   max-width: 725px;
   animation: fadeIn 0.8s ease-in-out;
@@ -63,7 +63,7 @@
 .title {
   font-family: 'titleFont', cursive;
   text-align: center;
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   margin-top: 2.5rem;
   margin-bottom: 1.2rem;
   font-weight: 600;
@@ -101,7 +101,7 @@
   margin: 10px 0;
   padding: 15px;
   font-family: 'contentFont', sans-serif;
-  font-size: 1.7rem;
+  font-size: 2rem;
   border: 2px solid #ffb6c1;
   border-radius: 12px;
   resize: none;
@@ -109,7 +109,7 @@
 }
 
 .textarea::placeholder {
-  font-size: 1.5rem; /* 폰트 크기 */
+  font-size: 1.8rem; /* 폰트 크기 */
   color: #888; /* 색상 */
   font-weight: bold; /* 굵기 */
   font-family: 'contentFont', sans-serif;
@@ -132,7 +132,7 @@
   margin-bottom: 2rem;
   border-radius: 25px;
   border: none;
-  font-size: 1.7em;
+  font-size: 2.2rem;
   font-family: 'contentFont', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -169,7 +169,7 @@
   border-radius: 30px;
   cursor: pointer;
   font-family: 'logoFont', sans-serif;
-  font-size: 2em;
+  font-size: 2.5rem;
   font-weight: 600;
   margin-top: 20px;
   transition: all 0.3s ease;

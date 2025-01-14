@@ -13,6 +13,7 @@ interface UserPayload {
   user_id: string;
   user_gender: string;
   user_nickname: string;
+  user_nickname: string;
   iat: number;
   exp: number;
 }
@@ -58,6 +59,7 @@ export default function Chat() {
   const [user_id, setUserId] = useState('');
   const [user_gender, setUserGender] = useState('');
   const [user_nickname, setUserNickname] = useState('');
+  const [user_nickname, setUserNickname] = useState('');
   // 토큰 디코딩을 위한 useEffect
   useEffect(() => {
     const token = Cookies.get('access');
@@ -65,6 +67,7 @@ export default function Chat() {
       const decoded = jwtDecode<UserPayload>(token);
       setUserId(decoded.user_id);
       setUserGender(decoded.user_gender);
+      setUserNickname(decoded.user_nickname);
       setUserNickname(decoded.user_nickname);
     } else {
       alert('유효하지 않은 접근입니다.');
@@ -92,6 +95,8 @@ export default function Chat() {
   const nopolite_flag = useRef(false);
 
   const dispatch = useDispatch();
+
+  const [waiting, setWaiting] = useState(false);
 
   const [waiting, setWaiting] = useState(false);
 
@@ -154,6 +159,16 @@ export default function Chat() {
       );
 
       if (response.ok) {
+        const encodedScript = await response.headers.get('X-Script');
+        console.log('encoded script:', encodedScript);
+        if (encodedScript) {
+          const decodedBytes = Buffer.from(encodedScript, 'base64');
+          const decodedScript = new TextDecoder('utf-8').decode(decodedBytes);
+          console.log('decoded script:', decodedScript);
+          setScript((prev) =>
+            prev ? `${prev}\n${decodedScript}` : decodedScript,
+          );
+        }
         const encodedScript = await response.headers.get('X-Script');
         console.log('encoded script:', encodedScript);
         if (encodedScript) {
@@ -414,6 +429,7 @@ export default function Chat() {
 
   const handleNavigation = async () => {
     setWaiting(true);
+    setWaiting(true);
     try {
       // 먼저 모든 리소스를 정리
       if (
@@ -512,6 +528,8 @@ export default function Chat() {
               onClick={handleNavigation}
               src="/call-end.svg"
               alt="대화 종료"
+              width={80}
+              height={80}
               width={80}
               height={80}
             />
