@@ -462,6 +462,7 @@ export default function Chat() {
           dispatch(setGPTFeedback(decodedScript));
           dispatch(setGPTAudioUrl(audioUrl));
         }
+        disconnectAudio.play();
         router.push('/FeedbackAI');
       } else {
         console.log('대화 종료 요청 실패');
