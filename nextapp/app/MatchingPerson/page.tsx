@@ -63,8 +63,10 @@ export default function MatchingPerson() {
       console.log('Socket connected:', newSocket.id);
     });
 
-    newSocket.on('matchSuccess', (data: { room_id: string }) => {
+    newSocket.on('matchSuccess', async (data: { room_id: string }) => {
       console.log('Match success:', data);
+      makeConnectAudio.pause();
+      makeConnectAudio.currentTime = 0;
       dispatch(setRoom(data.room_id));
       router.push(`/MatchingPerson/ChatHuman?room=${data.room_id}`);
     });

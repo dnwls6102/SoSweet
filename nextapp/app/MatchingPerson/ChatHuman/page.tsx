@@ -545,28 +545,32 @@ function ChatContent() {
           typeof user1.emo_analysis_result?.dominant_emotion === 'string' &&
           typeof user1.emo_analysis_result?.percentage === 'number'
         ) {
+          let newRemoteEmotion;
           if (user1.user_id === ID) {
             setMyEmotion(user1.emo_analysis_result.dominant_emotion);
             setMyValue(user1.emo_analysis_result.percentage);
             setRemoteEmotion(user2.emo_analysis_result.dominant_emotion);
             setRemoteValue(user2.emo_analysis_result.percentage);
+            newRemoteEmotion = user2.emo_analysis_result.dominant_emotion;
           } else {
             setMyEmotion(user2.emo_analysis_result.dominant_emotion);
             setMyValue(user2.emo_analysis_result.percentage);
             setRemoteEmotion(user1.emo_analysis_result.dominant_emotion);
             setRemoteValue(user1.emo_analysis_result.percentage);
+            newRemoteEmotion = user1.emo_analysis_result.dominant_emotion;
           }
 
+          // 상대방의 감정에 따라 즉시 메시지 업데이트
           if (
-            remoteEmotion === '슬픔' ||
-            remoteEmotion === '불편함' ||
-            remoteEmotion === '긴장' ||
-            remoteEmotion === '두려움'
+            newRemoteEmotion === '슬픔' ||
+            newRemoteEmotion === '불편함' ||
+            newRemoteEmotion === '긴장' ||
+            newRemoteEmotion === '두려움'
           ) {
             setEmotionMsg(
               '상대가 어딘가 불편해 보입니다. 현재 감정 상태에 대해 질문해 보세요.',
             );
-          } else if (remoteEmotion === '평온함') {
+          } else if (newRemoteEmotion === '평온함') {
             setEmotionMsg(
               '분위기가 평이합니다. 자신감 있는 태도로 제 코칭을 참고하여 대화해 보세요!',
             );
