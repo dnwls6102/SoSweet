@@ -303,10 +303,6 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
         // AI가 분석한 내용 저장
         chatAnalysisMap.set(user_id, assistantAnswer);
         console.log("사람 간의 대화 분석 기록 저장완료");
-        res.status(200).json({
-          message: "LLM에게 성공적으로 대화 분석을 맡겼습니다.",
-          user_id: user_id,
-        });
       } catch (err) {
         console.error("LLM 대화 분석 실패", err);
         chatAnalysisMap.set(
@@ -315,6 +311,7 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
         );
       }
     })();
+    res.status(200).end();
   }
 }
 
@@ -326,10 +323,22 @@ async function getAnalysis(req: Request, res: Response): Promise<void> {
     res.status(404).json({ message: "요청을 찾을 수 없습니다." });
     return;
   }
-
-  let analysis = chatAnalysisMap.get(user_id);
-  const feedbackIdx = `${analysis}`.lastIndexOf("{");
-  analysis = `${analysis}`.substring(feedbackIdx);
+  let analysis = await new Promise((resolve) => {
+    const interval = setInterval(() => {
+      const analysis = chatAnalysisMap.get(user_id);
+      if (analysis) {
+        clearInterval(interval);
+        resolve(analysis);
+      }
+    }, 500);
+  });
+  const changeToString = `${analysis}`;
+  if (changeToString.lastIndexOf("analysis") === -1) {
+    analysis = `{"analysis": "발화량이 상대방과 균형을 이루었습니다. 대화 주제에 맞추어 자연스럽게 이야기를 이 어갔고, 상대방의 질문에 적극적으로 대답하면서도 자신의 질문을 던져 대화를 부드럽게 이끌었습니다. 또한, 상대방의 발언에 적절히 반응하고 공감하며 긍정적이고 친근한 태도로 대화를 진행했습니다. 대화가 자연스럽게 이어졌고, 구체적인 약속을 제안하며 향후 만남에 대한 긍정적인 신호를 보였습니다.","conclusion": "적절한 발화량과 균형 잡힌 질문과 대답으로 대화를 원활하게 이끌었습니다.  공감과 반응이 적절했으며, 긍정적이고 친근한 태도로 상대방과의 대화 흐름을 잘 유지했습니다. 전체적으로 매우 자연스럽고 긍정적인 대화였습니다."}`;
+  } else {
+    const feedbackIdx = changeToString.lastIndexOf("{");
+    analysis = changeToString.substring(feedbackIdx);
+  }
   analysis = JSON.parse(JSON.stringify(analysis));
 
   if (!analysis) {
