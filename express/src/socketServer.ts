@@ -37,8 +37,10 @@ const evaluations: {
   };
 } = {};
 
-export const initializeSocketServer = (server: http.Server) => {
-  const io = new Server(server, {
+let io: Server;
+
+export function initializeSocketServer(server: http.Server) {
+  io = new Server(server, {
     path: "/api/match",
     cors: {
       origin: process.env.CLIENT_URL,
@@ -202,4 +204,12 @@ export const initializeSocketServer = (server: http.Server) => {
       console.log("연결 종료: ", socket.id);
     });
   });
-};
+}
+
+// 다른 모듈에서 소켓 인스턴스를 사용할 수 있도록 export
+export function getIO(): Server {
+  if (!io) {
+    throw new Error('Socket.io has not been initialized');
+  }
+  return io;
+}
