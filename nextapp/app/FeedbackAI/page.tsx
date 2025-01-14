@@ -7,6 +7,11 @@ import { useRouter } from 'next/navigation';
 
 export default function FeedbackAI() {
   const summary = useSelector((state: RootState) => state.GPTfeedback.summary);
+  const audioUrl = useSelector(
+    (state: RootState) => state.GPTfeedback.audioUrl,
+  );
+  const audio = new Audio(audioUrl);
+  audio.play();
   const router = useRouter();
 
   return (

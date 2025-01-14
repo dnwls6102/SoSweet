@@ -216,7 +216,7 @@ async function createAnalysis(
 }
 
 async function chatAnalysis(req: Request, res: Response): Promise<void> {
-  const { script, user_id } = req.body;
+  const { script, user_id, user_gender } = req.body;
   if (!script) {
     res.status(404).json({
       analysis: {
@@ -256,11 +256,28 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
         completedChat[user_id],
         "AI와"
       );
-      console.log(assistantAnswer);
-      res.json({
-        message: "대화 분석 완료!",
-        analysis: assistantAnswer,
+      const vcModel = user_gender === "남성" ? "nova" : "onyx";
+
+      // TTS API 호출
+      const opus = await openai.audio.speech.create({
+        model: "tts-1", // 사용할 TTS 모델
+        voice: vcModel, // 음성 스타일 (선택 가능)
+        input: assistantAnswer, // 변환할 텍스트
+        response_format: "opus",
+        speed: 1.15,
       });
+
+      // 음성 데이터를 버퍼로 변환
+      const buffer: Buffer = Buffer.from(await opus.arrayBuffer());
+      console.log("script:", assistantAnswer);
+      // 음성 데이터를 HTTP 응답으로 반환
+      res.set({
+        "Content-Type": "audio/opus",
+        "Content-Disposition": 'attachment; filename="output_speech.opus"',
+        "X-Script": Buffer.from(assistantAnswer).toString("base64"),
+        "Access-Control-Expose-Headers": "X-Script", //서버 환경 전용
+      });
+      res.send(buffer);
     } catch (err) {
       console.error(err);
       res.status(500).send("LLM으로부터 응답을 받아오는데 실패했습니다: AI");
