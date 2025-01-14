@@ -109,6 +109,11 @@ function ChatContent() {
   const [showEyeWarning, setShowEyeWarning] = useState(false);
   const [warningMessage, setWarningMessage] = useState('');
   const imgRef = useRef('');
+  const [waiting, setWaiting] = useState(false);
+
+  const ddingAudio = new Audio('/dding.mp4');
+  const disconnectAudio = new Audio('/disconnect.mp3');
+  const connectAudio = new Audio('/connect.mp3');
 
   useEffect(() => {
     const token = Cookies.get('access');
@@ -192,22 +197,18 @@ function ChatContent() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ user_id: ID, script, room_id, keywordRef }),
+          body: JSON.stringify({
+            user_id: ID,
+            script,
+            room_id,
+            keywordRef: keywordRef.current,
+          }),
           mode: 'cors',
         },
       );
 
       if (response.ok) {
         console.log('전송 성공');
-        const data = await response.json();
-        console.log('가이드 메시지 : ', data.guide_msg);
-        if (data.guide_msg !== '') {
-          setGuideMessage(data.guide_msg);
-          setShowGuide(true);
-          setTimeout(() => {
-            setShowGuide(false);
-          }, 7000); // 7초 후에 모달 닫기
-        }
       } else {
         console.log('오류 발생');
       }
@@ -294,6 +295,7 @@ function ChatContent() {
       alert('지원하지 않는 브라우저입니다.');
       return;
     }
+    connectAudio.play();
     console.log('Chat Component UseEffect Triggerd');
 
     recognition.current = new (
@@ -395,6 +397,7 @@ function ChatContent() {
         resolve('good');
       });
       alert('상대방이 연결을 종료했습니다.');
+      setWaiting(true);
       if (mediaRecorderRef.current) {
         mediaRecorderRef.current.stop();
       }
@@ -422,6 +425,7 @@ function ChatContent() {
       } catch (error) {
         console.error('대화 종료 요청 실패:', error);
       }
+      disconnectAudio.play();
       router.push('/Comment');
     });
 
@@ -540,28 +544,32 @@ function ChatContent() {
           typeof user1.emo_analysis_result?.dominant_emotion === 'string' &&
           typeof user1.emo_analysis_result?.percentage === 'number'
         ) {
+          let newRemoteEmotion;
           if (user1.user_id === ID) {
             setMyEmotion(user1.emo_analysis_result.dominant_emotion);
             setMyValue(user1.emo_analysis_result.percentage);
             setRemoteEmotion(user2.emo_analysis_result.dominant_emotion);
             setRemoteValue(user2.emo_analysis_result.percentage);
+            newRemoteEmotion = user2.emo_analysis_result.dominant_emotion;
           } else {
             setMyEmotion(user2.emo_analysis_result.dominant_emotion);
             setMyValue(user2.emo_analysis_result.percentage);
             setRemoteEmotion(user1.emo_analysis_result.dominant_emotion);
             setRemoteValue(user1.emo_analysis_result.percentage);
+            newRemoteEmotion = user1.emo_analysis_result.dominant_emotion;
           }
 
+          // 상대방의 감정에 따라 즉시 메시지 업데이트
           if (
-            remoteEmotion === '슬픔' ||
-            remoteEmotion === '불편함' ||
-            remoteEmotion === '긴장' ||
-            remoteEmotion === '두려움'
+            newRemoteEmotion === '슬픔' ||
+            newRemoteEmotion === '불편함' ||
+            newRemoteEmotion === '긴장' ||
+            newRemoteEmotion === '두려움'
           ) {
             setEmotionMsg(
               '상대가 어딘가 불편해 보입니다. 현재 감정 상태에 대해 질문해 보세요.',
             );
-          } else if (remoteEmotion === '평온함') {
+          } else if (newRemoteEmotion === '평온함') {
             setEmotionMsg(
               '분위기가 평이합니다. 자신감 있는 태도로 제 코칭을 참고하여 대화해 보세요!',
             );
@@ -619,6 +627,17 @@ function ChatContent() {
       captureAndSendFrame();
     }, 1500); // 1.5초마다
 
+    // 가이드 메시지 수신 이벤트 핸들러 추가
+    rtcSocket.on('guide_message', ({ guide_msg }: { guide_msg: string }) => {
+      console.log('가이드 메시지 수신:', guide_msg);
+      ddingAudio.play();
+      setGuideMessage(guide_msg);
+      setShowGuide(true);
+      setTimeout(() => {
+        setShowGuide(false);
+      }, 7000);
+    });
+
     // 정리 함수
     return () => {
       if (mediaRecorderRef.current) {
@@ -643,6 +662,7 @@ function ChatContent() {
         isRecording.current = false;
       }
       clearInterval(intervalId);
+      rtcSocket.off('guide_message');
     };
   }, [room_id, recordedChunks, dispatch, router, ID, rtcSocket]);
 
@@ -658,6 +678,8 @@ function ChatContent() {
       }
       resolve('good');
     });
+
+    setWaiting(true);
 
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
@@ -699,9 +721,18 @@ function ChatContent() {
     } catch (error) {
       console.error('대화 종료 요청 실패:', error);
     }
-
+    disconnectAudio.play();
     router.push('/Comment');
   };
+
+  if (waiting) {
+    return (
+      <div className={styles.loading}>
+        <p>방금 대화를 분석하고 있어요</p>
+        <div className={styles.spinner}></div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.wrapper}>
