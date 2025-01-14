@@ -192,22 +192,18 @@ function ChatContent() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ user_id: ID, script, room_id, keywordRef }),
+          body: JSON.stringify({
+            user_id: ID,
+            script,
+            room_id,
+            keywordRef: keywordRef.current,
+          }),
           mode: 'cors',
         },
       );
 
       if (response.ok) {
         console.log('전송 성공');
-        const data = await response.json();
-        console.log('가이드 메시지 : ', data.guide_msg);
-        if (data.guide_msg !== '') {
-          setGuideMessage(data.guide_msg);
-          setShowGuide(true);
-          setTimeout(() => {
-            setShowGuide(false);
-          }, 7000); // 7초 후에 모달 닫기
-        }
       } else {
         console.log('오류 발생');
       }
@@ -620,6 +616,16 @@ function ChatContent() {
       captureAndSendFrame();
     }, 1500); // 1.5초마다
 
+    // 가이드 메시지 수신 이벤트 핸들러 추가
+    rtcSocket.on('guide_message', ({ guide_msg }: { guide_msg: string }) => {
+      console.log('가이드 메시지 수신:', guide_msg);
+      setGuideMessage(guide_msg);
+      setShowGuide(true);
+      setTimeout(() => {
+        setShowGuide(false);
+      }, 7000);
+    });
+
     // 정리 함수
     return () => {
       if (mediaRecorderRef.current) {
@@ -644,6 +650,7 @@ function ChatContent() {
         isRecording.current = false;
       }
       clearInterval(intervalId);
+      rtcSocket.off('guide_message');
     };
   }, [room_id, recordedChunks, dispatch, router, ID, rtcSocket]);
 
