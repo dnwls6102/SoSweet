@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import styles from './page.module.css';
 import { useState } from 'react';
-
+import Image from 'next/image';
 interface UserPayload {
   user_id: string;
   user_gender: string;
@@ -31,6 +31,10 @@ function SetAI() {
   const [ai_job, setAiJob] = useState('');
   const [ai_hobby, setAiHobby] = useState('');
   const [waiting, setWaiting] = useState(false);
+
+  let img_src = '';
+  if (gender === '남성') img_src = '/girl.webp';
+  else img_src = '/boy.webp';
 
   const handleNavigation = async () => {
     setWaiting(true);
@@ -85,9 +89,22 @@ function SetAI() {
         <div className={styles.content}>
           <div className={styles.imageSection}>
             {/* 이미지가 들어갈 회색 영역 */}
-            <button onClick={handleNavigation} className={styles.submitButton}>
-              AI 생성하기
-            </button>
+            <div className={styles.imageWrapper}>
+              <Image
+                src={img_src}
+                alt="AI 프로필 이미지"
+                width={400}
+                height={400}
+                className={styles.profileImage}
+                priority
+              />
+              <button
+                onClick={handleNavigation}
+                className={styles.submitButton}
+              >
+                AI 생성하기
+              </button>
+            </div>
           </div>
 
           <div className={styles.formSection}>
