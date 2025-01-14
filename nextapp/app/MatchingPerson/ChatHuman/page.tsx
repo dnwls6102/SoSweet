@@ -713,7 +713,7 @@ function ChatContent() {
   if (waiting) {
     return (
       <div className={styles.loading}>
-        <p>상대방의 응답을 기다리고 있어요</p>
+        <p>대화를 분석하고 있어요</p>
         <div className={styles.spinner}></div>
       </div>
     );

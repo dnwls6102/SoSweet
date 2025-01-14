@@ -1,4 +1,5 @@
 import styles from './guideModal.module.css';
+import Image from 'next/image';
 
 interface GuideModalProps {
   message: string;
@@ -7,9 +8,18 @@ interface GuideModalProps {
 export default function GuideModal({ message }: GuideModalProps) {
   return (
     <div className={styles.modalContainer}>
+      <div className={styles.alertIcon}>
+      <Image 
+        src="/alert.svg" 
+        alt="alertIcon" 
+        width={75} 
+        height={75} 
+        className={styles.alertIcon}
+      />
+      </div>
       <div className={styles.title}>지금이야!</div>
-      <p className={styles.message}>&ldquo;{message}&rdquo; 라고</p>
-      <p className={styles.subMessage}>상대방에게 제안해보자!</p>
+      <p className={styles.message}>&ldquo;{message}&rdquo;</p>
+      <p className={styles.subMessage}>라고 제안해보자!</p>
     </div>
   );
 }
