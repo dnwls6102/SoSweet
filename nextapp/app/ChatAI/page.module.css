@@ -19,6 +19,18 @@
 .wrapper {
   padding: 40px;
   height: calc(100vh - 180px);
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .content {
@@ -152,25 +164,28 @@
   border-bottom-right-radius: 20px; /* 하단 오른쪽 모서리 */
 }
 
-/* 로딩 스피너 */
 .loading {
-  font-family: 'contentFont', sans-serif;
-  font-size: 2.1em;
+  font-family: 'logoFont', sans-serif;
+  font-size: 5rem;
   color: #ff6b6b;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%; /* 부모 요소가 높이를 정의했을 경우에 필요 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* 화면의 중앙으로 위치시킴 */
+  height: auto; /* 높이는 자동으로 조정 */
 }
 
 .spinner {
   margin-top: 10px;
-  border: 6px solid #f3f3f3;
-  border-top: 6px solid #ff6b6b;
+  border: 7px solid #f3f3f3;
+  border-top: 7px solid #ff6b6b;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 110px;
+  height: 110px;
   animation: spin 2s linear infinite;
 }
 
