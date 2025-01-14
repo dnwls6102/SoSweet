@@ -1,31 +1,90 @@
+@font-face {
+  font-family: 'logoFont';
+  src: url('@/fonts/Cafe24Ssurround-v2.0.ttf') format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'titleFont';
+  src: url('@/fonts/NotoSansKR-Black.ttf') format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'contentFont';
+  src: url('@/fonts/NotoSansKR-Regular.ttf') format('truetype');
+  font-weight: normal;
+}
+
 .modalContainer {
   position: fixed;
   top: 100px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  background-color: rgba(255, 107, 107, 0.8);
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.7), rgba(255, 71, 87, 0.8));
+  padding: 30px;
+  border-radius: 30px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
   text-align: center;
   color: white;
   max-width: 90%;
   width: auto;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translate(-50%, -40%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+} 
+
+.alertIcon {
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0.8;
 }
 
 .title {
-  font-size: 48px;
+  font-size: 3.2rem;
   font-weight: bold;
+  font-family: 'titleFont', sans-serif;
+  margin-top: 80px;
   margin-bottom: 20px;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .message {
-  font-size: 36px;
+  font-size: 2.8rem;
   margin: 20px 0;
+  font-family: 'contentFont', sans-serif;
+  font-weight: bold;
+  color: #ffe5e5;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
 }
 
 .subMessage {
-  font-size: 32px;
+  font-size: 2rem;
+  font-family: 'contentFont', sans-serif;
   margin-top: 20px;
+  opacity: 0.9;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: 8px;
 } 

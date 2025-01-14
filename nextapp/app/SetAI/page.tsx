@@ -18,20 +18,22 @@ function SetAI() {
   const token = Cookies.get('access');
   let ID = '';
   let gender = '';
-  let nickname = '';
+  let user_nickname = '';
   if (token) {
     const decoded = jwtDecode<UserPayload>(token);
     ID = decoded.user_id;
     gender = decoded.user_gender;
-    nickname = decoded.user_nickname;
+    user_nickname = decoded.user_nickname;
   }
   const [ai_name, setAiName] = useState('');
   const [ai_age, setAiAge] = useState('');
   const [ai_personality, setAiPersonality] = useState('');
   const [ai_job, setAiJob] = useState('');
   const [ai_hobby, setAiHobby] = useState('');
+  const [waiting, setWaiting] = useState(false);
 
   const handleNavigation = async () => {
+    setWaiting(true);
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/dialog/start`,
@@ -43,7 +45,7 @@ function SetAI() {
           body: JSON.stringify({
             user_id: ID,
             user_gender: gender,
-            user_nickname: nickname,
+            user_nickname: user_nickname,
             ai_name: ai_name,
             ai_age: ai_age,
             ai_personality: ai_personality,
@@ -63,6 +65,15 @@ function SetAI() {
     router.replace('/ChatAI');
   };
 
+  if (waiting) {
+    return (
+      <div className={styles.loading}>
+        <p>AI를 생성 중이에요</p>
+        <div className={styles.spinner}></div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
@@ -74,11 +85,14 @@ function SetAI() {
         <div className={styles.content}>
           <div className={styles.imageSection}>
             {/* 이미지가 들어갈 회색 영역 */}
+            <button onClick={handleNavigation} className={styles.submitButton}>
+              AI 생성하기
+            </button>
           </div>
 
           <div className={styles.formSection}>
             <div className={styles.inputGroup}>
-              <label>대화 상대의 이름은...</label>
+              <label>대화 상대의 이름을 정해 주세요.</label>
               <textarea
                 className={styles.input}
                 onChange={(e) => setAiName(e.target.value)}
@@ -86,7 +100,7 @@ function SetAI() {
             </div>
 
             <div className={styles.inputGroup}>
-              <label>나이는 어떻게 되시죠?</label>
+              <label>나이는 어떻게 될까요?</label>
               <textarea
                 className={styles.input}
                 onChange={(e) => setAiAge(e.target.value)}
@@ -94,7 +108,7 @@ function SetAI() {
             </div>
 
             <div className={styles.inputGroup}>
-              <label>상대는 어떤 성격인가요? 자유롭게 적어주세요!</label>
+              <label>상대는 어떤 성격인가요? 자유롭게 적어 주세요.</label>
               <textarea
                 className={styles.input}
                 onChange={(e) => setAiPersonality(e.target.value)}
@@ -102,7 +116,7 @@ function SetAI() {
             </div>
 
             <div className={styles.inputGroup}>
-              <label>직업은 어떻게 되시나요?</label>
+              <label>상대의 직업은 무엇인가요?</label>
               <textarea
                 className={styles.input}
                 onChange={(e) => setAiJob(e.target.value)}
@@ -116,10 +130,6 @@ function SetAI() {
                 onChange={(e) => setAiHobby(e.target.value)}
               />
             </div>
-
-            <button onClick={handleNavigation} className={styles.submitButton}>
-              AI 생성하기!
-            </button>
           </div>
         </div>
       </div>

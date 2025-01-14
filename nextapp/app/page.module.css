@@ -35,10 +35,11 @@
 
 .logo {
   font-family: 'logoFont', sans-serif;
-  font-size: 60px;
+  font-size: 70px;
   overflow: hidden;
   display: inline-block;
   cursor : default;
+  margin-top: 10%;
 }
 
 .contentwrapper {
@@ -46,16 +47,15 @@
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  margin: 5px 0;
   align-items: center;
   justify-content: center;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 .inputWrapper {
   position: relative;
   width: 100%;
-  max-width: 300px;
+  max-width: 330px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -63,12 +63,12 @@
 
 .input {
   width: 100%;
-  max-width: 280px;
-  padding: 12px 16px;
+  max-width: 330px;
+  padding: 14px 18px;
   border: 2px solid #e1e1e1;
   border-radius: 10px;
   font-family: 'contentFont', sans-serif;
-  font-size: 14px;
+  font-size: 1.8em;
   transition: all 0.3s ease;
   background-color: #f8f9fa;
 }
@@ -86,12 +86,12 @@
 
 .label {
   position: absolute;
-  left: 16px;
-  top: -10px;
+  left: 10px;
+  top: -18px;
   background-color: white;
   padding: 0 6px;
   font-family: 'contentFont', sans-serif;
-  font-size: 12px;
+  font-size: 1.5em;
   color: #868e96;
   pointer-events: none;
 }
@@ -112,9 +112,10 @@
   color: white;
   font-weight: 600;
   font-family: 'logoFont', sans-serif;
+  font-size: 2em;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  width: 120px;
+  width: 180px;
 }
 
 .button:hover {
@@ -135,7 +136,7 @@
   background-color: rgba(255, 235, 241, 0.95); /* 부드러운 핑크색 배경 */
   color: #e84393; /* 텍스트 색상 */
   font-family: 'titleFont', sans-serif;
-  font-size: 15px;
+  font-size: 2em;
   padding: 11px 22px;
   border-radius: 12px; /* 둥근 모서리 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */

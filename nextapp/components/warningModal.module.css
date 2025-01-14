@@ -1,0 +1,25 @@
+.warningModal {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  pointer-events: none;
+  width: 100%;
+}
+
+.warningContent {
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #000;
+  padding: 20px 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  font-size: 3rem;
+  font-weight: 700;
+  text-align: center;
+  width: 90%;
+  margin: 0 auto;
+  letter-spacing: 0.5px;
+  word-break: keep-all;
+  line-height: 1.4;
+} 
