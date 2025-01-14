@@ -66,7 +66,6 @@ export default function Chat() {
       setUserId(decoded.user_id);
       setUserGender(decoded.user_gender);
       setUserNickname(decoded.user_nickname);
-      setUserNickname(decoded.user_nickname);
     } else {
       alert('유효하지 않은 접근입니다.');
       router.replace('/');
@@ -414,7 +413,6 @@ export default function Chat() {
   }, [user_id]);
 
   const handleNavigation = async () => {
-    setWaiting(true);
     setWaiting(true);
     try {
       // 먼저 모든 리소스를 정리
