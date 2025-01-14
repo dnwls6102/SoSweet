@@ -1,22 +1,50 @@
+@font-face {
+  font-family: 'logoFont';
+  src: url('../../fonts/Cafe24Ssurround-v2.0.ttf') format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'titleFont';
+  src: url('../../fonts/NotoSansKR-Black.ttf') format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'contentFont';
+  src: url('../../fonts/NotoSansKR-Regular.ttf') format('truetype');
+  font-weight: normal;
+}
+
 .wrapper {
+  padding: 80px;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  align-items: center;
 }
 
 .container {
-  background: white;
+  text-align: center;
+  justify-content: center;
+  background-color: white;
   border-radius: 20px;
   padding: 40px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .title {
-  font-size: 2.5rem;
+  margin-top: 20px;
+  font-size: 3.5rem;
   font-weight: bold;
   margin-bottom: 40px;
   text-align: center;
+  font-family: 'titleFont', sans-serif;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ffb6c1;
 }
 
 .content {
@@ -49,7 +77,8 @@
 }
 
 .feedbackText {
-  font-size: 1.5rem;
+  font-size: 1.7rem;
+  font-family: 'contentFont', sans-serif;
   line-height: 1.6;
   color: #333;
   margin: 0;
@@ -66,8 +95,9 @@
   padding: 15px 30px;
   border: none;
   border-radius: 8px;
-  font-size: 1.2rem;
+  font-size: 1.9rem;
   font-weight: bold;
+  font-family: 'logoFont', sans-serif;
   cursor: pointer;
   transition: transform 0.2s;
 }
@@ -77,19 +107,29 @@
 }
 
 .moreButton {
-  background-color: #4CAF50;
+  background: linear-gradient(45deg, #ff99cc, #ff9dc2); /* 연한 핑크 */
   color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .moreButton:hover {
-  background-color: #45a049;
+  background: linear-gradient(45deg, #ff4d88, #ff85a5); /* hover 시 더 진한 핑크 */
 }
 
 .mainButton {
-  background-color: #ff4444;
+  background: linear-gradient(45deg, #ff3366, #ff6699); /* 진한 핑크 */
   color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .mainButton:hover {
-  background-color: #ff3333;
-} 
+  background: linear-gradient(45deg, #fe073d, #ff2870); /* hover 시 더 진한 핑크 */
+}

@@ -286,6 +286,10 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
         // AI가 분석한 내용 저장
         chatAnalysisMap.set(user_id, assistantAnswer);
         console.log("사람 간의 대화 분석 기록 저장완료");
+        res.status(200).json({
+          message: "LLM에게 성공적으로 대화 분석을 맡겼습니다.",
+          user_id: user_id,
+        });
       } catch (err) {
         console.error("LLM 대화 분석 실패", err);
         chatAnalysisMap.set(
@@ -294,11 +298,6 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
         );
       }
     })();
-
-    res.status(200).json({
-      message: "LLM에게 성공적으로 대화 분석을 맡겼습니다.",
-      user_id: user_id,
-    });
   }
 }
 
@@ -311,7 +310,11 @@ async function getAnalysis(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const analysis = chatAnalysisMap.get(user_id);
+  let analysis = chatAnalysisMap.get(user_id);
+  const feedbackIdx = `${analysis}`.lastIndexOf("{");
+  analysis = `${analysis}`.substring(feedbackIdx);
+  analysis = JSON.parse(JSON.stringify(analysis));
+
   if (!analysis) {
     res
       .status(202)
@@ -324,7 +327,7 @@ async function getAnalysis(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  res.status(200).json({ analysis });
+  res.status(200).json(analysis);
 }
 
 export { chatAnalysis, getAnalysis };

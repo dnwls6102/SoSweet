@@ -44,8 +44,8 @@ export default function NavbarIcon() {
           <Image
             src="/MyPageLogo.svg"
             alt="My Page Logo"
-            width={50} // 원하는 크기로 설정
-            height={50}
+            width={60} // 원하는 크기로 설정
+            height={60}
           />
         </Link>
       </div>

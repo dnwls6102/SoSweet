@@ -23,7 +23,7 @@
 
 .callEndIcon {
   position: absolute;
-  bottom: 20px;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   cursor: pointer;
@@ -77,10 +77,33 @@
   }
 }
 
-/* 😡"angry": "분노",
-🤮"disgust": "혐오",
-😨"fear": "공포",
-😍"happy": "행복",
-😢"sad": "슬픔",
-😲"surprise": "놀람",
-��"neutral": "중립" */
+.loading {
+  font-family: 'logoFont', sans-serif;
+  font-size: 5rem;
+  color: #ff6b6b;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* 화면의 중앙으로 위치시킴 */
+  height: auto;  /* 높이는 자동으로 조정 */
+}
+
+.spinner {
+  margin-top: 10px;
+  border: 7px solid #f3f3f3;
+  border-top: 7px solid #ff6b6b;
+  border-radius: 50%;
+  width: 110px;
+  height: 110px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+

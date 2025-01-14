@@ -5,7 +5,7 @@
   }
 
 .inputGroup {
-    margin-top: 3px;
+    margin-top: 4px;
     margin-bottom: 8px;
     position: relative;
     width: 500px;
@@ -18,21 +18,21 @@
 }
 
 .label {
-    width: 35%;
+    width: 33%;
     display: block;
     margin-bottom: 6px;
     font-family: 'contentFont', sans-serif;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 20px;
     color: #2d3748;
 }
 
 .select {
     padding: 0 14px;
     height: 40px;
-    width: 90px;
+    width: 100px;
     font-family: 'contentFont', sans-serif;
-    font-size: 14px;
+    font-size: 18px;
     border: 2px solid #e2e8f0;
     border-radius: 8px;
     background-color: #fff;

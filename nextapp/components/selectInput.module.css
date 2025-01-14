@@ -23,13 +23,13 @@
     margin-bottom: 6px;
     font-family: 'contentFont', sans-serif;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 20px;
     color: #2d3748;
 }
 
 .buttonGroup {
     display: flex;
-    gap: 10px;
+    gap: 13px;
 }
 
 .button {
@@ -37,7 +37,7 @@
     height: 40px;
     width: 165px;
     font-family: 'contentFont', sans-serif;
-    font-size: 14px;
+    font-size: 18px;
     border: 2px solid #e2e8f0;
     border-radius: 8px;
     background-color: #fff;
