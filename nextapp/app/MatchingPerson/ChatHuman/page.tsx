@@ -111,6 +111,10 @@ function ChatContent() {
   const imgRef = useRef('');
   const [waiting, setWaiting] = useState(false);
 
+  const ddingAudio = new Audio('/dding.mp4');
+  const disconnectAudio = new Audio('/disconnect.mp3');
+  const connectAudio = new Audio('/connect.mp3');
+
   useEffect(() => {
     const token = Cookies.get('access');
     if (token) {
@@ -291,6 +295,7 @@ function ChatContent() {
       alert('지원하지 않는 브라우저입니다.');
       return;
     }
+    connectAudio.play();
     console.log('Chat Component UseEffect Triggerd');
 
     recognition.current = new (
@@ -421,6 +426,7 @@ function ChatContent() {
       } catch (error) {
         console.error('대화 종료 요청 실패:', error);
       }
+      disconnectAudio.play();
       router.push('/Comment');
     });
 
@@ -621,6 +627,7 @@ function ChatContent() {
     // 가이드 메시지 수신 이벤트 핸들러 추가
     rtcSocket.on('guide_message', ({ guide_msg }: { guide_msg: string }) => {
       console.log('가이드 메시지 수신:', guide_msg);
+      ddingAudio.play();
       setGuideMessage(guide_msg);
       setShowGuide(true);
       setTimeout(() => {
@@ -714,6 +721,7 @@ function ChatContent() {
       console.error('대화 종료 요청 실패:', error);
     }
 
+    disconnectAudio.play();
     router.push('/Comment');
   };
 

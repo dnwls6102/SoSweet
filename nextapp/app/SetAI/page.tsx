@@ -125,7 +125,7 @@ function SetAI() {
             </div>
 
             <div className={styles.inputGroup}>
-              <label>상대는 어떤 성격인가요? 자유롭게 적어 주세요.</label>
+              <label>상대의 MBTI를 적어주세요!</label>
               <textarea
                 className={styles.input}
                 onChange={(e) => setAiPersonality(e.target.value)}

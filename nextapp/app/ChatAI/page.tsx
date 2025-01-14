@@ -95,6 +95,9 @@ export default function Chat() {
 
   const [waiting, setWaiting] = useState(false);
 
+  const disconnectAudio = new Audio('/disconnect.mp3');
+  const connectAudio = new Audio('/connect.mp3');
+
   //대화 영상 전체 / n분 간격으로 서버로 보내는 함수
 
   const tryNlp = async (script: string) => {
@@ -253,6 +256,7 @@ export default function Chat() {
       alert('지원하지 않는 브라우저입니다.');
       return;
     }
+    connectAudio.play();
 
     recognition.current = new (
       window as unknown as Window
@@ -447,6 +451,7 @@ export default function Chat() {
         const json_data = await response.json();
         console.log('받은 데이터:', json_data.analysis);
         dispatch(setGPTFeedback(json_data.analysis)); // 문자열 직접 저장
+        disconnectAudio.play();
         router.push('/FeedbackAI');
       } else {
         console.log('대화 종료 요청 실패');
