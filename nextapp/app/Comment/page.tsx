@@ -101,19 +101,19 @@ export default function RatingPage() {
     };
 
     console.log('피드백 제출:', data);
-    socket.emit('submitFeedback', data);
     setWaiting(true);
-
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/analysis`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            room_id: room,
             user_id: user_id,
+            script: '',
           }),
           credentials: 'include',
         },
@@ -129,6 +129,7 @@ export default function RatingPage() {
       } else {
         console.error('서버에서 분석을 반환하지 않음');
       }
+      socket.emit('submitFeedback', data);
     } catch (error) {
       console.error('분석 반환 요청 실패:', error);
     }
@@ -175,13 +176,13 @@ export default function RatingPage() {
         <h2 className={styles.title}>다음에 또 만나고 싶으신가요?</h2>
         <div className={styles.actions}>
           <button className={styles.likeButton} onClick={() => setLike(true)}>
-            💕 다시 만나고 싶어요
+            💕 <br /> 다시 만나고 싶어요
           </button>
           <button
             className={styles.dislikeButton}
             onClick={() => setLike(false)}
           >
-            💔 만나고 싶지 않아요
+            💔 <br /> 만나고 싶지 않아요
           </button>
         </div>
         <button className={styles.submitButton} onClick={handleSubmit}>
