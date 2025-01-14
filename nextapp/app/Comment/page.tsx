@@ -104,16 +104,14 @@ export default function RatingPage() {
     setWaiting(true);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/end`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/human/dialog/analysis`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            room_id: room,
             user_id: user_id,
-            script: '',
           }),
           credentials: 'include',
         },
