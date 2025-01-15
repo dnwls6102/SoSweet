@@ -1,0 +1,72 @@
+@font-face {
+  font-family: 'logoFont';
+  src: url('@/fonts/Cafe24Ssurround-v2.0.ttf') format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'titleFont';
+  src: url('@/fonts/NotoSansKR-Black.ttf') format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'contentFont';
+  src: url('@/fonts/NotoSansKR-Regular.ttf') format('truetype');
+  font-weight: normal;
+}
+
+.modalContainer {
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.8); /* 초기 크기를 줄여서 등장 효과 준비 */
+  z-index: 1000;
+  background: linear-gradient(135deg, rgba(255, 223, 107, 0.7), rgba(255, 193, 7, 0.8));
+  padding: 30px;
+  border-radius: 30px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-width: 90%;
+  width: auto;
+  opacity: 0; /* 투명도 초기값 */
+  animation: popIn 0.2s ease-out forwards; /* 새로운 애니메이션 */
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.8); /* 작고 투명하게 시작 */
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1); /* 정상 크기와 불투명 상태 */
+  }
+}
+
+.warningIcon {
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0.9;
+}
+
+.message {
+  font-size: 2.8rem;
+  margin: 20px 0;
+  margin-top: 50px;
+  font-family: 'contentFont', sans-serif;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
