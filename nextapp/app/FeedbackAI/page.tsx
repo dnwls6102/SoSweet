@@ -4,15 +4,33 @@ import { RootState } from '@/store/store';
 import styles from './page.module.css';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useEffect, useRef } from 'react';
 
 export default function FeedbackAI() {
   const summary = useSelector((state: RootState) => state.GPTfeedback.summary);
-  const audioUrl = useSelector(
-    (state: RootState) => state.GPTfeedback.audioUrl,
-  );
-  const audio = new Audio(audioUrl);
-  audio.play();
+  const audioUrl = useSelector((state: RootState) => state.GPTfeedback.audioUrl);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    audioRef.current = new Audio(audioUrl);
+    audioRef.current.play();
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, [audioUrl]);
+
+  const handleNavigation = (path: string) => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    router.push(path);
+  };
 
   return (
     <div className={styles.wrapper}>
@@ -33,15 +51,13 @@ export default function FeedbackAI() {
             <div className={styles.buttonGroup}>
               <button
                 className={`${styles.button} ${styles.moreButton}`}
-                onClick={() => {
-                  router.push('/SetAI');
-                }}
+                onClick={() => handleNavigation('/SetAI')}
               >
                 한번 더 하기!
               </button>
               <button
                 className={`${styles.button} ${styles.mainButton}`}
-                onClick={() => router.push('/MainPage')}
+                onClick={() => handleNavigation('/MainPage')}
               >
                 메인 화면으로
               </button>
