@@ -148,7 +148,7 @@ export default function Feedback() {
   return (
     <div className={styles.wrapper}>
       <header className={styles.header}>
-        <h1 className={styles.title}>당신의 소개팅력은?</h1>
+        <h1 className={styles.title}>❣ 당신의 소개팅력은?</h1>
       </header>
 
       <div className={styles.tabMenu}>
@@ -169,7 +169,7 @@ export default function Feedback() {
       <div className={styles.container}>
         {selectedTab === 'emotion' && (
           <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>감정 분석</h2>
+            {/* <h2 className={styles.sectionTitle}>감정 분석</h2> */}
             <div className={styles.chartWithLegend}>
               <div className={styles.chartContainer}>
                 {emotionData ? (
@@ -223,7 +223,7 @@ export default function Feedback() {
 
         {selectedTab === 'verbal' && (
           <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>대화 분석</h2>
+            {/* <h2 className={styles.sectionTitle}>대화 분석</h2> */}
             {conclusion ? (
               <div className={styles.summaryText}>{conclusion}</div>
             ) : (
@@ -237,7 +237,7 @@ export default function Feedback() {
 
         {selectedTab === 'nonverbal' && (
           <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>동작 분석</h2>
+            {/* <h2 className={styles.sectionTitle}>동작 분석</h2> */}
             <div className={styles.actionsWrapper}>
               {nonverbal ? (
                 typeof nonverbal === 'object' && nonverbal.counters ? (
@@ -261,8 +261,8 @@ export default function Feedback() {
                         height={180}
                       />
                       <h4>눈에 손 올리기</h4>
-                      <p>{nonverbal.counters.folded_arm_message_count} 회</p>
-                    </div>
+                      <p>{nonverbal.counters.eye_touch_message_count} 회</p>
+                    </div> */}
                     <div className={styles.actionItem}>
                       <Image
                         src="/sidemove.svg"

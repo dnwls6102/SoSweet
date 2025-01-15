@@ -24,6 +24,7 @@ function SetAI() {
     ID = decoded.user_id;
     gender = decoded.user_gender;
     user_nickname = decoded.user_nickname;
+    user_nickname = decoded.user_nickname;
   }
   const [ai_name, setAiName] = useState('');
   const [ai_age, setAiAge] = useState('');
