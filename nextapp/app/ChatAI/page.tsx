@@ -13,7 +13,6 @@ interface UserPayload {
   user_id: string;
   user_gender: string;
   user_nickname: string;
-  user_nickname: string;
   iat: number;
   exp: number;
 }
