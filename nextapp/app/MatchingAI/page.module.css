@@ -31,7 +31,7 @@
 }
 
 .loading {
-  font-family: 'contentFont', sans-serif;
+  font-family: 'logoFont', sans-serif;
   font-size: 5rem;
   color: #ff6b6b;
   display: flex;
@@ -43,10 +43,11 @@
   left: 50%;
   transform: translate(-50%, -50%); /* 화면의 중앙으로 위치시킴 */
   height: auto;  /* 높이는 자동으로 조정 */
+  white-space: nowrap; 
 }
 
 .spinner {
-  margin-top: 10px;
+  margin-top: -10px;
   border: 7px solid #f3f3f3;
   border-top: 7px solid #ff6b6b;
   border-radius: 50%;

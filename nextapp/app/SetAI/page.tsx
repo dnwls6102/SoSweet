@@ -94,8 +94,8 @@ function SetAI() {
               <Image
                 src={img_src}
                 alt="AI 프로필 이미지"
-                width={400}
-                height={400}
+                width={500}
+                height={500}
                 className={styles.profileImage}
                 priority
               />
