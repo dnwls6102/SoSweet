@@ -120,6 +120,7 @@ export default function RatingPage() {
         const result = await response.json();
         console.log('대화 분석 받음');
         const data = JSON.parse(result);
+        const data = JSON.parse(result);
         console.log(data.analysis);
         console.log(data.conclusion);
         dispatch(setSummary(data.analysis)); //서버에서 어떻게 줄 건지 확인
