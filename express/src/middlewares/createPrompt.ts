@@ -48,16 +48,16 @@ async function genPrompt(
       
       [작업 목표]  
       1. 사용자가 입력한 정보(이름, 성별, 나이, 직업, 취미, MBTI)를 바탕으로, **해당 인물의 직업과 취미가 MBTI 성격 특성에 의해 결정되었음을 서술**한 페르소나를 만든다.  
-      2. 페르소나의 **성격**을 10줄 이내로 간결하게 작성하며, MBTI가 인물의 말투·행동·관점 등에 어떤 영향을 미쳤는지 언급한다.  
+      2. 페르소나의 **성격**을 7줄 이내로 간결하게 작성하며, MBTI가 인물의 말투·행동·관점 등에 어떤 영향을 미쳤는지 언급한다.  
       3. 너무 장황하게 설명하지 않고, **핵심적인 특징과 가치관을 중심으로** 페르소나를 완성한다.
       
       [페르소나 생성 지침]  
       1. 사용자에게서 제공받은 MBTI를 토대로, **인물의 삶의 방식**(직업·취미 등)에 큰 영향을 미쳤다는 점을 명확히 설명한다.  
-      2. **구체적이고 새로운 표현**을 사용하되, 10줄 이내로만 작성한다.  
+      2. **구체적이고 새로운 표현**을 사용하되, 7줄 이내로만 작성한다.  
       3. **불필요한 문구는 최소화**하고, 인물이 어떤 태도로 세상과 사람을 대하는지 명확히 기술한다.
       
       [최종 출력 형태 안내]  
-      - **성격** (10줄 이내)
+      - **성격** (7줄 이내)
       `,
     },
   ];
@@ -73,12 +73,12 @@ async function genPrompt(
     if (ai_prompt === null) {
       throw new Error("페르소나 프롬프트 생성에 실패했습니다.");
     }
-    req.body.ai_personality = ai_prompt;
+    req.body.ai_job = ai_prompt;
     prompts[user_id].push({
       role: "assistant",
       content: ai_prompt,
     });
-    console.log("생성된 프롬프트 성격에 넣기", req.body.ai_personality);
+    console.log("생성된 프롬프트 직업 란에 넣기", req.body.ai_job);
     next();
   } catch (err) {
     res.status(500).json({ message: "프롬프트 생성에 실패했습니다." });
@@ -90,7 +90,7 @@ async function genDialog(req: Request, res: Response, next: NextFunction) {
   prompts[user_id].push({
     role: "user",
     content:
-      "위의 인물이 상대방의 무례함에 단호하게 선을 긋는 예시 대화 10개와 반대로 상대방과 즐겁게 질문과 대답을 번갈아 하는 대화 10개를 만들어줘. 대화만.",
+      "위의 인물이 카페에서 처음 만난 이성과 나눌 법한 대화를 간결하고 직설적으로 작성해주세요. 예시 대화는 10개로 제한하며, 짧고 자연스럽게 표현해주세요. 거기에 추가로 연애관을 알 수 있게 깻잎논쟁과 남사친 및 여사친에 대한 생각을 나타내는 답변도 2개 추가로 넣어주세요.",
   });
   try {
     const response = await openai.chat.completions.create({

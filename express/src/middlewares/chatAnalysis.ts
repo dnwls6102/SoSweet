@@ -81,7 +81,7 @@ function createAiPrompt(
       
       ### 결과 작성 방식
       
-      최종 피드백은 아래와 같이 3줄 이내의 문자열로 반환합니다.  
+      최종 피드백은 아래와 같이 **반드시 3줄 이내의 문자열**로 반환합니다.  
       상대방이 name이 ${user_id}와 소개팅을 한 뒤 느낀 점처럼 작성하며, **따뜻하고 긍정적인 어조**를 유지합니다.  
   
       ### 예시
@@ -313,7 +313,6 @@ async function chatAnalysis(req: Request, res: Response): Promise<void> {
         );
       }
     })();
-    res.status(200).end();
     res.status(200).end();
   }
 }
