@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store/store';
 import FeedbackModal from '@/components/feedbackModal';
 import WarningModal from '@/components/warningModal';
+import YellowWarningModal from '@/components/yellowWarningModal';
 
 interface UserPayload {
   user_id: string;

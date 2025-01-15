@@ -486,25 +486,6 @@ export default function Chat() {
       <div className={styles.content}>
         <div className={styles.left}>
           <div className={styles.relationshipContainer}>
-            <div className={styles.relationshipSet}>
-              <Image
-                src="/heart.svg"
-                alt="하트"
-                width={24}
-                height={24}
-                className={styles.heartIcon}
-              />
-              <div className={styles.relationshipExp}>
-                <div className={styles.progressBar}>
-                  <div
-                    className={styles.progressFill}
-                    style={{ width: `${48}%` }}
-                  >
-                    <span className={styles.progressValue}>48/100</span>
-                  </div>
-                </div>
-              </div>
-            </div>
             <Image
               src={image_src}
               alt="AI 이미지"
