@@ -41,6 +41,7 @@ interface NonverbalData {
     hand_message_count: number;
     folded_arm_message_count: number;
     side_move_message_count: number;
+    eye_touch_message_count: number;
   };
 }
 
@@ -262,7 +263,7 @@ export default function Feedback() {
                       />
                       <h4>눈에 손 올리기</h4>
                       <p>{nonverbal.counters.eye_touch_message_count} 회</p>
-                    </div> */}
+                    </div>
                     <div className={styles.actionItem}>
                       <Image
                         src="/sidemove.svg"

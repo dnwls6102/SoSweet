@@ -95,9 +95,12 @@ export default function Chat() {
 
   const [waiting, setWaiting] = useState(false);
 
-  const disconnectAudio = new Audio('/disconnect.mp3');
-  const connectAudio = new Audio('/connect.mp3');
-
+  let disconnectAudio: HTMLAudioElement;
+  let connectAudio: HTMLAudioElement;
+  if (typeof window !== 'undefined') {
+    disconnectAudio = new Audio('/disconnect.mp3');
+    connectAudio = new Audio('/connect.mp3');
+  }
   //대화 영상 전체 / n분 간격으로 서버로 보내는 함수
 
   const tryNlp = async (script: string) => {
@@ -169,16 +172,19 @@ export default function Chat() {
         }
         const audioBlob = await response.blob(); // 서버 응답 데이터를 Blob으로 변환
         const audioUrl = URL.createObjectURL(audioBlob); // Blob에서 재생 가능한 URL 생성
-        const audio = new Audio(audioUrl); // Audio 객체 생성
-        isRecording.current = false;
-        recognition.current?.stop();
-        audio.addEventListener('ended', () => {
-          console.log('음성 재생 완료');
+        let audio: HTMLAudioElement;
+        if (typeof window !== 'undefined') {
+          audio = new Audio(audioUrl); // Audio 객체 생성
+          isRecording.current = false;
+          recognition.current?.stop();
+          audio.addEventListener('ended', () => {
+            console.log('음성 재생 완료');
 
-          isRecording.current = true;
-          recognition.current?.start();
-        });
-        audio.play(); // 음성 파일 재생
+            isRecording.current = true;
+            recognition.current?.start();
+          });
+          audio.play(); // 음성 파일 재생
+        }
         console.log('전송 성공');
       } else {
         console.log('오류 발생');

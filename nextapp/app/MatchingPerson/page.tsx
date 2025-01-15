@@ -16,7 +16,6 @@ interface UserPayload {
   iat: number;
   exp: number;
 }
-
 export default function MatchingPerson() {
   const router = useRouter();
   const [isMatching, setIsMatching] = useState(false);
@@ -24,54 +23,67 @@ export default function MatchingPerson() {
   const [user_id, setUserID] = useState('');
   const [user_gender, setUserGender] = useState('');
   const dispatch = useDispatch();
-
-  const makeConnectAudio = new Audio('/makeConnect.mp3');
-  makeConnectAudio.loop = true;
+  let makeConnectAudio: HTMLAudioElement;
+  if (typeof window !== 'undefined') {
+    makeConnectAudio = new Audio('/makeConnect.mp3');
+    makeConnectAudio.loop = true;
+  }
 
   useEffect(() => {
-    if (isMatching) {
-      makeConnectAudio.play();
-    } else {
-      makeConnectAudio.pause();
-      makeConnectAudio.currentTime = 0;
+    if (typeof window !== 'undefined') {
+      if (isMatching) {
+        makeConnectAudio.play();
+      } else {
+        makeConnectAudio.pause();
+        makeConnectAudio.currentTime = 0;
+      }
+      return () => {
+        makeConnectAudio.pause();
+        makeConnectAudio.currentTime = 0;
+      };
     }
-    return () => {
-      makeConnectAudio.pause();
-      makeConnectAudio.currentTime = 0;
-    };
   }, [isMatching]);
 
   useEffect(() => {
-    const token = Cookies.get('access');
-    if (token) {
-      const decoded = jwtDecode<UserPayload>(token);
-      setUserID(decoded.user_id);
-      setUserGender(decoded.user_gender);
-    } else {
-      alert('유효하지 않은 접근입니다.');
-      router.replace('/');
+    if (typeof window !== 'undefined') {
+      const token = Cookies.get('access');
+      if (token) {
+        const decoded = jwtDecode<UserPayload>(token);
+        setUserID(decoded.user_id);
+        setUserGender(decoded.user_gender);
+      } else {
+        alert('유효하지 않은 접근입니다.');
+        router.replace('/');
+      }
+      // 소켓 연결 초기화
+      const newSocket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`, {
+        path: '/api/match',
+        transports: ['websocket'],
+      });
+      setSocket(newSocket);
+      dispatch(setReduxSocket(newSocket));
+
+      newSocket.on('connect', () => {
+        console.log('Socket connected:', newSocket.id);
+      });
+
+      newSocket.on('matchSuccess', async (data: { room_id: string }) => {
+        console.log('Match success:', data);
+        makeConnectAudio.pause();
+        makeConnectAudio.currentTime = 0;
+        dispatch(setRoom(data.room_id));
+        router.push(`/MatchingPerson/ChatHuman?room=${data.room_id}`);
+      });
+
+      const match_disconnect = () => {
+        const data = { socket_id: newSocket.id, room_id: null };
+        newSocket.emit('match-disconnect', data);
+        newSocket.disconnect();
+      };
+      window.addEventListener('popstate', match_disconnect);
+      window.addEventListener('beforeunload', match_disconnect);
+      return;
     }
-    // 소켓 연결 초기화
-    const newSocket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`, {
-      path: '/api/match',
-      transports: ['websocket'],
-    });
-    setSocket(newSocket);
-    dispatch(setReduxSocket(newSocket));
-
-    newSocket.on('connect', () => {
-      console.log('Socket connected:', newSocket.id);
-    });
-
-    newSocket.on('matchSuccess', async (data: { room_id: string }) => {
-      console.log('Match success:', data);
-      makeConnectAudio.pause();
-      makeConnectAudio.currentTime = 0;
-      dispatch(setRoom(data.room_id));
-      router.push(`/MatchingPerson/ChatHuman?room=${data.room_id}`);
-    });
-
-    return;
   }, [router, dispatch]);
 
   const handleMatching = () => {
@@ -112,7 +124,7 @@ export default function MatchingPerson() {
         <div className={styles.rightSection}>
           <div className={styles.rankContainer}>
             <span className={styles.rankText}>
-              지금 클릭하세요, <br/> 당신의 운명이 로딩 중입니다!
+              지금 클릭하세요, <br /> 당신의 운명이 로딩 중입니다!
             </span>
             {/* <span className={styles.rankText}>나의 등급</span>
             <Image

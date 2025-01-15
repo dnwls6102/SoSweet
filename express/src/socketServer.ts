@@ -203,13 +203,31 @@ export function initializeSocketServer(server: http.Server) {
       // 대기열에서 제거
       console.log("연결 종료: ", socket.id);
     });
+
+    socket.on(
+      "match-disconnect",
+      (data: { socket_id: string; room_id: string }) => {
+        const { socket_id, room_id } = data;
+        console.log(data);
+        if (room_id !== null) {
+          activeRooms.delete(room_id);
+          socket.leave(room_id);
+        }
+        if (socket_id !== null) {
+          waitingUsers.delete(socket_id);
+          socket.leave(socket_id);
+        }
+      }
+    );
+    console.log(waitingUsers);
+    console.log(activeRooms);
   });
 }
 
 // 다른 모듈에서 소켓 인스턴스를 사용할 수 있도록 export
 export function getIO(): Server {
   if (!io) {
-    throw new Error('Socket.io has not been initialized');
+    throw new Error("Socket.io has not been initialized");
   }
   return io;
 }

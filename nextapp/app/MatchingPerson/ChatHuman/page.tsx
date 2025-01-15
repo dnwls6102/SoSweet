@@ -111,9 +111,14 @@ function ChatContent() {
   const imgRef = useRef('');
   const [waiting, setWaiting] = useState(false);
 
-  const ddingAudio = new Audio('/dding.mp4');
-  const disconnectAudio = new Audio('/disconnect.mp3');
-  const connectAudio = new Audio('/connect.mp3');
+  let ddingAudio: HTMLAudioElement;
+  let disconnectAudio: HTMLAudioElement;
+  let connectAudio: HTMLAudioElement;
+  if (typeof window !== 'undefined') {
+    ddingAudio = new Audio('/dding.mp4');
+    disconnectAudio = new Audio('/disconnect.mp3');
+    connectAudio = new Audio('/connect.mp3');
+  }
 
   useEffect(() => {
     const token = Cookies.get('access');
