@@ -79,31 +79,34 @@
 
 .loading {
   font-family: 'logoFont', sans-serif;
-  font-size: 5rem;
-  color: #ff6b6b;
+  font-size: 5em;
+  color: #ff758c;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* 화면의 중앙으로 위치시킴 */
-  height: auto;  /* 높이는 자동으로 조정 */
+  height: 100%; /* 부모 요소가 높이를 정의했을 경우에 필요 */
+  white-space: nowrap; 
 }
 
 .spinner {
   margin-top: 10px;
-  border: 7px solid #f3f3f3;
-  border-top: 7px solid #ff6b6b;
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #ff758c;
   border-radius: 50%;
-  width: 110px;
-  height: 110px;
+  width: 65px;
+  height: 65px;
   animation: spin 2s linear infinite;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
+
+
 

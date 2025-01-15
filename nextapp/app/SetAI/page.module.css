@@ -16,24 +16,6 @@
   font-weight: normal;
 }
 
-@font-face {
-  font-family: 'logoFont';
-  src: url('../../fonts/Cafe24Ssurround-v2.0.ttf') format('truetype');
-  font-weight: bold;
-}
-
-@font-face {
-  font-family: 'titleFont';
-  src: url('../../fonts/NotoSansKR-Black.ttf') format('truetype');
-  font-weight: bold;
-}
-
-@font-face {
-  font-family: 'contentFont';
-  src: url('../../fonts/NotoSansKR-Regular.ttf') format('truetype');
-  font-weight: normal;
-}
-
 .wrapper {
   padding: 20px;
   max-width: 1300px;
@@ -61,9 +43,6 @@
   font-size: 3rem;
   margin-bottom: 10px;
   font-family: 'titleFont', sans-serif;
-  text-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
-  font-family: 'titleFont', sans-serif;
-  text-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
 }
 
 .subtitle {
@@ -163,7 +142,7 @@
 
 .submitButton {
   position: absolute;
-  bottom: 20px;
+  bottom: 10px;
   z-index: 1;
   margin: 0 auto;
   margin-top: auto;
@@ -256,11 +235,12 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%); /* 화면의 중앙으로 위치시킴 */
-  height: auto; /* 높이는 자동으로 조정 */
+  height: auto;  /* 높이는 자동으로 조정 */
+  white-space: nowrap; 
 }
 
 .spinner {
-  margin-top: 10px;
+  margin-top: -10px;
   border: 7px solid #f3f3f3;
   border-top: 7px solid #ff6b6b;
   border-radius: 50%;
@@ -270,10 +250,6 @@
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

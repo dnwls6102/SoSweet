@@ -470,6 +470,7 @@
   justify-content: center;
   align-items: center;
   height: 100%; /* 부모 요소가 높이를 정의했을 경우에 필요 */
+  white-space: nowrap; 
 }
 
 .spinner {

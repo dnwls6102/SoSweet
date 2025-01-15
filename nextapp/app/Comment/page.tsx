@@ -128,6 +128,7 @@ export default function RatingPage() {
         console.error('서버에서 분석을 반환하지 않음');
       }
       socket.emit('submitFeedback', data);
+      socket.emit('submitFeedback', data);
     } catch (error) {
       console.error('분석 반환 요청 실패:', error);
     }
@@ -175,11 +176,13 @@ export default function RatingPage() {
         <div className={styles.actions}>
           <button className={styles.likeButton} onClick={() => setLike(true)}>
             💕 <br /> 다시 만나고 싶어요
+            💕 <br /> 다시 만나고 싶어요
           </button>
           <button
             className={styles.dislikeButton}
             onClick={() => setLike(false)}
           >
+            💔 <br /> 만나고 싶지 않아요
             💔 <br /> 만나고 싶지 않아요
           </button>
         </div>

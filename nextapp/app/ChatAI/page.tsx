@@ -475,7 +475,7 @@ export default function Chat() {
   if (waiting) {
     return (
       <div className={styles.loading}>
-        <p>방금 대화를 분석하고 있어요</p>
+        <p>대화를 분석하고 있어요</p>
         <div className={styles.spinner}></div>
       </div>
     );

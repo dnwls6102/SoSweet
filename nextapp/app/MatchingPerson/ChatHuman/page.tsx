@@ -794,7 +794,11 @@ function ChatContent() {
 
 export default function Chat() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={
+    <div className={styles.loading}>
+      <p>Loading...</p>
+      <div className={styles.spinner}></div>
+    </div>}>
       <ChatContent />
     </Suspense>
   );
