@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import styles from './page.module.css';
 import { useState } from 'react';
-
+import Image from 'next/image';
 interface UserPayload {
   user_id: string;
   user_gender: string;
@@ -24,6 +24,7 @@ function SetAI() {
     ID = decoded.user_id;
     gender = decoded.user_gender;
     user_nickname = decoded.user_nickname;
+    user_nickname = decoded.user_nickname;
   }
   const [ai_name, setAiName] = useState('');
   const [ai_age, setAiAge] = useState('');
@@ -31,6 +32,10 @@ function SetAI() {
   const [ai_job, setAiJob] = useState('');
   const [ai_hobby, setAiHobby] = useState('');
   const [waiting, setWaiting] = useState(false);
+
+  let img_src = '';
+  if (gender === '남성') img_src = '/girl.webp';
+  else img_src = '/boy.webp';
 
   const handleNavigation = async () => {
     setWaiting(true);
@@ -85,9 +90,22 @@ function SetAI() {
         <div className={styles.content}>
           <div className={styles.imageSection}>
             {/* 이미지가 들어갈 회색 영역 */}
-            <button onClick={handleNavigation} className={styles.submitButton}>
-              AI 생성하기
-            </button>
+            <div className={styles.imageWrapper}>
+              <Image
+                src={img_src}
+                alt="AI 프로필 이미지"
+                width={400}
+                height={400}
+                className={styles.profileImage}
+                priority
+              />
+              <button
+                onClick={handleNavigation}
+                className={styles.submitButton}
+              >
+                AI 생성하기
+              </button>
+            </div>
           </div>
 
           <div className={styles.formSection}>
@@ -108,7 +126,7 @@ function SetAI() {
             </div>
 
             <div className={styles.inputGroup}>
-              <label>상대는 어떤 성격인가요? 자유롭게 적어 주세요.</label>
+              <label>상대의 MBTI를 적어주세요!</label>
               <textarea
                 className={styles.input}
                 onChange={(e) => setAiPersonality(e.target.value)}

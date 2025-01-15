@@ -57,7 +57,7 @@ export default function Chat() {
   const router = useRouter();
   const [user_id, setUserId] = useState('');
   const [user_gender, setUserGender] = useState('');
-
+  const [user_nickname, setUserNickname] = useState('');
   // 토큰 디코딩을 위한 useEffect
   useEffect(() => {
     const token = Cookies.get('access');
@@ -65,6 +65,7 @@ export default function Chat() {
       const decoded = jwtDecode<UserPayload>(token);
       setUserId(decoded.user_id);
       setUserGender(decoded.user_gender);
+      setUserNickname(decoded.user_nickname);
     } else {
       alert('유효하지 않은 접근입니다.');
       router.replace('/');
@@ -91,6 +92,11 @@ export default function Chat() {
   const nopolite_flag = useRef(false);
 
   const dispatch = useDispatch();
+
+  const [waiting, setWaiting] = useState(false);
+
+  const disconnectAudio = new Audio('/disconnect.mp3');
+  const connectAudio = new Audio('/connect.mp3');
 
   //대화 영상 전체 / n분 간격으로 서버로 보내는 함수
 
@@ -151,6 +157,16 @@ export default function Chat() {
       );
 
       if (response.ok) {
+        const encodedScript = await response.headers.get('X-Script');
+        console.log('encoded script:', encodedScript);
+        if (encodedScript) {
+          const decodedBytes = Buffer.from(encodedScript, 'base64');
+          const decodedScript = new TextDecoder('utf-8').decode(decodedBytes);
+          console.log('decoded script:', decodedScript);
+          setScript((prev) =>
+            prev ? `${prev}\n${decodedScript}` : decodedScript,
+          );
+        }
         const audioBlob = await response.blob(); // 서버 응답 데이터를 Blob으로 변환
         const audioUrl = URL.createObjectURL(audioBlob); // Blob에서 재생 가능한 URL 생성
         const audio = new Audio(audioUrl); // Audio 객체 생성
@@ -240,6 +256,7 @@ export default function Chat() {
       alert('지원하지 않는 브라우저입니다.');
       return;
     }
+    connectAudio.play();
 
     recognition.current = new (
       window as unknown as Window
@@ -400,6 +417,7 @@ export default function Chat() {
   }, [user_id]);
 
   const handleNavigation = async () => {
+    setWaiting(true);
     try {
       // 먼저 모든 리소스를 정리
       if (
@@ -424,19 +442,27 @@ export default function Chat() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ script: 'end', user_id }),
+          body: JSON.stringify({
+            script: 'end',
+            user_id,
+            user_nickname,
+            user_gender,
+          }),
           credentials: 'include',
         },
       );
 
       if (response.ok) {
-        const json_data = await response.json();
-        console.log('받은 데이터:', json_data.analysis);
-        const data = JSON.parse(json_data.analysis);
-        console.log('파싱된 데이터:', data);
-        console.log('분석:', data.analysis);
-        console.log('결론:', data.conclusion);
-        dispatch(setGPTFeedback(data.conclusion));
+        const encodedScript = response.headers.get('X-Script');
+        if (encodedScript) {
+          const decodedBytes = Buffer.from(encodedScript, 'base64');
+          const decodedScript = new TextDecoder('utf-8').decode(decodedBytes);
+          const audioBlob = await response.blob();
+          const audioUrl = URL.createObjectURL(audioBlob);
+          dispatch(setGPTFeedback(decodedScript));
+          dispatch(setGPTAudioUrl(audioUrl));
+        }
+        disconnectAudio.play();
         router.push('/FeedbackAI');
       } else {
         console.log('대화 종료 요청 실패');
@@ -445,6 +471,15 @@ export default function Chat() {
       console.error('대화 종료 요청 오류:', error);
     }
   };
+
+  if (waiting) {
+    return (
+      <div className={styles.loading}>
+        <p>방금 대화를 분석하고 있어요</p>
+        <div className={styles.spinner}></div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.wrapper}>
@@ -482,8 +517,8 @@ export default function Chat() {
               onClick={handleNavigation}
               src="/call-end.svg"
               alt="대화 종료"
-              width={50}
-              height={50}
+              width={80}
+              height={80}
             />
           </div>
         </div>
