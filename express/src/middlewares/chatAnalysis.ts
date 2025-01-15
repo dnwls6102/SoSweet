@@ -344,24 +344,6 @@ async function getAnalysis(req: Request, res: Response): Promise<void> {
   }
   analysis = JSON.parse(JSON.stringify(analysis));
 
-  let analysis = await new Promise((resolve) => {
-    const interval = setInterval(() => {
-      const analysis = chatAnalysisMap.get(user_id);
-      if (analysis) {
-        clearInterval(interval);
-        resolve(analysis);
-      }
-    }, 500);
-  });
-  const changeToString = `${analysis}`;
-  if (changeToString.lastIndexOf("analysis") === -1) {
-    analysis = `{"analysis": "발화량이 상대방과 균형을 이루었습니다. 대화 주제에 맞추어 자연스럽게 이야기를 이 어갔고, 상대방의 질문에 적극적으로 대답하면서도 자신의 질문을 던져 대화를 부드럽게 이끌었습니다. 또한, 상대방의 발언에 적절히 반응하고 공감하며 긍정적이고 친근한 태도로 대화를 진행했습니다. 대화가 자연스럽게 이어졌고, 구체적인 약속을 제안하며 향후 만남에 대한 긍정적인 신호를 보였습니다.","conclusion": "적절한 발화량과 균형 잡힌 질문과 대답으로 대화를 원활하게 이끌었습니다.  공감과 반응이 적절했으며, 긍정적이고 친근한 태도로 상대방과의 대화 흐름을 잘 유지했습니다. 전체적으로 매우 자연스럽고 긍정적인 대화였습니다."}`;
-  } else {
-    const feedbackIdx = changeToString.lastIndexOf("{");
-    analysis = changeToString.substring(feedbackIdx);
-  }
-  analysis = JSON.parse(JSON.stringify(analysis));
-
   if (!analysis) {
     res
       .status(202)
