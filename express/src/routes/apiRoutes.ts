@@ -9,13 +9,13 @@ import {
 import { chatAnalysis, getAnalysis } from "../middlewares/chatAnalysis";
 import { initTTS, ttsMiddleware } from "../middlewares/tts";
 import { sendFrameInfoToFlask } from "../controllers/flaskController";
-import { genPrompt, genProfile } from "../middlewares/createPrompt";
+import { genPrompt, genDialog } from "../middlewares/createPrompt";
 
 const api = Router();
 
-api.post("/ai/dialog/start", genPrompt, initChat, initTTS);
+api.post("/ai/dialog/start", genPrompt, genDialog, initChat);
 
-api.post("/ai/profile", genPrompt, genProfile);
+api.post("/ai/tts", initTTS);
 
 api.post("/ai/dialog", chatMiddleware, ttsMiddleware);
 

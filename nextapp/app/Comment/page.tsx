@@ -120,7 +120,6 @@ export default function RatingPage() {
         const result = await response.json();
         console.log('대화 분석 받음');
         const data = JSON.parse(result);
-        const data = JSON.parse(result);
         console.log(data.analysis);
         console.log(data.conclusion);
         dispatch(setSummary(data.analysis)); //서버에서 어떻게 줄 건지 확인
@@ -128,6 +127,7 @@ export default function RatingPage() {
       } else {
         console.error('서버에서 분석을 반환하지 않음');
       }
+      socket.emit('submitFeedback', data);
       socket.emit('submitFeedback', data);
     } catch (error) {
       console.error('분석 반환 요청 실패:', error);
@@ -176,11 +176,13 @@ export default function RatingPage() {
         <div className={styles.actions}>
           <button className={styles.likeButton} onClick={() => setLike(true)}>
             💕 <br /> 다시 만나고 싶어요
+            💕 <br /> 다시 만나고 싶어요
           </button>
           <button
             className={styles.dislikeButton}
             onClick={() => setLike(false)}
           >
+            💔 <br /> 만나고 싶지 않아요
             💔 <br /> 만나고 싶지 않아요
           </button>
         </div>
