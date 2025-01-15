@@ -42,6 +42,7 @@ const MainPage = () => {
     } catch (error) {
       console.error('서버 요청 전송 오류:', error);
     }
+    router.push('/SetAI');
   };
 
   // const handleNavigation = () => {
