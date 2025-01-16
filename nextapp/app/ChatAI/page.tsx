@@ -168,8 +168,6 @@ export default function Chat() {
         let audio: HTMLAudioElement;
         if (typeof window !== 'undefined') {
           audio = new Audio(audioUrl); // Audio 객체 생성
-          isRecording.current = false;
-          recognition.current?.stop();
           audio.addEventListener('ended', () => {
             console.log('음성 재생 완료');
 
@@ -214,6 +212,8 @@ export default function Chat() {
       console.log('Transcription result: ', scriptRef.current);
 
       if (scriptRef.current !== '') {
+        isRecording.current = false;
+        recognition.current?.stop();
         tryNlp(scriptRef.current);
         trySendScript(scriptRef.current);
         scriptRef.current = '';
@@ -273,6 +273,16 @@ export default function Chat() {
     };
   }, [user_id]); // user_id를 의존성 배열에 추가
 
+  // 말풍선 자동 스크롤
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [script]); // script가 업데이트될 때마다 실행되어 스크롤을 아래로 내림
+
   const handleNavigation = async () => {
     setWaiting(true);
     try {
@@ -321,15 +331,6 @@ export default function Chat() {
       </div>
     );
   }
-
-  // 말풍선 자동 스크롤
-  const chatContainerRef = useRef<HTMLDivElement | null>(null);
-  
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-  }, [script]); // script가 업데이트될 때마다 실행되어 스크롤을 아래로 내림
 
   return (
     <div className={styles.wrapper}>

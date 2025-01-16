@@ -14,7 +14,7 @@
 
 .modalContainer {
   position: fixed;
-  top: 50%;
+  top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
@@ -37,7 +37,6 @@
   color: white;
   font-size: 2.5rem;
   margin: 0 auto;
-  margin-top: 40px;
   white-space: pre-wrap;
   text-align: center;
   font-family: 'contentFont', sans-serif;
