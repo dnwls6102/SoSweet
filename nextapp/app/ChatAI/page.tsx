@@ -17,9 +17,6 @@ interface UserPayload {
   exp: number;
 }
 
-// 프레임 카운터 추가
-let frameCounter = 0;
-
 interface SpeechRecognitionEvent {
   resultIndex: number;
   results: {
@@ -74,15 +71,11 @@ export default function Chat() {
 
   const image_src = user_gender === '남성' ? '/emma.webp' : '/john.webp';
 
-  const localVideoRef = useRef<HTMLVideoElement>(null);
-  const mediaStreamRef = useRef<MediaStream | null>(null);
   const isRecording = useRef<boolean>(false);
   const [script, setScript] = useState('');
   const scriptRef = useRef('');
   const recognition = useRef<SpeechRecognition | null>(null);
 
-  const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]); // 녹화 데이터 쌓는 배열
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const myEmotionRef = useRef('평온함');
   const myValueRef = useRef(0);
 
@@ -280,167 +273,9 @@ export default function Chat() {
     };
   }, [user_id]); // user_id를 의존성 배열에 추가
 
-  // 비디오 스트림 초기화를 위한 useEffect
-  useEffect(() => {
-    if (!user_id) return; // user_id가 설정되기 전에는 실행하지 않음
-
-    const initializeMedia = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-        });
-
-        mediaStreamRef.current = stream;
-
-        // 비디오 엘리먼트에 스트림 연결
-        if (localVideoRef.current) {
-          localVideoRef.current.srcObject = stream;
-          console.log('비디오 스트림 연결 성공');
-        }
-
-        // 여기서 MediaRecorder로 '전체 영상 Blob' 저장 로직 구현하기
-        setupMediaRecorder(stream);
-
-        // 스트림 초기화 후 바로 감정 분석 시작
-        startEmotionAnalysis();
-      } catch (err) {
-        console.error('Error accessing media devices:', err);
-      }
-    };
-
-    const setupMediaRecorder = (stream: MediaStream) => {
-      const recorder = new MediaRecorder(stream, {
-        mimeType: 'video/webm; codecs=vp8',
-      });
-      mediaRecorderRef.current = recorder;
-      console.log('MediaRecorder 설정 완료');
-
-      recorder.ondataavailable = (event) => {
-        if (event.data && event.data.size > 0) {
-          setRecordedChunks((prev) => [...prev, event.data]);
-        }
-      };
-
-      recorder.onstop = () => {
-        console.log('녹화 중지됨. recordedChunks:', recordedChunks);
-      };
-
-      recorder.start(1000);
-      console.log('녹화 시작됨');
-    };
-
-    const startEmotionAnalysis = () => {
-      const captureAndSendFrame = async () => {
-        const videoEl = localVideoRef.current;
-        if (!videoEl || !videoEl.srcObject) return;
-
-        const vWidth = videoEl.videoWidth / 4;
-        const vHeight = videoEl.videoHeight / 4;
-
-        if (!vWidth || !vHeight) return;
-
-        const canvas = document.createElement('canvas');
-        canvas.width = vWidth;
-        canvas.height = vHeight;
-
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-        const dataURL = canvas.toDataURL('image/jpeg', 0.7);
-        frameCounter += 1;
-        const timestamp = frameCounter;
-
-        try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/ai/frameInfo`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                frame: dataURL,
-                timestamp: timestamp,
-                user_id: user_id,
-              }),
-              mode: 'cors',
-            },
-          );
-
-          if (!response.ok) {
-            console.log('감정 분석 응답 에러:', response.status);
-            return;
-          }
-
-          const analyzeResult = await response.json();
-          console.log('감정 분석 결과:', analyzeResult);
-
-          if (analyzeResult.dominant_emotion) {
-            myEmotionRef.current = analyzeResult.dominant_emotion;
-            myValueRef.current = analyzeResult.value;
-          }
-        } catch (error) {
-          console.error('전송 에러:', error);
-        }
-      };
-
-      const intervalId = setInterval(captureAndSendFrame, 1500);
-      return intervalId;
-    };
-
-    let emotionIntervalId: NodeJS.Timeout;
-    initializeMedia().then(() => {
-      emotionIntervalId = startEmotionAnalysis();
-    });
-
-    return () => {
-      if (emotionIntervalId) {
-        clearInterval(emotionIntervalId);
-      }
-
-      if (
-        mediaRecorderRef.current &&
-        mediaRecorderRef.current.state !== 'inactive'
-      ) {
-        mediaRecorderRef.current.stop();
-        mediaRecorderRef.current = null;
-      }
-
-      if (mediaStreamRef.current) {
-        mediaStreamRef.current.getTracks().forEach((track) => {
-          track.stop();
-        });
-        mediaStreamRef.current = null;
-      }
-
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = null;
-      }
-
-      setRecordedChunks([]);
-    };
-  }, [user_id]);
-
   const handleNavigation = async () => {
     setWaiting(true);
     try {
-      // 먼저 모든 리소스를 정리
-      if (
-        mediaRecorderRef.current &&
-        mediaRecorderRef.current.state !== 'inactive'
-      ) {
-        mediaRecorderRef.current.stop();
-        mediaRecorderRef.current = null;
-      }
-
-      if (mediaStreamRef.current) {
-        mediaStreamRef.current.getTracks().forEach((track) => {
-          track.stop();
-        });
-        mediaStreamRef.current = null;
-      }
-
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/dialog/end`,
         {
@@ -525,13 +360,6 @@ export default function Chat() {
                 </div>
               ))}
           </div>
-          <video
-            ref={localVideoRef}
-            autoPlay
-            playsInline
-            muted
-            style={{ width: 1, height: 1 }}
-          />
         </div>
       </div>
     </div>

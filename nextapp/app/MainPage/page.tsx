@@ -27,13 +27,16 @@ const MainPage = () => {
 
   const handleNavigation = async () => {
     try {
-      const response = await fetch('https://back.sosweet.site/api/ai/tts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/tts`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
         },
-        credentials: 'include',
-      });
+      );
       if (response.ok) {
         console.log('성공');
       } else {
