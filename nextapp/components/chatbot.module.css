@@ -1,3 +1,9 @@
+@font-face {
+  font-family: 'contentFont';
+  src: url('@/fonts/NotoSansKR-Regular.ttf') format('truetype');
+  font-weight: normal;
+}
+
 .chatbotContainer {
   position: fixed;
   bottom: 20px;
@@ -14,6 +20,7 @@
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-size: 2rem;
+  font-family: 'contentFont', sans-serif;
   min-width: 500px;
   max-width: 500px;
   width: fit-content;

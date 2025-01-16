@@ -84,6 +84,9 @@ export default function Chat() {
   const noend_flag = useRef(false);
   const nopolite_flag = useRef(false);
 
+  // 말풍선 자동 스크롤
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
   const dispatch = useDispatch();
 
   const [waiting, setWaiting] = useState(false);
@@ -322,14 +325,15 @@ export default function Chat() {
     );
   }
 
-  // 말풍선 자동 스크롤
-  const chatContainerRef = useRef<HTMLDivElement | null>(null);
-  
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-  }, [script]); // script가 업데이트될 때마다 실행되어 스크롤을 아래로 내림
+    const scrollToBottom = () => {
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      }
+    };
+
+    scrollToBottom();
+  }, [script]);  // script가 업데이트될 때마다 실행되어 스크롤을 아래로 내림
 
   return (
     <div className={styles.wrapper}>
