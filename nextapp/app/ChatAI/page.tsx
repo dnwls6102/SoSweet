@@ -322,6 +322,15 @@ export default function Chat() {
     );
   }
 
+  // 말풍선 자동 스크롤
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
+  
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [script]); // script가 업데이트될 때마다 실행되어 스크롤을 아래로 내림
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.content}>
@@ -331,7 +340,7 @@ export default function Chat() {
               src={image_src}
               alt="AI 이미지"
               width={800}
-              height={500}
+              height={600}
               className={`${styles.aiImage} ${!isRecording.current ? styles.imageBorderActive : ''}`}
             />
             <Image
@@ -345,7 +354,7 @@ export default function Chat() {
           </div>
         </div>
         <div className={styles.right}>
-          <div className={styles.chatContainer}>
+          <div ref={chatContainerRef} className={styles.chatContainer}>
             {script
               .split('\n')
               .filter((message) => message.trim() !== '')

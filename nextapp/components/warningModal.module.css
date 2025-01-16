@@ -1,6 +1,6 @@
 .warningModal {
   position: absolute;
-  top: 5px;
+  bottom: 10%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 15;

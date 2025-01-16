@@ -24,11 +24,14 @@
 .callEndIcon {
   position: absolute;
   left: 50%;
-  bottom: 10px;
+  bottom: 10%;
   transform: translateX(-50%);
   cursor: pointer;
   transition: all 0.3s ease;
   z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .callEndIcon:hover {
