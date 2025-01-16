@@ -4,13 +4,39 @@ import { RootState } from '@/store/store';
 import styles from './page.module.css';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
+import { useEffect, useRef, useState } from 'react';
+
+interface UserPayload {
+  user_id: string;
+  user_gender: string;
+  user_nickname: string;
+  iat: number;
+  exp: number;
+}
 
 export default function FeedbackAI() {
   const summary = useSelector((state: RootState) => state.GPTfeedback.summary);
-  const audioUrl = useSelector((state: RootState) => state.GPTfeedback.audioUrl);
+  const audioUrl = useSelector(
+    (state: RootState) => state.GPTfeedback.audioUrl,
+  );
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const router = useRouter();
+  const [user_gender, setUserGender] = useState('');
+
+  // 토큰 디코딩을 위한 useEffect
+  useEffect(() => {
+    const token = Cookies.get('access');
+    if (token) {
+      const decoded = jwtDecode<UserPayload>(token);
+      setUserGender(decoded.user_gender);
+    } else {
+      alert('유효하지 않은 접근입니다.');
+      router.replace('/');
+    }
+  }, [router]);
+  const image_src = user_gender === '남성' ? '/emma.webp' : '/john.webp';
 
   useEffect(() => {
     audioRef.current = new Audio(audioUrl);
@@ -39,7 +65,7 @@ export default function FeedbackAI() {
         <div className={styles.content}>
           <div className={styles.imageSection}>
             <Image
-              src="/john.webp"
+              src={image_src}
               alt="AI 이미지"
               width={400}
               height={400}

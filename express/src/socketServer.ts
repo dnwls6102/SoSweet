@@ -204,6 +204,7 @@ export function initializeSocketServer(server: http.Server) {
       console.log("연결 종료: ", socket.id);
     });
 
+    // 뒤로가기, 새로고침, 창 닫기 이벤트 발생 시 대기 리스트 제거 및 소켓 해제
     socket.on(
       "match-disconnect",
       (data: { socket_id: string; room_id: string }) => {

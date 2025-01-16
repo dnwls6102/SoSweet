@@ -39,7 +39,7 @@ app.use(
       "Authorization",
       "X-Requested-With",
       "Accept",
-      "X-Script"
+      "X-Script",
     ],
     exposedHeaders: ["X-Script"],
     credentials: true,
@@ -65,21 +65,18 @@ mongoose
   .then(() => console.log("MongoDB 연결 성공!"))
   .catch((error: unknown) => console.error("MongoDB 연결 실패: ", error));
 
-// REST API 라우트 등록
-// 임시 라우트
-app.get("/chat", (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "public", "chat.html"));
-});
+/* REST API 라우트 등록 */
 // user 라우트
 app.use("/users", userRoutes);
 
 // api , flask 서버 라우트
 app.use("/api", apiRoutes);
 
+// 소켓 연결 api 기본 라우트
 app.post("/api/match", (req: Request, res: Response) => {
-  res.send("응답");
+  res.end();
 });
-// // 기본 경로
+// 기본 라우트
 app.get("/", (req: Request, res: Response) => {
   res.status(200).end();
 });
