@@ -176,13 +176,11 @@ export default function RatingPage() {
         <div className={styles.actions}>
           <button className={styles.likeButton} onClick={() => setLike(true)}>
             💕 <br /> 다시 만나고 싶어요
-            💕 <br /> 다시 만나고 싶어요
           </button>
           <button
             className={styles.dislikeButton}
             onClick={() => setLike(false)}
           >
-            💔 <br /> 만나고 싶지 않아요
             💔 <br /> 만나고 싶지 않아요
           </button>
         </div>
