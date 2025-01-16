@@ -50,6 +50,11 @@ interface Window {
   webkitSpeechRecognition: new () => SpeechRecognition;
 }
 
+interface Message {
+  text: string;
+  isUser: boolean;
+}
+
 export default function Chat() {
   const router = useRouter();
   const [user_id, setUserId] = useState('');
@@ -72,17 +77,12 @@ export default function Chat() {
   const image_src = user_gender === '남성' ? '/emma.webp' : '/john.webp';
 
   const isRecording = useRef<boolean>(false);
-  const [script, setScript] = useState('');
+  const [messages, setMessages] = useState<Message[]>([]);
   const scriptRef = useRef('');
   const recognition = useRef<SpeechRecognition | null>(null);
 
   const myEmotionRef = useRef('평온함');
   const myValueRef = useRef(0);
-
-  const noword_flag = useRef(false);
-  const filler_flag = useRef(false);
-  const noend_flag = useRef(false);
-  const nopolite_flag = useRef(false);
 
   const dispatch = useDispatch();
 
@@ -94,34 +94,6 @@ export default function Chat() {
     disconnectAudio = new Audio('/disconnect.mp3');
     connectAudio = new Audio('/connect.mp3');
   }
-  //대화 영상 전체 / n분 간격으로 서버로 보내는 함수
-
-  const tryNlp = async (script: string) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/nlp`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ script }),
-        },
-      );
-      if (response.ok) {
-        const result = await response.json();
-        noword_flag.current = result.noword_flag;
-        filler_flag.current = result.filler_flag;
-        noend_flag.current = result.noend_flag;
-        nopolite_flag.current = result.nopolite_flag;
-      } else {
-        const result = await response.json();
-        console.log(result.error);
-      }
-    } catch (error) {
-      console.log('서버 오류 발생 : ', error);
-    }
-  };
 
   const trySendScript = async (script: string) => {
     const emotion = {
@@ -159,9 +131,10 @@ export default function Chat() {
           const decodedBytes = Buffer.from(encodedScript, 'base64');
           const decodedScript = new TextDecoder('utf-8').decode(decodedBytes);
           console.log('decoded script:', decodedScript);
-          setScript((prev) =>
-            prev ? `${prev}\n${decodedScript}` : decodedScript,
-          );
+          setMessages((prev) => [
+            ...prev,
+            { text: decodedScript, isUser: false },
+          ]);
         }
         const audioBlob = await response.blob(); // 서버 응답 데이터를 Blob으로 변환
         const audioUrl = URL.createObjectURL(audioBlob); // Blob에서 재생 가능한 URL 생성
@@ -205,7 +178,7 @@ export default function Chat() {
           event.results[i][0].transcript.trim() !== ''
         ) {
           const newScript = event.results[i][0].transcript;
-          setScript((prev) => (prev ? `${prev}\n${newScript}` : newScript));
+          setMessages((prev) => [...prev, { text: newScript, isUser: true }]);
           scriptRef.current += newScript;
         }
       }
@@ -214,7 +187,6 @@ export default function Chat() {
       if (scriptRef.current !== '') {
         isRecording.current = false;
         recognition.current?.stop();
-        tryNlp(scriptRef.current);
         trySendScript(scriptRef.current);
         scriptRef.current = '';
       }
@@ -281,7 +253,7 @@ export default function Chat() {
       chatContainerRef.current.scrollTop =
         chatContainerRef.current.scrollHeight;
     }
-  }, [script]); // script가 업데이트될 때마다 실행되어 스크롤을 아래로 내림
+  }, [messages]); // script 대신 messages를 dependency로 변경
 
   const handleNavigation = async () => {
     setWaiting(true);
@@ -356,19 +328,16 @@ export default function Chat() {
         </div>
         <div className={styles.right}>
           <div ref={chatContainerRef} className={styles.chatContainer}>
-            {script
-              .split('\n')
-              .filter((message) => message.trim() !== '')
-              .map((message, index) => (
-                <div
-                  key={index}
-                  className={`${styles.message} ${
-                    index % 2 === 0 ? styles.userMessage : styles.aiMessage
-                  }`}
-                >
-                  {message}
-                </div>
-              ))}
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`${styles.message} ${
+                  message.isUser ? styles.userMessage : styles.aiMessage
+                }`}
+              >
+                {message.text}
+              </div>
+            ))}
           </div>
         </div>
       </div>
