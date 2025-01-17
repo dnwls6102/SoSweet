@@ -12,14 +12,16 @@ export default function GuideModal({ message }: GuideModalProps) {
       <Image 
         src="/alert.svg" 
         alt="alertIcon" 
-        width={75} 
-        height={75} 
+        width={70} 
+        height={70} 
         className={styles.alertIcon}
       />
       </div>
-      <div className={styles.title}>지금이야!</div>
-      <p className={styles.message}>&ldquo;{message}&rdquo;</p>
-      <p className={styles.subMessage}>라고 제안해보자!</p>
+      <div className={styles.modalContent}>
+        <div className={styles.title}>지금이야!  </div>
+        <p className={styles.message}>&ldquo;{message}&rdquo;</p>
+        <p className={styles.subMessage}>라고 제안해보자!</p>
+      </div>
     </div>
   );
 }
