@@ -24,7 +24,8 @@ export default function Chatbot({ emotion, message }: ChatbotProps) {
       {showMessage && <div className={styles.messageBox}>{message}</div>}
       <div
         className={styles.emojiWrapper}
-        onClick={() => setShowMessage(!showMessage)}
+        onMouseEnter={() => setShowMessage(true)}
+        onMouseLeave={() => setShowMessage(false)}
       >
         {emotionToEmoji[emotion]}
       </div>
