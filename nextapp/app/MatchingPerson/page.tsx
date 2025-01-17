@@ -67,6 +67,12 @@ export default function MatchingPerson() {
         console.log('Socket connected:', newSocket.id);
       });
 
+      // 중복 매칭 방지
+      newSocket.on('already-exist', () => {
+        router.push('/MainPage');
+        alert('이미 매칭 중입니다');
+      });
+
       newSocket.on('matchSuccess', async (data: { room_id: string }) => {
         console.log('Match success:', data);
         makeConnectAudio.pause();

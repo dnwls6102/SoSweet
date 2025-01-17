@@ -35,7 +35,8 @@ export function initializeSocketServer(server: http.Server) {
     cors: {
       origin: process.env.CLIENT_URL,
       credentials: true,
-      methods: ["GET", "POST", "OPTIONS"],
+      methods: "*",
+      allowedHeaders: "*",
     },
   });
 
@@ -49,6 +50,14 @@ export function initializeSocketServer(server: http.Server) {
     socket.on("startMatching", async (userData) => {
       const { user_id, gender } = userData;
       console.log("매칭 시작:", user_id, gender);
+
+      // 중복 매칭 방지
+      for (let value of waitingUsers.values()) {
+        if (value.user_id === user_id) {
+          socket.emit("already-exist");
+          return;
+        }
+      }
 
       // 대기열에 사용자 추가
       waitingUsers.set(socket.id, { user_id, gender, socket });
