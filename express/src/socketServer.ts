@@ -36,7 +36,6 @@ export function initializeSocketServer(server: http.Server) {
       origin: process.env.CLIENT_URL,
       credentials: true,
       methods: "*",
-      allowedHeaders: "*",
     },
   });
 

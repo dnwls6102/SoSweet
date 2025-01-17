@@ -34,7 +34,13 @@ app.use(
   cors({
     origin: [`${process.env.CLIENT_URL}`, `${process.env.FLASK_SERVER_URL}`],
     methods: "*",
-    allowedHeaders: "*",
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "Accept",
+      "X-Script",
+    ],
     exposedHeaders: ["X-Script"],
     credentials: true,
     preflightContinue: false,
