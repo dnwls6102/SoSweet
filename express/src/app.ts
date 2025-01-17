@@ -15,9 +15,9 @@ const app = express();
 // 쿠키 파싱 미들웨어: 최상단에 위치해야 한다고 함
 app.use(cookieParser());
 // JSON 파싱 미들웨어
-app.use(express.json());
 // URL 쿼리 파싱 미들웨어
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "50mb" })); // JSON 요청 크기 제한 증가
+app.use(express.urlencoded({ limit: "50mb", extended: true })); // form-urlencoded 데이터 크기 제한
 
 // 정적 파일 사용
 app.use(express.static(path.join(__dirname, "public")));
@@ -27,7 +27,6 @@ app.use(
   express.static(path.join(__dirname, "..", "node_modules"))
 );
 // 쿠키 뜯어볼 수 있게 쿠키 파서 설정
-app.use(cookieParser());
 
 // CORS 설정
 app.use(
@@ -49,9 +48,6 @@ app.use(
 );
 
 app.options("*", cors()); // CORS 사전 요청 허용
-
-app.use(express.json({ limit: "50mb" })); // JSON 요청 크기 제한 증가
-app.use(express.urlencoded({ limit: "50mb", extended: true })); // form-urlencoded 데이터 크기 제한
 
 // 요청 로깅 미들웨어
 app.use((req, res, next) => {
