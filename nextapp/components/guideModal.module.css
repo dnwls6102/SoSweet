@@ -18,22 +18,26 @@
 
 .modalContainer {
   position: fixed;
-  top: 100px;
+  top: 120px;
   left: 50%;
   transform: translateX(-50%) scale(0.8); /* 초기 크기를 줄여서 등장 효과 준비 */
   z-index: 1000;
   background: linear-gradient(
     135deg,
-    rgba(255, 107, 107, 0.7),
-    rgba(255, 71, 87, 0.8)
+    rgba(255, 69, 58, 0.6),   /* #FF453A - 강렬한 레드 */
+    rgba(255, 87, 51, 0.65),  /* #FF5733 - 약간 오렌지 느낌 */
+    rgba(255, 94, 77, 0.7),   /* #FF5E4D - 따뜻한 붉은색 */
+    rgba(255, 107, 89, 0.75)  /* #FF6B59 - 부드러운 레드 */
   );
   padding: 30px;
   border-radius: 30px;
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
   text-align: center;
   color: white;
-  max-width: 90%;
+  max-width: none;
   width: auto;
+  display: inline-block;
+  white-space: nowrap;
   opacity: 0; /* 투명도 초기값 */
   animation: popIn 0.2s ease-out forwards; /* 새로운 애니메이션 */
 }
@@ -57,22 +61,32 @@
   opacity: 0.8;
 }
 
+.modalContent {
+  display: flex; /* 가로 정렬 */
+  align-items: center; /* 수직 정렬 */
+  justify-content: center; /* 중앙 정렬 */
+  white-space: nowrap; /* 줄바꿈 방지 */
+  gap: 10px; /* 요소 간격 조정 */
+  margin-top: 10px;
+  margin-bottom: -45px;
+}
+
 .title {
-  font-size: 3.2rem;
+  font-size: 2.5rem;
   font-weight: bold;
-  font-family: 'titleFont', sans-serif;
-  margin-top: 80px;
-  margin-bottom: 20px;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  font-family: 'contentFont', sans-serif;
+  opacity: 0.9;
 }
 
 .message {
-  font-size: 2.8rem;
-  margin: 20px 0;
-  font-family: 'contentFont', sans-serif;
+  font-size: 3.2rem;
+  font-family: 'titleFont', sans-serif;
   font-weight: bold;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   animation: pulse 1.5s infinite;
+  margin-left: 40px;
+  margin-right: 30px;
+  opacity: 0.9;
 }
 
 @keyframes pulse {
@@ -86,10 +100,8 @@
 }
 
 .subMessage {
-  font-size: 2rem;
+  font-size: 2.5rem;
+  font-weight: bold;
   font-family: 'contentFont', sans-serif;
-  margin-top: 20px;
   opacity: 0.9;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  margin-bottom: 8px;
 }

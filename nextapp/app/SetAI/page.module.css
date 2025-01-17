@@ -199,7 +199,6 @@
 
 .submitButton:hover {
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 15px 25px rgba(255, 107, 107, 0.4);
 } 
 
 .submitButton:hover::after {
@@ -208,7 +207,6 @@
 
 .submitButton:active {
   transform: translateY(2px);
-  box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
 }
 
 @keyframes shine {
