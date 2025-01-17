@@ -144,16 +144,11 @@ function ChatContent() {
       );
       if (response.ok) {
         const result: NlpResponse = await response.json();
-        console.log('키워드 분석:', result.keyword_dict);
         keywordRef.current = result.keyword_dict;
         noword_flag.current = result.noword_flag;
         filler_flag.current = result.filler_flag;
         noend_flag.current = result.noend_flag;
         nopolite_flag.current = result.nopolite_flag;
-        console.log('말 더듬음: ', noword_flag.current);
-        console.log('추임새 많음: ', filler_flag.current);
-        console.log('문장 끝 없음: ', noend_flag.current);
-        console.log('반말 사용: ', nopolite_flag.current);
       } else {
         const result = await response.json();
         console.log(result.error);
@@ -212,7 +207,6 @@ function ChatContent() {
       );
 
       if (response.ok) {
-        console.log('전송 성공');
       } else {
         console.log('오류 발생');
       }
@@ -226,12 +220,9 @@ function ChatContent() {
 
     recognition.current.onstart = () => {
       isRecording.current = true;
-      console.log('Speech recognition started');
     };
 
-    recognition.current.onspeechstart = () => {
-      console.log('사용자가 말을 시작함');
-    };
+    recognition.current.onspeechstart = () => {};
 
     //onresult : 음성 인식 결과가 발생할때마다 호출됨
     recognition.current.onresult = (event: SpeechRecognitionEvent) => {
@@ -240,7 +231,6 @@ function ChatContent() {
           scriptRef.current += event.results[i][0].transcript;
         }
       }
-      console.log('Transcription result: ', scriptRef.current);
       if (scriptRef.current !== '') {
         tryNlp(scriptRef.current);
         trySendScript(scriptRef.current);
@@ -249,8 +239,6 @@ function ChatContent() {
     };
 
     recognition.current.onspeechend = () => {
-      console.log('onspeechend called');
-      console.log('Final transcript:', scriptRef.current);
       /* 이곳에 trySendScript로 발화 내용을 전송하면
          문제점 : 사용자가 발화하지 않는다고 판단하는 시간을 너무 보수적으로 잡음
          --> chunk 내용이 엄청 길어지게 됨
@@ -259,17 +247,14 @@ function ChatContent() {
     };
 
     recognition.current.onend = () => {
-      console.log('Speech recognition session ended.');
-      console.log('isRecording:', isRecording.current);
       if (isRecording.current) {
-        console.log('Restarting speech recognition...');
         recognition.current?.start();
       }
     };
 
     recognition.current.onerror = (event) => {
       if (event.error !== 'no-speech')
-        console.error('Speech recognition error:', event.error);
+        console.log('Speech recognition error:', event.error);
     };
 
     recognition.current.start();
@@ -300,7 +285,6 @@ function ChatContent() {
       return;
     }
     connectAudio.play();
-    console.log('Chat Component UseEffect Triggerd');
 
     recognition.current = new (
       window as unknown as Window
@@ -311,7 +295,7 @@ function ChatContent() {
     handleStartRecording();
 
     if (!room_id) {
-      console.error('No room provided');
+      console.log('No room provided');
       return;
     }
 
@@ -340,7 +324,7 @@ function ChatContent() {
         setupMediaRecorder(stream);
         rtcSocket.emit('join', { room_id: room_id });
       } catch (err) {
-        console.error('Error accessing media devices:', err);
+        console.log('Error accessing media devices:', err);
       }
     };
 
@@ -359,7 +343,6 @@ function ChatContent() {
 
       recorder.onstop = () => {
         // 최종적으로 recordedChunks 가 전체 동영상임
-        console.log('녹화 중지됨. recordedChunks:', recordedChunks);
       };
     };
 
@@ -368,7 +351,7 @@ function ChatContent() {
     // PeerConnection 이벤트 핸들러 설정
     newPeerConnection.onicecandidate = (event) => {
       if (event.candidate) {
-        console.log('Sending ICE candidate');
+        // console.log('Sending ICE candidate');
         rtcSocket.emit('candidate', {
           candidate: event.candidate,
           room_id: room_id,
@@ -377,7 +360,7 @@ function ChatContent() {
     };
 
     newPeerConnection.ontrack = (event) => {
-      console.log('Received remote track');
+      // console.log('Received remote track');
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = event.streams[0];
       }
@@ -385,7 +368,7 @@ function ChatContent() {
 
     // WebRTC 소켓 이벤트 핸들러 설정
     rtcSocket.on('peerDisconnected', async () => {
-      console.log('Peer disconnected - from rtcSocket');
+      // console.log('Peer disconnected - from rtcSocket');
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = null;
       }
@@ -395,7 +378,7 @@ function ChatContent() {
           const tracks = (
             localVideoRef.current.srcObject as MediaStream
           ).getTracks();
-          console.log('tracks : ', tracks);
+          // console.log('tracks : ', tracks);
           tracks.forEach((track) => track.stop());
           tracks.forEach((track) => track.stop());
         }
@@ -422,12 +405,11 @@ function ChatContent() {
           },
         );
         if (response.ok) {
-          console.log('대화 종료 요청 성공');
         } else {
-          console.error('요청을 받았지만 200을 반환하지 않음');
+          console.log('요청을 받았지만 200을 반환하지 않음');
         }
       } catch (error) {
-        console.error('대화 종료 요청 실패:', error);
+        console.log('대화 종료 요청 실패:', error);
       }
       disconnectAudio.play();
       router.push('/Comment');
@@ -440,12 +422,12 @@ function ChatContent() {
         await newPeerConnection.setLocalDescription(offer);
         rtcSocket.emit('offer', { offer, room_id });
       } catch (error) {
-        console.error('Error creating offer:', error);
+        console.log('Error creating offer:', error);
       }
     });
 
     rtcSocket.on('offer', async (offer: RTCSessionDescription) => {
-      console.log('Received offer');
+      // console.log('Received offer');
       try {
         await newPeerConnection.setRemoteDescription(
           new RTCSessionDescription(offer),
@@ -454,27 +436,27 @@ function ChatContent() {
         await newPeerConnection.setLocalDescription(answer);
         rtcSocket.emit('answer', { answer, room_id });
       } catch (error) {
-        console.error('Error handling offer:', error);
+        console.log('Error handling offer:', error);
       }
     });
 
     rtcSocket.on('answer', async (answer: RTCSessionDescription) => {
-      console.log('Received answer');
+      // console.log('Received answer');
       try {
         await newPeerConnection.setRemoteDescription(
           new RTCSessionDescription(answer),
         );
       } catch (error) {
-        console.error('Error handling answer:', error);
+        console.log('Error handling answer:', error);
       }
     });
 
     rtcSocket.on('candidate', async (candidate: RTCIceCandidate) => {
-      console.log('Received ICE candidate');
+      // console.log('Received ICE candidate');
       try {
         await newPeerConnection.addIceCandidate(new RTCIceCandidate(candidate));
       } catch (error) {
-        console.error('Error handling ICE candidate:', error);
+        console.log('Error handling ICE candidate:', error);
       }
     });
 
@@ -533,13 +515,13 @@ function ChatContent() {
         );
 
         if (!response.ok) {
-          console.error('감정 및 동작 분석 응답 에러:', response.status);
+          console.log('감정 및 동작 분석 응답 에러:', response.status);
           return;
         }
 
         // Flask -> Node -> 클라이언트로 넘어온 최종 결과
         const analyzeResult = await response.json();
-        console.log('감정 및 동작 분석 결과:', analyzeResult);
+        // console.log('감정 및 동작 분석 결과:', analyzeResult);
         //user1, user2 구분
         const { user1, user2 } = analyzeResult.data;
         //감정 및 비율 받아오기
@@ -588,7 +570,7 @@ function ChatContent() {
             user1.user_id === ID ? user1.act_analysis : user2.act_analysis;
           if (currentActAnalysis) {
             if (currentActAnalysis.is_hand === 1) {
-              console.log('is_hand 발동');
+              // console.log('is_hand 발동');
               setShowHandWarning(true);
               setWarningMessage('손동작이 과도합니다. 차분히 대화해주세요.');
               imgRef.current = '/nohand.png';
@@ -598,7 +580,7 @@ function ChatContent() {
               }, 7000);
             }
             if (currentActAnalysis.is_side === 1) {
-              console.log('is_side 발동');
+              // console.log('is_side 발동');
               setShowSideWarning(true);
               setWarningMessage(
                 '자세가 불안정합니다. 바른 자세를 유지해주세요.',
@@ -610,7 +592,7 @@ function ChatContent() {
               }, 7000);
             }
             if (currentActAnalysis.is_eye === 1) {
-              console.log('is_eye 발동');
+              // console.log('is_eye 발동');
               setShowEyeWarning(true);
               setWarningMessage('눈을 자주 만지지 마세요.');
               imgRef.current = '/noeye.png';
@@ -622,7 +604,7 @@ function ChatContent() {
           }
         }
       } catch (error) {
-        console.error('전송 에러: ', error);
+        console.log('전송 에러: ', error);
       }
     };
 
@@ -633,7 +615,7 @@ function ChatContent() {
 
     // 가이드 메시지 수신 이벤트 핸들러 추가
     rtcSocket.on('guide_message', ({ guide_msg }: { guide_msg: string }) => {
-      console.log('가이드 메시지 수신:', guide_msg);
+      // console.log('가이드 메시지 수신:', guide_msg);
       ddingAudio.play();
       setGuideMessage(guide_msg);
       setShowGuide(true);
@@ -649,7 +631,7 @@ function ChatContent() {
           const tracks = (
             localVideoRef.current.srcObject as MediaStream
           ).getTracks();
-          console.log('tracks : ', tracks);
+          // console.log('tracks : ', tracks);
           tracks.forEach((track) => track.stop());
           tracks.forEach((track) => track.stop());
         }
@@ -693,7 +675,7 @@ function ChatContent() {
         const tracks = (
           localVideoRef.current.srcObject as MediaStream
         ).getTracks();
-        console.log('tracks : ', tracks);
+        // console.log('tracks : ', tracks);
         tracks.forEach((track) => track.stop());
         tracks.forEach((track) => track.stop());
       }
@@ -702,19 +684,19 @@ function ChatContent() {
 
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
-      console.log('녹화 중지됨!');
+      // console.log('녹화 중지됨!');
 
-      const completeBlob = new Blob(recordedChunks, { type: 'video/webm' });
-      console.log('완성된 영상 Blob: ', completeBlob);
+      // const completeBlob = new Blob(recordedChunks, { type: 'video/webm' });
+      // console.log('완성된 영상 Blob: ', completeBlob);
     }
 
     // socket 상태 대신 rtcSocket 직접 사용
     const currentSocket = rtcSocket;
     if (currentSocket) {
-      console.log('Sending endCall event with room:', room_id);
+      // console.log('Sending endCall event with room:', room_id);
       currentSocket.emit('endCall', { room_id: room_id });
     } else {
-      console.log('Socket is not available');
+      // console.log('Socket is not available');
     }
     try {
       const response = await fetch(
@@ -733,12 +715,11 @@ function ChatContent() {
         },
       );
       if (response.ok) {
-        console.log('대화 종료 요청 성공');
       } else {
-        console.error('요청을 받았지만 200을 반환하지 않음');
+        console.log('요청을 받았지만 200을 반환하지 않음');
       }
     } catch (error) {
-      console.error('대화 종료 요청 실패:', error);
+      console.log('대화 종료 요청 실패:', error);
     }
     disconnectAudio.play();
     router.push('/Comment');

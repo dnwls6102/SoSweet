@@ -81,9 +81,6 @@ export default function Chat() {
   const scriptRef = useRef('');
   const recognition = useRef<SpeechRecognition | null>(null);
 
-  const myEmotionRef = useRef('평온함');
-  const myValueRef = useRef(0);
-
   const dispatch = useDispatch();
 
   // 말풍선 자동 스크롤
@@ -99,20 +96,11 @@ export default function Chat() {
   }
 
   const trySendScript = async (script: string) => {
-    const emotion = {
-      emotion: myEmotionRef.current,
-      value: myValueRef.current,
-    };
-
     // user_id가 없으면 함수 실행하지 않음
     if (!user_id) {
       console.log('user_id가 아직 설정되지 않았습니다.');
       return;
     }
-
-    console.log('전송하는 user_id:', user_id);
-    console.log('전송하는 user_gender:', user_gender);
-    console.log('전송하는 emotion:', emotion);
 
     try {
       const response = await fetch(
@@ -123,17 +111,15 @@ export default function Chat() {
             'Content-Type': 'application/json',
           },
           credentials: 'include',
-          body: JSON.stringify({ script, user_id, user_gender, emotion }),
+          body: JSON.stringify({ script, user_id, user_gender }),
         },
       );
 
       if (response.ok) {
         const encodedScript = await response.headers.get('X-Script');
-        console.log('encoded script:', encodedScript);
         if (encodedScript) {
           const decodedBytes = Buffer.from(encodedScript, 'base64');
           const decodedScript = new TextDecoder('utf-8').decode(decodedBytes);
-          console.log('decoded script:', decodedScript);
           setMessages((prev) => [
             ...prev,
             { text: decodedScript, isUser: false },
@@ -145,16 +131,12 @@ export default function Chat() {
         if (typeof window !== 'undefined') {
           audio = new Audio(audioUrl); // Audio 객체 생성
           audio.addEventListener('ended', () => {
-            console.log('음성 재생 완료');
-
             isRecording.current = true;
             recognition.current?.start();
           });
           audio.play(); // 음성 파일 재생
         }
-        console.log('전송 성공');
       } else {
-        console.log('오류 발생');
       }
     } catch (error) {
       console.log('서버 오류 발생 : ', error);
@@ -166,12 +148,9 @@ export default function Chat() {
 
     recognition.current.onstart = () => {
       isRecording.current = true;
-      console.log('Speech recognition started');
     };
 
-    recognition.current.onspeechstart = () => {
-      console.log('사용자가 말을 시작함');
-    };
+    recognition.current.onspeechstart = () => {};
 
     //onresult : 음성 인식 결과가 발생할때마다 호출됨
     recognition.current.onresult = (event: SpeechRecognitionEvent) => {
@@ -185,7 +164,6 @@ export default function Chat() {
           scriptRef.current += newScript;
         }
       }
-      console.log('Transcription result: ', scriptRef.current);
 
       if (scriptRef.current !== '') {
         isRecording.current = false;
@@ -196,8 +174,6 @@ export default function Chat() {
     };
 
     recognition.current.onspeechend = () => {
-      console.log('onspeechend called');
-      console.log('Final transcript:', scriptRef.current);
       /* 이곳에 trySendScript로 발화 내용을 전송하면
          문제점 : 사용자가 발화하지 않는다고 판단하는 시간을 너무 보수적으로 잡음
          --> chunk 내용이 엄청 길어지게 됨
@@ -206,17 +182,14 @@ export default function Chat() {
     };
 
     recognition.current.onend = () => {
-      console.log('Speech recognition session ended.');
-      console.log('isRecording:', isRecording.current);
       if (isRecording.current) {
-        console.log('Restarting speech recognition...');
         recognition.current?.start();
       }
     };
 
     recognition.current.onerror = (event: { error: string }) => {
       if (event.error !== 'no-speech')
-        console.error('Speech recognition error:', event.error);
+        console.log('Speech recognition error:', event.error);
     };
 
     recognition.current.start();
@@ -288,10 +261,9 @@ export default function Chat() {
         disconnectAudio.play();
         router.push('/FeedbackAI');
       } else {
-        console.log('대화 종료 요청 실패');
       }
     } catch (error) {
-      console.error('대화 종료 요청 오류:', error);
+      console.log('대화 종료 요청 오류:', error);
     }
   };
 

@@ -35,7 +35,7 @@ export default function FaceFilter() {
   useEffect(() => {
     const setupFaceFilter = async () => {
       if (!videoRef.current || !canvasRef.current) {
-        console.error('Video or Canvas element is missing.');
+        console.log('Video or Canvas element is missing.');
         return;
       }
 
@@ -54,7 +54,7 @@ export default function FaceFilter() {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       if (!ctx) {
-        console.error('Canvas 2D context could not be initialized.');
+        console.log('Canvas 2D context could not be initialized.');
         return;
       }
 
@@ -107,7 +107,7 @@ export default function FaceFilter() {
           videoRef.current!.srcObject = stream;
           await videoRef.current!.play();
         } catch (error) {
-          console.error('Error accessing camera:', error);
+          console.log('Error accessing camera:', error);
         }
       };
 
@@ -118,7 +118,7 @@ export default function FaceFilter() {
           await faceDetection.send({ image: videoRef.current! });
           requestAnimationFrame(renderFrame);
         } catch (error) {
-          console.error('Error in renderFrame:', error);
+          console.log('Error in renderFrame:', error);
         }
       };
 

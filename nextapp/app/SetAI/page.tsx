@@ -62,10 +62,10 @@ function SetAI() {
       if (response.ok) {
         console.log('성공');
       } else {
-        console.error('서버에서 200 반환안함');
+        console.log('서버에서 200 반환안함');
       }
     } catch (error) {
-      console.error('서버 요청 전송 오류:', error);
+      console.log('서버 요청 전송 오류:', error);
     }
     router.replace('/ChatAI');
   };

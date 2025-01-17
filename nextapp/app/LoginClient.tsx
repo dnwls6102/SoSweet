@@ -62,7 +62,7 @@ export default function LoginClient() {
         const errorData = await response
           .json()
           .catch(() => ({ message: '로그인 실패' }));
-        console.error('로그인 실패:', errorData.message);
+        console.log('로그인 실패:', errorData.message);
         setToastMsg(
           errorData.message ||
             '로그인 실패: 아이디 또는 비밀번호를 확인해주세요.',
@@ -70,7 +70,7 @@ export default function LoginClient() {
         setShowToast(true);
       }
     } catch (error) {
-      console.error('서버 오류:', error);
+      console.log('서버 오류:', error);
       setToastMsg('로그인 중 알 수 없는 오류가 발생했습니다.');
       setShowToast(true);
     }
@@ -110,11 +110,7 @@ export default function LoginClient() {
           </button>
         </div>
       </SmallForm>
-      {showToast && (
-        <div className={styles.toast}>
-          {toastMsg}
-        </div>
-      )}
+      {showToast && <div className={styles.toast}>{toastMsg}</div>}
     </div>
   );
 }

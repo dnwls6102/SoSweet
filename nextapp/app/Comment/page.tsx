@@ -93,7 +93,7 @@ export default function RatingPage() {
 
   const handleSubmit = async () => {
     if (!socket || !room) {
-      console.error('소켓 또는 방 정보가 없습니다.');
+      console.log('소켓 또는 방 정보가 없습니다.');
       return;
     }
 
@@ -130,11 +130,11 @@ export default function RatingPage() {
         dispatch(setSummary(data.analysis)); //서버에서 어떻게 줄 건지 확인
         dispatch(setConclusion(data.conclusion));
       } else {
-        console.error('서버에서 분석을 반환하지 않음');
+        console.log('서버에서 분석을 반환하지 않음');
       }
       socket.emit('submitFeedback', data);
     } catch (error) {
-      console.error('분석 반환 요청 실패:', error);
+      console.log('분석 반환 요청 실패:', error);
     }
   };
 
