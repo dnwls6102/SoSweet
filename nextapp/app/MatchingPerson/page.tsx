@@ -75,13 +75,12 @@ export default function MatchingPerson() {
         router.push(`/MatchingPerson/ChatHuman?room=${data.room_id}`);
       });
 
-      const match_disconnect = () => {
-        const data = { socket_id: newSocket.id, room_id: null };
-        newSocket.emit('match-disconnect', data);
+      // 뒤로가기 이벤트 발생 시 메인 페이지로 이동
+      window.addEventListener('popstate', () => {
+        newSocket.emit('match-disconnect');
         newSocket.disconnect();
-      };
-      window.addEventListener('popstate', match_disconnect);
-      window.addEventListener('beforeunload', match_disconnect);
+        router.push('/MainPage');
+      });
       return;
     }
   }, [router, dispatch]);

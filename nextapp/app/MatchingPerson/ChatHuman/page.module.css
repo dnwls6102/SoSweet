@@ -68,7 +68,8 @@
   width: 40% !important;
   height: auto !important;
   object-fit: contain;
-  filter: contrast(1.2) brightness(1.1) drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+  filter: contrast(1.2) brightness(1.1)
+    drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
 }
 
 @keyframes blink {
@@ -79,37 +80,3 @@
     opacity: 1;
   }
 }
-
-.loading {
-  font-family: 'logoFont', sans-serif;
-  font-size: 5em;
-  color: #ff758c;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%; /* 부모 요소가 높이를 정의했을 경우에 필요 */
-  white-space: nowrap; 
-}
-
-.spinner {
-  margin-top: 10px;
-  border: 6px solid #f3f3f3;
-  border-top: 6px solid #ff758c;
-  border-radius: 50%;
-  width: 65px;
-  height: 65px;
-  animation: spin 2s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-
-

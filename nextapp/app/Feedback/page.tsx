@@ -335,10 +335,10 @@ export default function Feedback() {
               {summary ? (
                 <div className={styles.overallText}>
                   <p>{summary}</p>
-                  <p>
+                  {/* <p>
                     당신은 <span className={styles.highlight}>연애고자</span>{' '}
                     입니다.
-                  </p>
+                  </p> */}
                 </div>
               ) : (
                 <div className={styles.loading}>

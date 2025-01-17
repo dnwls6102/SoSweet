@@ -16,16 +16,6 @@ interface RTCIceCandidate {
 
 dotenv.config();
 
-// // DB Connection test
-// (async () => {
-//   for (let i = 0; i < 5; i++) {
-//     await UserSchema.create({
-//       user_id: `dummy${i + 1}`,
-//       user_gender: "남성",
-//     });
-//   }
-// })();
-
 // 평가를 담기 위한 객체 생성
 const evaluations: {
   [room_id: string]: {
@@ -51,12 +41,11 @@ export function initializeSocketServer(server: http.Server) {
 
   // 대기 중인 사용자 관리를 위한 Map
   const waitingUsers = new Map();
-  // 활성화된 방 관리를 위한 Map
-  const activeRooms = new Map();
 
   io.on("connection", async (socket: Socket) => {
     console.log("새로운 사용자 연결:", socket.id);
 
+    let currentRoom: string | null = null;
     // 매칭 시작 이벤트 처리
     socket.on("startMatching", async (userData) => {
       const { user_id, gender } = userData;
@@ -81,11 +70,6 @@ export function initializeSocketServer(server: http.Server) {
           currentSocket.join(room_id);
           waitingUser.socket.join(room_id);
 
-          // 방 정보 저장
-          activeRooms.set(room_id, {
-            users: [waitingSocketId, currentSocket.id],
-          });
-
           // 양쪽 모두에게 매칭 성공 알림
           io.to(room_id).emit("matchSuccess", { room_id });
 
@@ -102,6 +86,7 @@ export function initializeSocketServer(server: http.Server) {
     socket.on("join", async (data: { room_id: string }) => {
       console.log("User joined room:", data.room_id);
 
+      currentRoom = data.room_id;
       // 방에 있는 다른 사용자 수 확인
       const clients = await io.in(data.room_id).allSockets();
       if (clients.size === 2) {
@@ -186,42 +171,23 @@ export function initializeSocketServer(server: http.Server) {
     socket.on("endCall", (data: { room_id: string }) => {
       console.log("endCall 이벤트 수신:", data.room_id);
 
-      // room 정보를 직접 사용
-      const roomData = activeRooms.get(data.room_id);
-      if (roomData) {
-        // 상대방에게 연결 종료 알림
-        socket.to(data.room_id).emit("peerDisconnected");
-        console.log("상대방에게 연결 종료 알림 전송:", data.room_id);
-        activeRooms.delete(data.room_id);
-      } else {
-        console.log("해당 room을 찾을 수 없음:", data.room_id);
-      }
+      socket.to(data.room_id).emit("peerDisconnected");
+      console.log("상대방에게 연결 종료 알림 전송:", data.room_id);
     });
 
     // 연결 종료 처리
     socket.on("disconnect", () => {
       // 대기열에서 제거
+      waitingUsers.delete(socket.id);
       console.log("연결 종료: ", socket.id);
     });
 
-    // 뒤로가기, 새로고침, 창 닫기 이벤트 발생 시 대기 리스트 제거 및 소켓 해제
-    socket.on(
-      "match-disconnect",
-      (data: { socket_id: string; room_id: string }) => {
-        const { socket_id, room_id } = data;
-        console.log(data);
-        if (room_id !== null) {
-          activeRooms.delete(room_id);
-          socket.leave(room_id);
-        }
-        if (socket_id !== null) {
-          waitingUsers.delete(socket_id);
-          socket.leave(socket_id);
-        }
-      }
-    );
+    // 뒤로가기 이벤트 발생 시 대기 리스트 제거 및 소켓 해제
+    socket.on("match-disconnect", () => {
+      waitingUsers.delete(socket.id);
+      socket.disconnect();
+    });
     console.log(waitingUsers);
-    console.log(activeRooms);
   });
 }
 

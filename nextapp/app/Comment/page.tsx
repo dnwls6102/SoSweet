@@ -77,6 +77,11 @@ export default function RatingPage() {
       router.push('/Feedback');
     });
 
+    // 뒤로가기 이벤트 발생 시 메인 페이지로 이동
+    window.addEventListener('popstate', () => {
+      router.push('/MainPage');
+    });
+
     return () => {
       socket.off('receiveFeedback');
     };
@@ -127,7 +132,6 @@ export default function RatingPage() {
       } else {
         console.error('서버에서 분석을 반환하지 않음');
       }
-      socket.emit('submitFeedback', data);
       socket.emit('submitFeedback', data);
     } catch (error) {
       console.error('분석 반환 요청 실패:', error);

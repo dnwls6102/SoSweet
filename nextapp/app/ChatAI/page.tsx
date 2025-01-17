@@ -86,6 +86,9 @@ export default function Chat() {
 
   const dispatch = useDispatch();
 
+  // 말풍선 자동 스크롤
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
+
   const [waiting, setWaiting] = useState(false);
 
   let disconnectAudio: HTMLAudioElement;
@@ -273,6 +276,13 @@ export default function Chat() {
     };
   }, [user_id]); // user_id를 의존성 배열에 추가
 
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [script]); // script가 업데이트될 때마다 실행되어 스크롤을 아래로 내림
+
   const handleNavigation = async () => {
     setWaiting(true);
     try {
@@ -321,15 +331,6 @@ export default function Chat() {
       </div>
     );
   }
-
-  // 말풍선 자동 스크롤
-  const chatContainerRef = useRef<HTMLDivElement | null>(null);
-  
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-  }, [script]); // script가 업데이트될 때마다 실행되어 스크롤을 아래로 내림
 
   return (
     <div className={styles.wrapper}>

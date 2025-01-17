@@ -109,7 +109,6 @@ function ChatContent() {
   const [showEyeWarning, setShowEyeWarning] = useState(false);
   const [warningMessage, setWarningMessage] = useState('');
   const imgRef = useRef('');
-  const [waiting, setWaiting] = useState(false);
 
   let ddingAudio: HTMLAudioElement;
   let disconnectAudio: HTMLAudioElement;
@@ -398,11 +397,11 @@ function ChatContent() {
           ).getTracks();
           console.log('tracks : ', tracks);
           tracks.forEach((track) => track.stop());
+          tracks.forEach((track) => track.stop());
         }
         resolve('good');
       });
       alert('상대방이 연결을 종료했습니다.');
-      setWaiting(true);
       if (mediaRecorderRef.current) {
         mediaRecorderRef.current.stop();
       }
@@ -643,6 +642,22 @@ function ChatContent() {
       }, 7000);
     });
 
+    // 뒤로가기 이벤트 발생 시 메인 페이지로 이동
+    window.addEventListener('popstate', async () => {
+      await new Promise((resolve) => {
+        if (localVideoRef.current?.srcObject) {
+          const tracks = (
+            localVideoRef.current.srcObject as MediaStream
+          ).getTracks();
+          console.log('tracks : ', tracks);
+          tracks.forEach((track) => track.stop());
+          tracks.forEach((track) => track.stop());
+        }
+        resolve('good');
+      });
+      router.push('/MainPage');
+    });
+
     // 정리 함수
     return () => {
       if (mediaRecorderRef.current) {
@@ -680,11 +695,10 @@ function ChatContent() {
         ).getTracks();
         console.log('tracks : ', tracks);
         tracks.forEach((track) => track.stop());
+        tracks.forEach((track) => track.stop());
       }
       resolve('good');
     });
-
-    setWaiting(true);
 
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
@@ -729,15 +743,6 @@ function ChatContent() {
     disconnectAudio.play();
     router.push('/Comment');
   };
-
-  if (waiting) {
-    return (
-      <div className={styles.loading}>
-        <p>대화를 분석하고 있어요</p>
-        <div className={styles.spinner}></div>
-      </div>
-    );
-  }
 
   return (
     <div className={styles.wrapper}>
@@ -799,11 +804,14 @@ function ChatContent() {
 
 export default function Chat() {
   return (
-    <Suspense fallback={
-    <div className={styles.loading}>
-      <p>Loading...</p>
-      <div className={styles.spinner}></div>
-    </div>}>
+    <Suspense
+      fallback={
+        <div className={styles.loading}>
+          <p>Loading...</p>
+          <div className={styles.spinner}></div>
+        </div>
+      }
+    >
       <ChatContent />
     </Suspense>
   );
