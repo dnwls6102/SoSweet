@@ -45,7 +45,6 @@ export function initializeSocketServer(server: http.Server) {
   io.on("connection", async (socket: Socket) => {
     console.log("새로운 사용자 연결:", socket.id);
 
-    let currentRoom: string | null = null;
     // 매칭 시작 이벤트 처리
     socket.on("startMatching", async (userData) => {
       const { user_id, gender } = userData;
@@ -86,7 +85,6 @@ export function initializeSocketServer(server: http.Server) {
     socket.on("join", async (data: { room_id: string }) => {
       console.log("User joined room:", data.room_id);
 
-      currentRoom = data.room_id;
       // 방에 있는 다른 사용자 수 확인
       const clients = await io.in(data.room_id).allSockets();
       if (clients.size === 2) {
