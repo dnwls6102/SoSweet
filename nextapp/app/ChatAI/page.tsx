@@ -74,7 +74,17 @@ export default function Chat() {
     }
   }, [router]);
 
-  const image_src = user_gender === '남성' ? '/emma.webp' : '/john.webp';
+  const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const video_src = user_gender === '남성' ? '/kgirl.mp4' : '/kboy.mp4';
+
+  // 비디오 첫 프레임 캡처를 위한 useEffect
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.load();
+    }
+  }, [video_src]);
 
   const isRecording = useRef<boolean>(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -96,7 +106,6 @@ export default function Chat() {
   }
 
   const trySendScript = async (script: string) => {
-    // user_id가 없으면 함수 실행하지 않음
     if (!user_id) {
       console.log('user_id가 아직 설정되지 않았습니다.');
       return;
@@ -125,18 +134,33 @@ export default function Chat() {
             { text: decodedScript, isUser: false },
           ]);
         }
-        const audioBlob = await response.blob(); // 서버 응답 데이터를 Blob으로 변환
-        const audioUrl = URL.createObjectURL(audioBlob); // Blob에서 재생 가능한 URL 생성
-        let audio: HTMLAudioElement;
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
         if (typeof window !== 'undefined') {
-          audio = new Audio(audioUrl); // Audio 객체 생성
+          const audio = new Audio(audioUrl);
+
+          audio.addEventListener('play', () => {
+            setIsPlaying(true);
+            if (videoRef.current) {
+              videoRef.current.currentTime = 0;
+              videoRef.current
+                .play()
+                .catch((e) => console.error('비디오 재생 실패:', e));
+            }
+          });
+
           audio.addEventListener('ended', () => {
+            setIsPlaying(false);
+            if (videoRef.current) {
+              videoRef.current.pause();
+              videoRef.current.currentTime = 0;
+            }
             isRecording.current = true;
             recognition.current?.start();
           });
-          audio.play(); // 음성 파일 재생
+
+          audio.play().catch((e) => console.error('오디오 재생 실패:', e));
         }
-      } else {
       }
     } catch (error) {
       console.log('서버 오류 발생 : ', error);
@@ -281,13 +305,22 @@ export default function Chat() {
       <div className={styles.content}>
         <div className={styles.left}>
           <div className={styles.relationshipContainer}>
-            <Image
-              src={image_src}
-              alt="AI 이미지"
-              width={800}
-              height={600}
-              className={`${styles.aiImage} ${!isRecording.current ? styles.imageBorderActive : ''}`}
-            />
+            <div className={styles.mediaContainer}>
+              <video
+                ref={videoRef}
+                src={video_src}
+                className={`${styles.aiVideo} ${!isRecording.current ? styles.imageBorderActive : ''}`}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                }}
+                loop={isPlaying}
+                muted
+                playsInline
+                preload="auto"
+              />
+            </div>
             <Image
               className={styles.callEndIcon}
               onClick={handleNavigation}

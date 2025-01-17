@@ -36,7 +36,7 @@ export default function FeedbackAI() {
       router.replace('/');
     }
   }, [router]);
-  const image_src = user_gender === '남성' ? '/emma.webp' : '/john.webp';
+  const image_src = user_gender === '남성' ? '/kgirl.jpg' : '/kboy.jpg';
 
   useEffect(() => {
     audioRef.current = new Audio(audioUrl);
