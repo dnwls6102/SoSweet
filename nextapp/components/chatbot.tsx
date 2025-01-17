@@ -1,9 +1,8 @@
 import styles from './chatbot.module.css';
-// import { useState } from 'react';
 
 interface ChatbotProps {
   emotion: string;
-  message: string;
+  message?: string;
 }
 
 const emotionToEmoji: Record<string, string> = {
@@ -17,11 +16,9 @@ const emotionToEmoji: Record<string, string> = {
 };
 
 export default function Chatbot({ emotion, message }: ChatbotProps) {
-  // const [showMessage, setShowMessage] = useState(false);
-
   return (
     <div className={styles.chatbotContainer}>
-      <div className={styles.messageBox}>{message}</div>
+      {message && <div className={styles.messageBox}>{message}</div>}
       <div className={styles.emojiWrapper}>
         {emotionToEmoji[emotion]}
       </div>

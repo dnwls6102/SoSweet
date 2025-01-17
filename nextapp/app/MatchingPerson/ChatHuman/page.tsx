@@ -486,8 +486,8 @@ function ChatContent() {
       if (!videoEl) return;
 
       // 현재 비디오 크기 가져오기
-      const vWidth = videoEl.videoWidth / 4; // 기존 해당도의 1/4 로 줄이기
-      const vHeight = videoEl.videoHeight / 4;
+      const vWidth = videoEl.videoWidth; // 기존 해당도의 1/4 로 줄이기
+      const vHeight = videoEl.videoHeight;
 
       // 영상 아직 준비 안 되었으면 스킵하기
       if (!vWidth || !vHeight) return;
