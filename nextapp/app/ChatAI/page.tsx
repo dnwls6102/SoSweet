@@ -248,9 +248,6 @@ export default function Chat() {
     };
   }, [user_id]); // user_id를 의존성 배열에 추가
 
-  // 말풍선 자동 스크롤
-  const chatContainerRef = useRef<HTMLDivElement | null>(null);
-
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop =
