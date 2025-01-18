@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import { useDispatch } from 'react-redux';
@@ -76,15 +76,36 @@ export default function Chat() {
 
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const retryCount = useRef(0);
+  const maxRetries = 3;
+
+  const loadVideo = useCallback(() => {
+    if (videoRef.current) {
+      videoRef.current.load();
+      videoRef.current.onerror = async (e) => {
+        console.error('비디오 로딩 실패:', e);
+        if (retryCount.current < maxRetries) {
+          retryCount.current += 1;
+          console.log(
+            `비디오 로딩 재시도 (${retryCount.current}/${maxRetries})`,
+          );
+          setTimeout(loadVideo, 1000); // 1초 후 재시도
+        } else {
+          console.error('최대 재시도 횟수 초과');
+        }
+      };
+    }
+  }, []);
+
   const video_src = user_gender === '남성' ? '/kgirl.mp4' : '/kboy.mp4';
 
   // 비디오 첫 프레임 캡처를 위한 useEffect
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
-      videoRef.current.load();
+      loadVideo();
     }
-  }, [video_src]);
+  }, [video_src, loadVideo]);
 
   const isRecording = useRef<boolean>(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -143,9 +164,12 @@ export default function Chat() {
             setIsPlaying(true);
             if (videoRef.current) {
               videoRef.current.currentTime = 0;
-              videoRef.current
-                .play()
-                .catch((e) => console.error('비디오 재생 실패:', e));
+              videoRef.current.play().catch((e) => {
+                console.error('비디오 재생 실패:', e);
+                // 비디오 재생 실패 시 재시도
+                retryCount.current = 0;
+                loadVideo();
+              });
             }
           });
 

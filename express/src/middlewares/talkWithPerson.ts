@@ -72,10 +72,10 @@ async function recordDialog(req: Request, res: Response): Promise<void> {
     // 업데이트된 키워드 카운트 저장
     await redisClient.set(`keywords:${room_id}`, JSON.stringify(keywordCounts));
     
-    let guide_msg = '';
+    // let guide_msg = '';
     // 키워드가 5회 이상 언급된 경우 가이드 메시지 생성
     const frequentKeywords = Object.entries(keywordCounts)
-      .filter(([_, count]) => count >= 3)
+      .filter(([_, count]) => count >= 2)
       .map(([keyword]) => keyword);
     
     if (frequentKeywords.length > 0) {
