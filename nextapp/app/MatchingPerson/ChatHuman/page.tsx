@@ -232,6 +232,7 @@ function ChatContent() {
         }
       }
       if (scriptRef.current !== '') {
+        console.log(scriptRef.current);
         tryNlp(scriptRef.current);
         trySendScript(scriptRef.current);
       }
